@@ -15,8 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Core.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
