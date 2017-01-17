@@ -1,6 +1,8 @@
 #ifndef UAD_CORE_H
 #define UAD_CORE_H
 
+#include "BaseDriver.h"
+
 class RootFramework;
 
 class AppBase {
@@ -33,7 +35,6 @@ public:
 	virtual void UpdateApplication() = 0;
 	virtual void ProcessInput() = 0;
 	virtual void ResetApplication() = 0;
-	virtual ~RootFramework() = 0;
 
 	BaseDriver		*pVideoDriver;
 	AppBase			*pBaseApp;
