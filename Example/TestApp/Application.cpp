@@ -13,7 +13,9 @@ void TestApp::OnUpdate(unsigned int dt) {
 }
 
 void TestApp::OnDraw() {
+	pFramework->pVideoDriver->Clear();
 
+	pFramework->pVideoDriver->SwapBuffers();
 }
 
 void TestApp::OnInput() {

@@ -7,7 +7,9 @@
 
 class Win32Framework : public RootFramework {
 public:
-	Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp) {}
+	Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) 	{ 
+		pBaseApp->SetParentFramework(this);
+	}
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();
@@ -17,6 +19,8 @@ public:
 	void ProcessInput();
 	void ResetApplication();
 	~Win32Framework() {	}
+
+	bool	m_alive;
 };
 
 #endif

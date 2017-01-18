@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClInclude Include="BaseDriver.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="GLDriver.h" />
     <ClInclude Include="Win32Framework.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="GLDriver.cpp" />
     <ClCompile Include="Win32Framework.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
