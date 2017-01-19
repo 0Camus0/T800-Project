@@ -9,10 +9,22 @@ void EGLError(const char* c_ptr) {
 	}
 }
 
+bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
+{
+	*nativedisp_out = (EGLNativeDisplayType)NULL;
+	return true;
+}
+
 void	GLDriver::InitDriver() {
 	EGLint numConfigs, w, h;
-	HDC	hDC = GetDC(eglWindow);
-	eglDisplay = eglGetDisplay(hDC);
+
+	EGLNativeDisplayType nativeDisplay;
+
+	if(!OpenNativeDisplay(&nativeDisplay)){
+		std::cout << "can't open native display" << std::endl;
+	}
+
+	eglDisplay = eglGetDisplay(nativeDisplay);
 
 	EGLError("eglGetDisplay");
 
