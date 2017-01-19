@@ -5,6 +5,7 @@
 #include "PrimitiveBase.h"
 
 class PrimitiveManager {
+public:
 	int  CreateTriangle();
 
 	void TransformPrimitive(unsigned int,float *);

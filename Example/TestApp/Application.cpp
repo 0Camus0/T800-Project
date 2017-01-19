@@ -2,7 +2,7 @@
 
 
 void TestApp::CreateAssets() {
-
+	PrimitiveMgr.CreateTriangle();
 }
 
 void TestApp::DestroyAssets() {

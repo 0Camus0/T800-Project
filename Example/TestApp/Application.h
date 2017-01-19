@@ -1,4 +1,5 @@
 #include <Core.h>
+#include <PrimitiveManager.h>
 
 class TestApp : public AppBase {
 public:
@@ -14,4 +15,6 @@ public:
 	void OnResume();
 
 	void OnReset();
+
+	PrimitiveManager PrimitiveMgr;
 };

@@ -8,12 +8,13 @@
 
 class TrangleGL : public PrimitiveBase {
 public:
-	TrangleGL(){}
+	TrangleGL() : shaderID(0) {}
 	void Create();
 	void Transform(float *t);
 	void Draw();
 	void Destroy();
 
+	GLuint	shaderID;
 	
 };
 
