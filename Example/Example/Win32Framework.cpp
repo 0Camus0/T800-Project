@@ -16,7 +16,7 @@ void Win32Framework::OnCreateApplication(){
 	SDL_WM_SetCaption("UAD Framework Daniel", 0);
 	int flags = SDL_HWSURFACE;
 	//flags |= SDL_FULLSCREEN;
-	flags |= SDL_RESIZABLE;
+	//flags |= SDL_RESIZABLE;
 	int width = 1280;
 	int height = 720;
 	SDL_SetVideoMode(width, height, 32, flags);

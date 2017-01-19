@@ -6,6 +6,10 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
+struct triVertex{
+	float x,y,z;
+};
+
 class TrangleGL : public PrimitiveBase {
 public:
 	TrangleGL() : shaderID(0) {}
@@ -15,6 +19,9 @@ public:
 	void Destroy();
 
 	GLuint	shaderID;
+	GLuint	vertexAttribLoc;
+
+	triVertex	vertices[3];
 	
 };
 

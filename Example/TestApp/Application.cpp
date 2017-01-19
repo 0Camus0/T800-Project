@@ -6,7 +6,7 @@ void TestApp::CreateAssets() {
 }
 
 void TestApp::DestroyAssets() {
-
+	PrimitiveMgr.DestroyPrimitives();
 }
 
 void TestApp::OnUpdate(unsigned int dt) {
@@ -15,7 +15,7 @@ void TestApp::OnUpdate(unsigned int dt) {
 
 void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
-
+	PrimitiveMgr.DrawPrimitives();
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

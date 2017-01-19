@@ -18,9 +18,15 @@ void PrimitiveManager::TransformPrimitive(unsigned int index, float *mat) {
 }
 
 void PrimitiveManager::DrawPrimitives() {
-
+	for(unsigned int i=0;i<primitives.size();i++){
+		primitives[i]->Draw();
+	}
 }
 
 void PrimitiveManager::DestroyPrimitives() {
-
+	for (unsigned int i = 0; i < primitives.size(); i++) {
+		primitives[i]->Destroy();
+		delete primitives[i];
+	}
+	primitives.clear();
 }
