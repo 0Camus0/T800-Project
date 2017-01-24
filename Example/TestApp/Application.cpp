@@ -10,7 +10,7 @@ void TestApp::DestroyAssets() {
 }
 
 void TestApp::OnUpdate(unsigned int dt) {
-
+	PrimitiveMgr.TransformPrimitive(0, 0);
 }
 
 void TestApp::OnDraw() {

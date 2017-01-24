@@ -1,8 +1,6 @@
 
 #include "TriangleGL.h"
 
-#include <d3dx9math.h>
-
 #include <stdio.h>
 
 void checkcompilederrors(GLuint shader, GLenum type) {
@@ -56,8 +54,6 @@ char *file2string(const char *path){
 	return str;
 }
 
-
-
 void TrangleGL::Create() {
 	shaderID = glCreateProgram();
 
@@ -74,19 +70,35 @@ void TrangleGL::Create() {
 	glUseProgram(shaderID);
 
 	vertexAttribLoc = glGetAttribLocation(shaderID, "MyVertex");
+	
+	matUniformLoc = glGetUniformLocation(shaderID, "MyMatrix");
 
 	vertices[0] = {  0.0f,  0.5f, 0.0f };
 	vertices[1] = { -0.5f, -0.5f, 0.0f };
 	vertices[2] = {  0.5f, -0.5f, 0.0f };	
+
+	D3DXMatrixIdentity(&transform);
 }
 
 void TrangleGL::Transform(float *t) {
-
+	 D3DXMATRIX translation;
+	static float x_ = 0.0f; // x coord
+	static float y_ = 0.0f; // y coord
+	static float a_ = 0.0f; //  Freq en x
+	static float b_ = 0.0f; //  Freq en y
+	x_ = 0.5f*sin(a_); // Max val -1 a 1
+	y_ = 0.5f*cos(b_); // Max val -1 a 1
+	a_ += 0.002f;
+	b_ += 0.002f;
+	D3DXMatrixTranslation(&translation, x_, y_, 1.0f);
+	transform = translation;
+	
 }
 
 void TrangleGL::Draw() {
 	glEnableVertexAttribArray(vertexAttribLoc);
 	glVertexAttribPointer(vertexAttribLoc, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+	glUniformMatrix4fv(matUniformLoc, 1, GL_FALSE, &transform.m[0][0] );
 	glDrawArrays(GL_TRIANGLES,0,3);
 }
 
