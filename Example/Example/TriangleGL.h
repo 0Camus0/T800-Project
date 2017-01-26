@@ -7,10 +7,26 @@
 
 #include <d3dx9math.h>
 
+//#define USE_ARRAY_OF_STRUCTS
+#define USE_VBO
 
-struct triVertex{
-	float x,y,z;
+#ifdef USE_VBO
+struct triVertex {
+	float x, y, z;
+	float r, g, b;
 };
+#else
+	#ifdef USE_ARRAY_OF_STRUCTS
+	struct triVertex{
+		float x,y,z;
+		float r,g,b;
+	};
+	#else
+	struct triVertex {
+		float x, y, z;
+	};
+	#endif
+#endif
 
 class TrangleGL : public PrimitiveBase {
 public:
@@ -22,10 +38,22 @@ public:
 
 	GLuint	shaderID;
 	GLuint	vertexAttribLoc;
+	GLuint	colorAttribLoc;
 	
 	GLuint  matUniformLoc;
-
-	triVertex	vertices[3];
+#ifdef USE_VBO
+	triVertex		vertices[4];
+	unsigned short	indices[6];
+	GLuint			VB;
+	GLuint			IB;
+#else
+	#ifdef USE_ARRAY_OF_STRUCTS
+		triVertex	vertices[6];
+	#else
+		triVertex	positions[6];
+		triVertex	colors[6];
+	#endif
+#endif
 	D3DXMATRIX	transform;
 };
 
