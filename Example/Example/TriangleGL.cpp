@@ -32,12 +32,12 @@ void TrangleGL::Create() {
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(triVertex), &vertices[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	indices[0] = 0;
+	indices[0] = 2;
 	indices[1] = 1;
-	indices[2] = 2;
-	indices[3] = 0;
+	indices[2] = 0;
+	indices[3] = 3;
 	indices[4] = 2;
-	indices[5] = 3;
+	indices[5] = 0;
 
 	glGenBuffers(1, &IB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);

@@ -23,12 +23,11 @@ public:
 
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	Cubes[10];
-	PrimitiveInst	Triangle[10];
+	PrimitiveInst	Triangles[10];
 
 	D3DXVECTOR3		Position;
 	D3DXVECTOR3		Orientation;
 	D3DXVECTOR3		Scaling;
-	D3DXMATRIX		WorldTransform;
 
 	D3DXMATRIX		View;
 	D3DXMATRIX		Projection;

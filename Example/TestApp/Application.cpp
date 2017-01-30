@@ -12,6 +12,8 @@ void TestApp::CreateAssets() {
 	int indexCube = PrimitiveMgr.CreateCube();
 	Cubes[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
 	Cubes[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
+	int indexTriangle = PrimitiveMgr.CreateTriangle();
+	Triangles[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexTriangle), &VP);
 
 	D3DXMATRIX View;
 	D3DXVECTOR3 Pos		= D3DXVECTOR3(0.0f,1.0f,5.0f);
@@ -23,6 +25,7 @@ void TestApp::CreateAssets() {
 	D3DXMatrixPerspectiveFovRH(&Proj,D3DXToRadian(45.0f),1280.0f/720.0f,0.1f,1000.0f);
 	//	D3DXMatrixOrthoRH(&Proj, 1280.0f / 720.0f, 1.0f , 0.1, 100.0f);
 	VP = View*Proj;
+
 
 }
 
@@ -43,12 +46,20 @@ void TestApp::OnUpdate() {
 	Cubes[0].ScaleAbsolute(Scaling.x);
 	Cubes[0].Update();
 
-	Cubes[1].TranslateAbsolute(-Position.x,-Position.y, Position.z);
-	Cubes[1].RotateXAbsolute(-Orientation.x);
-	Cubes[1].RotateYAbsolute(-Orientation.y);
-	Cubes[1].RotateZAbsolute(-Orientation.z);
-	Cubes[1].ScaleAbsolute(Scaling.x);
+	static float freq = DtTimer.GetDTSecs();
+	freq += 10.0f*DtTimer.GetDTSecs();
+
+	if (freq > 36.0f)
+		freq = 0.0f;
+
+	Cubes[1].TranslateAbsolute(1.5f*exp(0.1f*-freq)*sin(freq), 1.5f*exp(0.1f*-freq)*cos(freq), 0.0f);
+	Cubes[1].RotateXRelative(180.0f*DtTimer.GetDTSecs());
+	Cubes[1].RotateYRelative(180.0f*DtTimer.GetDTSecs());
+	Cubes[1].RotateZRelative(180.0f*DtTimer.GetDTSecs());
+	Cubes[1].ScaleAbsolute(0.15f);
 	Cubes[1].Update();
+
+	Triangles[0].Update();
 
 	OnDraw();
 }
@@ -58,6 +69,8 @@ void TestApp::OnDraw() {
 	
 	Cubes[0].Draw();
 	Cubes[1].Draw();
+
+//	Triangles[0].Draw();
 
 	pFramework->pVideoDriver->SwapBuffers();
 }
