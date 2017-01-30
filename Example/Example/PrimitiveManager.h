@@ -7,6 +7,7 @@
 class PrimitiveManager {
 public:
 	int  CreateTriangle();
+	int	 CreateCube();
 
 	void TransformPrimitive(unsigned int,float *);
 	void DrawPrimitives();

@@ -8,7 +8,8 @@ void TestApp::InitVars() {
 }
 
 void TestApp::CreateAssets() {	
-	PrimitiveMgr.CreateTriangle();
+	PrimitiveMgr.CreateCube();
+//	PrimitiveMgr.CreateTriangle();
 }
 
 void TestApp::DestroyAssets() {
@@ -19,12 +20,15 @@ void TestApp::OnUpdate() {
 	DtTimer.Update();
 
 	OnInput();
-	
-	D3DXMATRIX WorldTranslate,WorldScale,WorldRotate;
+
+	D3DXMATRIX WorldTranslate,WorldScale,WorldRotation,WorldRotateX, WorldRotateY, WorldRotateZ;
 	D3DXMatrixTranslation(&WorldTranslate, Position.x, Position.y, Position.z);
 	D3DXMatrixScaling(&WorldScale, Scaling.x, Scaling.y, Scaling.z);
-	D3DXMatrixRotationZ(&WorldRotate, Orientation.z);
-	WorldTransform = WorldScale*WorldRotate*WorldTranslate;
+	D3DXMatrixRotationX(&WorldRotateX, Orientation.x);
+	D3DXMatrixRotationY(&WorldRotateY, Orientation.y);
+	D3DXMatrixRotationZ(&WorldRotateZ, Orientation.z);
+	WorldRotation= WorldRotateZ*WorldRotateY*WorldRotateX;
+	WorldTransform = WorldScale*WorldRotation*WorldTranslate;
 
 	PrimitiveMgr.TransformPrimitive(0, &WorldTransform.m[0][0]);
 
@@ -55,6 +59,14 @@ void TestApp::OnInput() {
 		Position.x += 1.0f*DtTimer.GetDTSecs();
 	}
 
+	if (IManager.PressedKey(SDLK_z)) {
+		Position.z -= 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_x)) {
+		Position.z += 1.0f*DtTimer.GetDTSecs();
+	}
+
 	if (IManager.PressedKey(SDLK_KP_PLUS)) {
 		Scaling.x += 1.0f*DtTimer.GetDTSecs();
 		Scaling.y += 1.0f*DtTimer.GetDTSecs();
@@ -65,6 +77,22 @@ void TestApp::OnInput() {
 		Scaling.x -= 1.0f*DtTimer.GetDTSecs();
 		Scaling.y -= 1.0f*DtTimer.GetDTSecs();
 		Scaling.z -= 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP5)) {
+		Orientation.x -= 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP6)) {
+		Orientation.x += 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP2)) {
+		Orientation.y -= 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP3)) {
+		Orientation.y += 1.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP0)) {

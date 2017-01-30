@@ -1,6 +1,7 @@
 
 #include "PrimitiveManager.h"
 #include "TriangleGL.h"
+#include "CubeGL.h"
 
 
 int  PrimitiveManager::CreateTriangle() {
@@ -8,6 +9,13 @@ int  PrimitiveManager::CreateTriangle() {
 	primitive->Create();
 	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);
+}
+
+int	 PrimitiveManager::CreateCube(){
+	PrimitiveBase *primitive = new CubeGL();
+	primitive->Create();
+	primitives.push_back(primitive);
+	return (int)(primitives.size() - 1);
 }
 
 void PrimitiveManager::TransformPrimitive(unsigned int index, float *mat) {

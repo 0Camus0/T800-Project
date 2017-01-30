@@ -72,6 +72,11 @@ void	GLDriver::InitDriver() {
 	std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
 	std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
 	std::cout << "GL Version: " << GL_Version << "\n\nExtensions\n\n" << GL_Extensions << std::endl;
+
+	glEnable(GL_DEPTH_TEST);
+	glClearDepthf(1.0f);
+	//glEnable(GL_CULL_FACE);
+//	glCullFace(GL_FRONT_AND_BACK);
 }
 
 void	GLDriver::CreateSurfaces() {
@@ -98,7 +103,8 @@ void	GLDriver::SetWindow(void *window) {
 
 void	GLDriver::Clear() {
 	glClearColor(0.0,0.0,0.0,1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+
 }
 
 void	GLDriver::SwapBuffers() {
