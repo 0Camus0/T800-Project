@@ -1,5 +1,5 @@
 #include "CubeGL.h"
-
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 void CubeGL::Create() {
 	shaderID = glCreateProgram();
@@ -20,51 +20,44 @@ void CubeGL::Create() {
 	normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
 	uvAttribLoc     = glGetAttribLocation(shaderID, "UV");
 
-	if(normalAttribLoc<0)
-		normalAttribLoc=0;
-
-	if(uvAttribLoc<0)
-		uvAttribLoc=0;
-
-
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc		   = glGetUniformLocation(shaderID, "World");
 	
 	// +Y SIDE
-	vertices[0] = { -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f };
-	vertices[1] = {  1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f };
-	vertices[2] = { -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f };
-	vertices[3] = {  1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f };
+	vertices[0] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[1] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[2] = { -1.0f,  1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[3] = {  1.0f,  1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
 
 	// -Y SIDE
-	vertices[4] = { -1.0f,  -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f };
-	vertices[5] = {  1.0f,  -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f };
-	vertices[6] = { -1.0f,  -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f };
-	vertices[7] = {  1.0f,  -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f };
+	vertices[4] = { -1.0f,  -1.0f, -1.0f, 1.0f,  0.0f, -1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[5] = {  1.0f,  -1.0f, -1.0f, 1.0f,  0.0f, -1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[6] = { -1.0f,  -1.0f,  1.0f, 1.0f,  0.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[7] = {  1.0f,  -1.0f,  1.0f, 1.0f,  0.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 
 	// +X SIDE
-	vertices[8]  = { 1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 0.0f,  0.0f, 1.0f };
-	vertices[9]  = { 1.0f,  1.0f, -1.0f,   1.0f, 0.0f, 0.0f,  1.0f, 1.0f };
-	vertices[10] = { 1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f };
-	vertices[11] = { 1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f };
+	vertices[8]  = { 1.0f,  1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[9]  = { 1.0f,  1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[10] = { 1.0f, -1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[11] = { 1.0f, -1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
 
 	// -X SIDE
-	vertices[12] = { -1.0f,  1.0f,  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
-	vertices[13] = { -1.0f,  1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-	vertices[14] = { -1.0f, -1.0f,  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
-	vertices[15] = { -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+	vertices[12] = { -1.0f,  1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[13] = { -1.0f,  1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[14] = { -1.0f, -1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[15] = { -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 
 	// +Z SIDE
-	vertices[16] = { -1.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[17] = {  1.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[18] = { -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[19] = {  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[16] = { -1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f };
+	vertices[17] = {  1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f };
+	vertices[18] = { -1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 0.0f };
+	vertices[19] = {  1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f };
 
 	// -Z SIDE
-	vertices[20] = { -1.0f,  1.0f, -1.0f,  0.0f, 0.0f, -1.0f, 1.0f, 0.0f };
-	vertices[21] = {  1.0f,  1.0f, -1.0f,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f };
-	vertices[22] = { -1.0f, -1.0f, -1.0f,  0.0f, 0.0f, -1.0f, 1.0f, 1.0f };
-	vertices[23] = {  1.0f, -1.0f, -1.0f,  0.0f, 0.0f, -1.0f, 0.0f, 1.0f };
+	vertices[20] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 0.0f };
+	vertices[21] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f };
+	vertices[22] = { -1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 1.0f };
+	vertices[23] = {  1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f };
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -131,36 +124,32 @@ void CubeGL::Transform(float *t) {
 	transform = t;
 }
 
-void CubeGL::Draw() {
+void CubeGL::Draw(float *t,float *vp) {
+	glUseProgram(shaderID);
+
+	if (t)
+		transform = t;
+
+	D3DXMATRIX VP = D3DXMATRIX(vp);
+	D3DXMATRIX WVP = transform*VP;
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
-
-	D3DXMATRIX View;
-	D3DXVECTOR3 Pos		= D3DXVECTOR3(0.0f,1.0f,5.0f);
-	D3DXVECTOR3 Up		= D3DXVECTOR3(0.0f,1.0f,0.0f);
-	D3DXVECTOR3 LookAt	= D3DXVECTOR3(0.0001f, 0.0001f, 0.0001f) - Pos;
-	D3DXMatrixLookAtRH(&View,&Pos,&LookAt,&Up);
-	D3DXMATRIX Proj;
-//	D3DXMatrixPerspectiveFovRH(&Proj,D3DXToRadian(45.0f),1280.0f/720.0f,0.1f,1000.0f);
-//	D3DXMatrixOrthoRH(&Proj, 1280.0f / 720.0f, 1.0f , 0.1, 100.0f);
-	D3DXMATRIX WVP = transform*View;
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
 	glEnableVertexAttribArray(vertexAttribLoc);
-	glVertexAttribPointer(vertexAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(CVertex), (void*)0);
+	glEnableVertexAttribArray(normalAttribLoc);
 
-	if (normalAttribLoc>0) {
-		glEnableVertexAttribArray(normalAttribLoc);
-		glVertexAttribPointer(normalAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(CVertex), (void*)12);
-	}
-
-	if(uvAttribLoc>0){
+	if (uvAttribLoc != -1) 
 		glEnableVertexAttribArray(uvAttribLoc);
-		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), (void*)24);
-	}
+	
+	glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
+	glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
+	
+	if(uvAttribLoc!=-1)
+		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	
@@ -168,13 +157,13 @@ void CubeGL::Draw() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vertexAttribLoc);
-	if (uvAttribLoc>0) {
 	glDisableVertexAttribArray(normalAttribLoc);
-	}
-	if (uvAttribLoc>0) {
+	
+	if (uvAttribLoc!=-1) {
 	glDisableVertexAttribArray(uvAttribLoc);
 	}
 
+	glUseProgram(0);
 }
 
 void CubeGL::Destroy() {

@@ -11,8 +11,9 @@
 
 
 struct CVertex {
-	float x, y, z;
-	float nx,ny,nz;
+
+	float x, y, z,w;
+	float nx,ny,nz,nw;
 	float s,t;
 };
 
@@ -21,7 +22,7 @@ public:
 	CubeGL() : shaderID(0) {}
 	void Create();
 	void Transform(float *t);
-	void Draw();
+	void Draw(float *t,float *vp);
 	void Destroy();
 
 	GLuint	shaderID;

@@ -8,8 +8,22 @@ void TestApp::InitVars() {
 }
 
 void TestApp::CreateAssets() {	
-	PrimitiveMgr.CreateCube();
-//	PrimitiveMgr.CreateTriangle();
+	PrimitiveMgr.SetVP(&VP);
+	int indexCube = PrimitiveMgr.CreateCube();
+	Cubes[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
+	Cubes[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
+
+	D3DXMATRIX View;
+	D3DXVECTOR3 Pos		= D3DXVECTOR3(0.0f,1.0f,5.0f);
+	D3DXVECTOR3 Up		= D3DXVECTOR3(0.0f,1.0f,0.0f);
+	D3DXVECTOR3 LookAt	= D3DXVECTOR3(0.0001f, 0.0001f, 0.0001f) - Pos;
+	D3DXMatrixLookAtRH(&View,&Pos,&LookAt,&Up);
+	D3DXMATRIX Proj;
+
+	D3DXMatrixPerspectiveFovRH(&Proj,D3DXToRadian(45.0f),1280.0f/720.0f,0.1f,1000.0f);
+	//	D3DXMatrixOrthoRH(&Proj, 1280.0f / 720.0f, 1.0f , 0.1, 100.0f);
+	VP = View*Proj;
+
 }
 
 void TestApp::DestroyAssets() {
@@ -21,23 +35,30 @@ void TestApp::OnUpdate() {
 
 	OnInput();
 
-	D3DXMATRIX WorldTranslate,WorldScale,WorldRotation,WorldRotateX, WorldRotateY, WorldRotateZ;
-	D3DXMatrixTranslation(&WorldTranslate, Position.x, Position.y, Position.z);
-	D3DXMatrixScaling(&WorldScale, Scaling.x, Scaling.y, Scaling.z);
-	D3DXMatrixRotationX(&WorldRotateX, Orientation.x);
-	D3DXMatrixRotationY(&WorldRotateY, Orientation.y);
-	D3DXMatrixRotationZ(&WorldRotateZ, Orientation.z);
-	WorldRotation= WorldRotateZ*WorldRotateY*WorldRotateX;
-	WorldTransform = WorldScale*WorldRotation*WorldTranslate;
 
-	PrimitiveMgr.TransformPrimitive(0, &WorldTransform.m[0][0]);
+	Cubes[0].TranslateAbsolute(Position.x, Position.y, Position.z);
+	Cubes[0].RotateXAbsolute(Orientation.x);
+	Cubes[0].RotateYAbsolute(Orientation.y);
+	Cubes[0].RotateZAbsolute(Orientation.z);
+	Cubes[0].ScaleAbsolute(Scaling.x);
+	Cubes[0].Update();
+
+	Cubes[1].TranslateAbsolute(-Position.x,-Position.y, Position.z);
+	Cubes[1].RotateXAbsolute(-Orientation.x);
+	Cubes[1].RotateYAbsolute(-Orientation.y);
+	Cubes[1].RotateZAbsolute(-Orientation.z);
+	Cubes[1].ScaleAbsolute(Scaling.x);
+	Cubes[1].Update();
 
 	OnDraw();
 }
 
 void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
-	PrimitiveMgr.DrawPrimitives();
+	
+	Cubes[0].Draw();
+	Cubes[1].Draw();
+
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
@@ -80,27 +101,27 @@ void TestApp::OnInput() {
 	}
 
 	if (IManager.PressedKey(SDLK_KP5)) {
-		Orientation.x -= 1.0f*DtTimer.GetDTSecs();
+		Orientation.x -= 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP6)) {
-		Orientation.x += 1.0f*DtTimer.GetDTSecs();
+		Orientation.x += 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP2)) {
-		Orientation.y -= 1.0f*DtTimer.GetDTSecs();
+		Orientation.y -= 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP3)) {
-		Orientation.y += 1.0f*DtTimer.GetDTSecs();
+		Orientation.y += 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP0)) {
-		Orientation.z -= 1.0f*DtTimer.GetDTSecs();
+		Orientation.z -= 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
-		Orientation.z += 1.0f*DtTimer.GetDTSecs();
+		Orientation.z += 60.0f*DtTimer.GetDTSecs();
 	}
 
 	

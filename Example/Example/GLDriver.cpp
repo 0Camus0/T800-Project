@@ -1,3 +1,4 @@
+
 #include "GLDriver.h"
 #include <iostream>
 #include <string>
@@ -75,8 +76,8 @@ void	GLDriver::InitDriver() {
 
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);
-	//glEnable(GL_CULL_FACE);
-//	glCullFace(GL_FRONT_AND_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 }
 
 void	GLDriver::CreateSurfaces() {
