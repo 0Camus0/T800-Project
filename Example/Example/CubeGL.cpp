@@ -1,5 +1,4 @@
 #include "CubeGL.h"
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 void CubeGL::Create() {
 	shaderID = glCreateProgram();
@@ -9,6 +8,9 @@ void CubeGL::Create() {
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
+
+	delete[] vsSourceP;
+	delete[] fsSourceP;
 
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
@@ -117,7 +119,7 @@ void CubeGL::Create() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	D3DXMatrixIdentity(&transform);
+	XMatIdentity(transform);
 }
 
 void CubeGL::Transform(float *t) {
@@ -130,8 +132,8 @@ void CubeGL::Draw(float *t,float *vp) {
 	if (t)
 		transform = t;
 
-	D3DXMATRIX VP = D3DXMATRIX(vp);
-	D3DXMATRIX WVP = transform*VP;
+	XMATRIX44 VP = XMATRIX44(vp);
+	XMATRIX44 WVP = transform*VP;
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);

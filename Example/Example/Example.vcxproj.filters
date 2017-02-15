@@ -47,6 +47,15 @@
     <ClInclude Include="PrimitiveInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MeshGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -77,6 +86,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PrimitiveInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

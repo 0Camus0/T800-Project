@@ -11,6 +11,9 @@ void TrangleGL::Create() {
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
 
+	delete [] vsSourceP;
+	delete [] fsSourceP;
+
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
 
@@ -70,7 +73,7 @@ void TrangleGL::Create() {
 		colors[5] = { 1.0f, 0.0f, 0.0f };
 	#endif
 #endif
-	D3DXMatrixIdentity(&transform);
+		XMatIdentity(transform);
 }
 
 void TrangleGL::Transform(float *t) {

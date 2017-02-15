@@ -3,7 +3,7 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <d3dx9math.h>
+#include <xMaths.h>
 
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
@@ -21,6 +21,7 @@ class CubeGL : public PrimitiveBase {
 public:
 	CubeGL() : shaderID(0) {}
 	void Create();
+	void Create(char *) {}
 	void Transform(float *t);
 	void Draw(float *t,float *vp);
 	void Destroy();
@@ -38,7 +39,7 @@ public:
 	GLuint			VB;
 	GLuint			IB;
 
-	D3DXMATRIX	transform;
+	XMATRIX44	transform;
 };
 
 

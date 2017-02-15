@@ -2,7 +2,7 @@
 #include <PrimitiveManager.h>
 #include <PrimitiveInstance.h>
 
-#include <d3dx9math.h>
+#include <xMaths.h>
 #include <Timer.h>
 
 class TestApp : public AppBase {
@@ -24,14 +24,15 @@ public:
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	Cubes[10];
 	PrimitiveInst	Triangles[10];
+	PrimitiveInst   Pigs[10];
 
-	D3DXVECTOR3		Position;
-	D3DXVECTOR3		Orientation;
-	D3DXVECTOR3		Scaling;
+	XVECTOR3		Position;
+	XVECTOR3		Orientation;
+	XVECTOR3		Scaling;
 
-	D3DXMATRIX		View;
-	D3DXMATRIX		Projection;
-	D3DXMATRIX		VP;
+	XMATRIX44		View;
+	XMATRIX44		Projection;
+	XMATRIX44		VP;
 
 	Timer			DtTimer;
 };

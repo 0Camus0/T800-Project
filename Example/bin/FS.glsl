@@ -1,7 +1,6 @@
-varying highp vec4 NormalTransformed;
+varying highp vec3 NormalTransformed;
 
 void main(){
-	highp vec4 normal = normalize(NormalTransformed*0.5 + 0.5);
-	normal.w = 1.0;
-	gl_FragColor = normal;
+	highp vec3 normal = normalize(NormalTransformed*0.5 + 0.5);
+	gl_FragColor = vec4(normal,1.0);
 }

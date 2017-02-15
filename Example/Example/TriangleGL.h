@@ -3,7 +3,7 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <d3dx9math.h>
+#include <xMaths.h>
 
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
@@ -34,6 +34,7 @@ class TrangleGL : public PrimitiveBase {
 public:
 	TrangleGL() : shaderID(0) {}
 	void Create();
+	void Create(char *) {}
 	void Transform(float *t);
 	void Draw(float *t,float *vp);
 	void Destroy();
@@ -56,7 +57,7 @@ public:
 		triVertex	colors[6];
 	#endif
 #endif
-	D3DXMATRIX	transform;
+	XMATRIX44	transform;
 };
 
 #endif

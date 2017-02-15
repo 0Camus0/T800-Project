@@ -2,22 +2,22 @@
 #define UAD_PRIMITIVE_INSTANCE_H
 
 #include "PrimitiveBase.h"
-#include <d3dx9math.h>
+#include <xMaths.h>
 
 
 
 class PrimitiveInst {
 	public:
-		void	CreateInstance(PrimitiveBase *pPrim, D3DXMATRIX *pVP) {
+		void	CreateInstance(PrimitiveBase *pPrim, XMATRIX44 *pVP) {
 			pBase = pPrim;
 			pViewProj = pVP;
-			D3DXMatrixIdentity(&Position);
-			D3DXMatrixIdentity(&Scale);
-			D3DXMatrixIdentity(&RotationX);
-			D3DXMatrixIdentity(&RotationY);
-			D3DXMatrixIdentity(&RotationZ);
-			D3DXMatrixIdentity(&RotationZ);
-			D3DXMatrixIdentity(&Final);			
+			XMatIdentity(Position);
+			XMatIdentity(Scale);
+			XMatIdentity(RotationX);
+			XMatIdentity(RotationY);
+			XMatIdentity(RotationZ);
+			XMatIdentity(RotationZ);
+			XMatIdentity(Final);
 		}
 
 		void	TranslateAbsolute(float x, float y, float z);
@@ -35,14 +35,14 @@ class PrimitiveInst {
 		void	Update();
 		void	Draw();
 
-		D3DXMATRIX		Position;
-		D3DXMATRIX		Scale;
-		D3DXMATRIX		RotationX;
-		D3DXMATRIX		RotationY;
-		D3DXMATRIX		RotationZ;
-		D3DXMATRIX		Final;
+		XMATRIX44		Position;
+		XMATRIX44		Scale;
+		XMATRIX44		RotationX;
+		XMATRIX44		RotationY;
+		XMATRIX44		RotationZ;
+		XMATRIX44		Final;
 
-		D3DXMATRIX		*pViewProj;
+		XMATRIX44		*pViewProj;
 
 		PrimitiveBase	*pBase;
 };
