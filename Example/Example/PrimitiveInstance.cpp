@@ -55,5 +55,7 @@ void PrimitiveInst::Update() {
 }
 
 void PrimitiveInst::Draw(){
+	if (!Visible)
+		return;
 	pBase->Draw(&Final.m[0][0],&(*pViewProj).m[0][0]);
 }

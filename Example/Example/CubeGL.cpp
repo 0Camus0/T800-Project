@@ -1,6 +1,13 @@
 #include "CubeGL.h"
 
 void CubeGL::Create() {
+
+	Texture *tex = new TextureGL;
+	TexId = tex->LoadTexture("cerdo_D.tga");
+	if (TexId == -1) {
+		delete tex;
+	}
+
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS.glsl");
@@ -24,6 +31,8 @@ void CubeGL::Create() {
 
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc		   = glGetUniformLocation(shaderID, "World");
+
+	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
 	
 	// +Y SIDE
 	vertices[0] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
@@ -38,28 +47,28 @@ void CubeGL::Create() {
 	vertices[7] = {  1.0f,  -1.0f,  1.0f, 1.0f,  0.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 
 	// +X SIDE
-	vertices[8]  = { 1.0f,  1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[9]  = { 1.0f,  1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[10] = { 1.0f, -1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[11] = { 1.0f, -1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[8]  = { 1.0f,  1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[9]  = { 1.0f,  1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[10] = { 1.0f, -1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[11] = { 1.0f, -1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 
 	// -X SIDE
-	vertices[12] = { -1.0f,  1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
-	vertices[13] = { -1.0f,  1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[14] = { -1.0f, -1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[15] = { -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[12] = { -1.0f,  1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[13] = { -1.0f,  1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[14] = { -1.0f, -1.0f,  1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[15] = { -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f };
 
 	// +Z SIDE
-	vertices[16] = { -1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f };
-	vertices[17] = {  1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f };
-	vertices[18] = { -1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 0.0f };
-	vertices[19] = {  1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f };
+	vertices[16] = { -1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f };
+	vertices[17] = {  1.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 0.0f };
+	vertices[18] = { -1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f };
+	vertices[19] = {  1.0f, -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f };
 
 	// -Z SIDE
-	vertices[20] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 0.0f };
-	vertices[21] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f };
-	vertices[22] = { -1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 1.0f };
-	vertices[23] = {  1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f };
+	vertices[20] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f };
+	vertices[21] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 0.0f };
+	vertices[22] = { -1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f };
+	vertices[23] = {  1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 1.0f };
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -113,6 +122,13 @@ void CubeGL::Create() {
 	indices[33] = 21;
 	indices[34] = 22;
 	indices[35] = 23;
+	
+	for (int i = 0; i < 36; i += 3) {
+		int id0 = indices[i];
+		int id2 = indices[i+2];
+		indices[i] = id2;
+		indices[i+2] = id0;
+	}
 
 	glGenBuffers(1, &IB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
@@ -127,6 +143,7 @@ void CubeGL::Transform(float *t) {
 }
 
 void CubeGL::Draw(float *t,float *vp) {
+
 	glUseProgram(shaderID);
 
 	if (t)
@@ -142,16 +159,24 @@ void CubeGL::Draw(float *t,float *vp) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
 	glEnableVertexAttribArray(vertexAttribLoc);
-	glEnableVertexAttribArray(normalAttribLoc);
+
+	if (normalAttribLoc != -1)
+		glEnableVertexAttribArray(normalAttribLoc);
 
 	if (uvAttribLoc != -1) 
 		glEnableVertexAttribArray(uvAttribLoc);
 	
 	glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
-	glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
+	
+	if (normalAttribLoc != -1)
+		glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
 	
 	if(uvAttribLoc!=-1)
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TexId);
+	glUniform1i(diffuseLoc, 0);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	
@@ -159,10 +184,13 @@ void CubeGL::Draw(float *t,float *vp) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vertexAttribLoc);
-	glDisableVertexAttribArray(normalAttribLoc);
+
+	if (normalAttribLoc != -1) {
+		glDisableVertexAttribArray(normalAttribLoc);
+	}
 	
 	if (uvAttribLoc!=-1) {
-	glDisableVertexAttribArray(uvAttribLoc);
+		glDisableVertexAttribArray(uvAttribLoc);
 	}
 
 	glUseProgram(0);

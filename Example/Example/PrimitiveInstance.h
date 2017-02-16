@@ -18,6 +18,7 @@ class PrimitiveInst {
 			XMatIdentity(RotationZ);
 			XMatIdentity(RotationZ);
 			XMatIdentity(Final);
+			Visible = true;
 		}
 
 		void	TranslateAbsolute(float x, float y, float z);
@@ -34,6 +35,10 @@ class PrimitiveInst {
 
 		void	Update();
 		void	Draw();
+
+		void ToogleVisible() { Visible = !Visible; }
+		void SetVisible(bool f) { Visible = f; }
+		bool Visible;
 
 		XMATRIX44		Position;
 		XMATRIX44		Scale;

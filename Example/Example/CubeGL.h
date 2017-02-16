@@ -7,7 +7,7 @@
 
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
-
+#include "TextureGL.h"
 
 
 struct CVertex {
@@ -30,6 +30,8 @@ public:
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;
 	GLint	uvAttribLoc;
+	GLint	diffuseLoc;
+	int		TexId;
 
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
@@ -40,6 +42,7 @@ public:
 	GLuint			IB;
 
 	XMATRIX44	transform;
+	Texture		*tex;
 };
 
 

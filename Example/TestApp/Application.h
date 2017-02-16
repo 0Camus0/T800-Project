@@ -5,6 +5,13 @@
 #include <xMaths.h>
 #include <Timer.h>
 
+enum {
+	DRAW_CUBE_SPINNING = 0,
+	DRAW_CUBE_BIG,
+	DRAW_MESH,
+	DRAW_ALL,
+};
+
 class TestApp : public AppBase {
 public:
 	TestApp() : AppBase() {}
@@ -21,6 +28,8 @@ public:
 
 	void OnReset();
 
+	void UpdateVP();
+
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	Cubes[10];
 	PrimitiveInst	Triangles[10];
@@ -35,4 +44,5 @@ public:
 	XMATRIX44		VP;
 
 	Timer			DtTimer;
+	int				SelectedMesh;
 };

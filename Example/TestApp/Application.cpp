@@ -2,9 +2,11 @@
 
 void TestApp::InitVars() {
 	DtTimer.Init();
-	Position	= XVECTOR3(0.0f, -2.0f, 0.0f);
+	Position = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
-	Scaling		= XVECTOR3(0.045f, 0.045f, 0.045f);
+	Scaling = XVECTOR3(1.0f, 1.0f, 1.0f);
+	SelectedMesh = 0;
+
 }
 
 void TestApp::CreateAssets() {
@@ -17,6 +19,15 @@ void TestApp::CreateAssets() {
 	int indexCerdo = PrimitiveMgr.CreateMesh("NuCroc.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
 
+	Cubes[0].SetVisible(false);
+	Cubes[1].SetVisible(true);
+	Pigs[0].SetVisible(false);
+
+	
+	UpdateVP();
+}
+
+void TestApp::UpdateVP() {
 	XMATRIX44 View;
 	XVECTOR3 Pos = XVECTOR3(0.0f, 1.0f, -5.0f);
 	XVECTOR3 Up = XVECTOR3(0.0f, 1.0f, 0.0f);
@@ -26,7 +37,6 @@ void TestApp::CreateAssets() {
 	XMATRIX44 Proj;
 	XMatPerspectiveLH(Proj, Deg2Rad(45.0f), 1280.0f / 720.0f, 0.01f, 10000.0f);
 	VP = View*Proj;
-
 }
 
 void TestApp::DestroyAssets() {
@@ -38,22 +48,23 @@ void TestApp::OnUpdate() {
 
 	OnInput();
 
+	PrimitiveInst *Sel = &Cubes[0];
+	switch (SelectedMesh){
+		case DRAW_CUBE_BIG:{
+			Sel = &Cubes[0];
+		}break;
+		case DRAW_MESH:{
+			Sel = &Pigs[0];
+		}break;
+	}
 
-	Cubes[0].TranslateAbsolute(Position.x, Position.y, Position.z);
-	Cubes[0].RotateXAbsolute(Orientation.x);
-	Cubes[0].RotateYAbsolute(Orientation.y);
-	Cubes[0].RotateZAbsolute(Orientation.z);
-	Cubes[0].ScaleAbsolute(0.25f);
-	Cubes[0].Update();
-	
-
-	Pigs[0].TranslateAbsolute(Position.x, Position.y, Position.z);
-	Pigs[0].RotateXAbsolute(Orientation.x);
-	Pigs[0].RotateYAbsolute(Orientation.y);
-	Pigs[0].RotateZAbsolute(Orientation.z);
-	Pigs[0].ScaleAbsolute(Scaling.x);
-	Pigs[0].Update();
-
+	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
+	Sel->RotateXAbsolute(Orientation.x);
+	Sel->RotateYAbsolute(Orientation.y);
+	Sel->RotateZAbsolute(Orientation.z);
+	Sel->ScaleAbsolute(Orientation.z);
+	Sel->ScaleAbsolute(Scaling.x);
+	Sel->Update();
 
 	static float freq = DtTimer.GetDTSecs();
 	freq += 10.0f*DtTimer.GetDTSecs();
@@ -68,19 +79,16 @@ void TestApp::OnUpdate() {
 	Cubes[1].ScaleAbsolute(0.15f);
 	Cubes[1].Update();
 
-	Triangles[0].Update();
-	
 	OnDraw();
 }
 
 void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 	
-	//Cubes[0].Draw();
+	Cubes[0].Draw();
 	Cubes[1].Draw();
-
 	Pigs[0].Draw();
-//	Triangles[0].Draw();
+
 
 	pFramework->pVideoDriver->SwapBuffers();
 }
@@ -147,6 +155,46 @@ void TestApp::OnInput() {
 		Orientation.z += 60.0f*speedFactor*DtTimer.GetDTSecs();
 	}
 
+	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
+		Orientation.z += 60.0f*speedFactor*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedOnceKey(SDLK_SPACE)) {
+		SelectedMesh++;
+		if (SelectedMesh > DRAW_ALL)
+			SelectedMesh = 0;
+
+		switch (SelectedMesh) {
+			case DRAW_CUBE_SPINNING:{
+				Cubes[0].SetVisible(false);
+				Cubes[1].SetVisible(true);
+				Pigs[0].SetVisible(false);
+			}break;
+			case DRAW_CUBE_BIG:{
+				Cubes[0].SetVisible(true);
+				Cubes[1].SetVisible(false);
+				Pigs[0].SetVisible(false);
+				Position = XVECTOR3(0.0f, 0.0f, 0.0f);
+				Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
+				Scaling = XVECTOR3(1.0f, 1.0f, 1.0f);
+			}break;
+			case DRAW_MESH:{
+				Cubes[0].SetVisible(false);
+				Cubes[1].SetVisible(false);
+				Pigs[0].SetVisible(true);
+				Position = XVECTOR3(0.0f, -2.0f, 0.0f);
+				Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
+				Scaling = XVECTOR3(0.045f, 0.045f, 0.045f);
+			}break;
+			case DRAW_ALL:{
+				Cubes[0].SetVisible(true);
+				Cubes[1].SetVisible(true);
+				Pigs[0].SetVisible(true);
+			}break;
+		}
+	}
+
+	
 	
 }
 

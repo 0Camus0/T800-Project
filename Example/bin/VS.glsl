@@ -1,14 +1,13 @@
-
 attribute highp vec4 Vertex;
 attribute highp vec4 Normal;
 attribute highp vec2 UV;
 
-varying highp vec3 NormalTransformed;
+varying highp vec2 vecUVCoords;
 
 uniform highp mat4 WVP;
 uniform highp mat4 World;
 
 void main(){
-	NormalTransformed	= normalize(mat3(World)*Normal.xyz);
+	vecUVCoords	= UV;
 	gl_Position = WVP*Vertex;
 }

@@ -1,6 +1,8 @@
-varying highp vec3 NormalTransformed;
+uniform mediump sampler2D diffuse;
+
+varying highp vec2 vecUVCoords;
 
 void main(){
-	highp vec3 normal = normalize(NormalTransformed*0.5 + 0.5);
-	gl_FragColor = vec4(normal,1.0);
+	lowp vec3 vector = texture2D(diffuse,vecUVCoords).rgb;
+	gl_FragColor = vec4(vector,1.0);
 }

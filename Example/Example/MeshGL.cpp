@@ -170,7 +170,6 @@ void MeshGL::Transform(float *t) {
 }
 
 void MeshGL::Draw(float *t, float *vp) {
-	
 
 	if (t)
 		transform = t;
