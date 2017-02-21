@@ -96,7 +96,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)Librerias\SDL-1.2.14\lib;$(SolutionDir)Librerias\OGLES2\pvr\lib;$(SolutionDir)Librerias\XDataBase\lib;$(SolutionDir)Librerias\DXMath\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Framework.lib;libEGL.lib;libGLESv2.lib;SDL.lib;XDataBased.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Framework.lib;libEGL.lib;libGLESv2.lib;SDL.lib;XDataBased.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
