@@ -16,6 +16,7 @@ public:
 	void	Update();
 	void	DestroyDriver();
 	void	SetWindow(void *window) ;
+	void	SetDimensions(int, int);
 
 	void	Clear();
 	void	SwapBuffers();
