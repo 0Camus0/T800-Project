@@ -1,6 +1,8 @@
 #ifndef UAD_D3DXDRIVER_H
 #define UAD_D3DXDRIVER_H
 
+#include "Config.h"
+
 #include "BaseDriver.h"
 
 #include <d3d11.h>
@@ -24,11 +26,6 @@ public:
 
 	void	Clear();
 	void	SwapBuffers();
-
-	ComPtr<IDXGISwapChain>			DXGISwapchain;
-	ComPtr<ID3D11Device>            D3D11Device;
-	ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
-	ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;
 
 	int		Width;
 	int		Height;

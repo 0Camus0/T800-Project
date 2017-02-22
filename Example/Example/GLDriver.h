@@ -1,6 +1,8 @@
 #ifndef UAD_GLDRIVER_H
 #define UAD_GLDRIVER_H
 
+#include "Config.h"
+
 #include "BaseDriver.h"
 
 #include <EGL/egl.h>

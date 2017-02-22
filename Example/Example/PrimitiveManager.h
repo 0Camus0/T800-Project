@@ -1,6 +1,8 @@
 #ifndef UAD_PRIMITIVEMANAGER_H
 #define UAD_PRIMITIVEMANAGER_H
 
+#include "Config.h"
+
 #include <vector>
 #include <xMaths.h>
 #include "PrimitiveBase.h"

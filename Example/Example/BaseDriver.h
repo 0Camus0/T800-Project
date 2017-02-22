@@ -1,6 +1,8 @@
 #ifndef UAD_BASEDRIVER_H
 #define UAD_BASEDRIVER_H
 
+#include "Config.h"
+
 class BaseDriver {
 public:
 	BaseDriver() {  }

@@ -1,8 +1,8 @@
 
-#include "TriangleGL.h"
+#include "Triangle.h"
 
 
-void TrangleGL::Create() {
+void Trangle::Create() {
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS_tri.glsl");
@@ -76,11 +76,11 @@ void TrangleGL::Create() {
 		XMatIdentity(transform);
 }
 
-void TrangleGL::Transform(float *t) {
+void Trangle::Transform(float *t) {
 	transform = t;
 }
 
-void TrangleGL::Draw(float *t,float *vp) {
+void Trangle::Draw(float *t,float *vp) {
 	glUseProgram(shaderID);
 	
 	if (t)
@@ -127,6 +127,6 @@ void TrangleGL::Draw(float *t,float *vp) {
 	glUseProgram(0);
 }
 
-void TrangleGL::Destroy() {
+void Trangle::Destroy() {
 	glDeleteProgram(shaderID);
 }

@@ -20,36 +20,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseDriver.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Core.h" />
-    <ClInclude Include="CubeGL.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="D3DXDriver.h" />
     <ClInclude Include="GLDriver.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="MeshGL.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="PrimitiveBase.h" />
     <ClInclude Include="PrimitiveInstance.h" />
     <ClInclude Include="PrimitiveManager.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureD3D.h" />
     <ClInclude Include="TextureGL.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="TriangleGL.h" />
-    <ClInclude Include="UtilsGL.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Win32Framework.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
-    <ClCompile Include="CubeGL.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="D3DXDriver.cpp" />
     <ClCompile Include="GLDriver.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="MeshGL.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PrimitiveInstance.cpp" />
     <ClCompile Include="PrimitiveManager.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureD3D.cpp" />
     <ClCompile Include="TextureGL.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TriangleGL.cpp" />
-    <ClCompile Include="UtilsGL.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Win32Framework.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

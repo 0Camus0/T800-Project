@@ -1,10 +1,10 @@
 #ifndef UAD_PRIMITIVE_INSTANCE_H
 #define UAD_PRIMITIVE_INSTANCE_H
 
+#include "Config.h"
+
 #include "PrimitiveBase.h"
 #include <xMaths.h>
-
-
 
 class PrimitiveInst {
 	public:

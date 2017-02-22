@@ -4,7 +4,7 @@
 
 int		Texture::LoadTexture(char *fn){
 	int x = 0, y = 0, channels = 0;
-	unsigned char *buffer = stbi_load(fn, &x, &y, &channels, 0);
+	unsigned char *buffer = stbi_load(fn, &x, &y, &channels, 4);
 
 	if(!buffer)
 		return -1;

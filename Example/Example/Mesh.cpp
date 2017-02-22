@@ -1,10 +1,10 @@
-#include "MeshGL.h"
+#include "Mesh.h"
 #include <iostream>
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
 
-void MeshGL::Create(char *filename) {
+void Mesh::Create(char *filename) {
 
 	std::string fname = std::string(filename);
 	if (xFile.LoadXFile(fname)) {
@@ -165,11 +165,11 @@ void MeshGL::Create(char *filename) {
 	XMatIdentity(transform);
 }
 
-void MeshGL::Transform(float *t) {
+void Mesh::Transform(float *t) {
 	transform = t;
 }
 
-void MeshGL::Draw(float *t, float *vp) {
+void Mesh::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
@@ -263,7 +263,7 @@ void MeshGL::Draw(float *t, float *vp) {
 	
 }
 
-void MeshGL::Destroy() {
+void Mesh::Destroy() {
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 		xFinalGeometry *it = &xFile.MeshInfo[i];
 		glDeleteProgram(it->ShaderProg);

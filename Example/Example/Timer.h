@@ -1,6 +1,8 @@
 #ifndef UAD_TIMER_H
 #define UAD_TIMER_H
 
+#include "Config.h"
+
 #include <windows.h>
 
 class Timer {

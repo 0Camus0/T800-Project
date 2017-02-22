@@ -5,6 +5,11 @@
 
 #define DEBUG_DRIVER 1
 
+ComPtr<IDXGISwapChain>			DXGISwapchain;
+ComPtr<ID3D11Device>            D3D11Device;
+ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;
+
 void D3DXDriver::InitDriver(){
 	DXGI_MODE_DESC BackBufferDesc;
 	ZeroMemory(&BackBufferDesc, sizeof(DXGI_MODE_DESC));

@@ -1,6 +1,8 @@
 #ifndef UAD_TEXTURE_GL_H
 #define UAD_TEXTURE_GL_H
 
+#include "Config.h"
+
 #include "Texture.h"
 
 class TextureGL : public Texture {

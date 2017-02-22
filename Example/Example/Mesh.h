@@ -1,22 +1,24 @@
 #ifndef UAD_MESH_GL_H
 #define UAD_MESH_GL_H
 
+#include "Config.h"
+
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <xMaths.h>
 #include <XDataBase.h>
 
 #include "PrimitiveBase.h"
-#include "UtilsGL.h"
+#include "Utils.h"
 #include "TextureGL.h"
 
 #include <vector>
 
 using namespace xF;
 
-class MeshGL : public PrimitiveBase {
+class Mesh : public PrimitiveBase {
 public:
-	MeshGL()  {}
+	Mesh()  {}
 	void Create() {}
 	void Create(char *);
 	void Transform(float *t);

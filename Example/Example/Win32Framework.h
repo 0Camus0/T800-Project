@@ -1,6 +1,8 @@
 #ifndef UAD_WIN32FRAMEWORK_H
 #define UAD_WIN32FRAMEWORK_H
 
+#include "Config.h"
+
 #include "Core.h"
 #include "BaseDriver.h"
 #include <memory>

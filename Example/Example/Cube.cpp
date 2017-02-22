@@ -1,13 +1,22 @@
-#include "CubeGL.h"
+#include "Cube.h"
 
-void CubeGL::Create() {
+#ifdef USING_D3D11
+extern ComPtr<ID3D11Device>            D3D11Device;
+extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+#endif
 
-	Texture *tex = new TextureGL;
+void Cube::Create() {
+#ifdef USING_OPENGL_ES
+	tex = new TextureGL;
+#elif defined(USING_D3D11)
+	tex = new TextureD3D;
+#endif
 	TexId = tex->LoadTexture("cerdo_D.tga");
 	if (TexId == -1) {
 		delete tex;
 	}
 
+#ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS.glsl");
@@ -33,7 +42,56 @@ void CubeGL::Create() {
 	matWorldUniformLoc		   = glGetUniformLocation(shaderID, "World");
 
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
-	
+#elif defined(USING_D3D11)
+	char *vsSourceP = file2string("VS.hlsl");
+	char *fsSourceP = file2string("FS.hlsl");
+	HRESULT hr;
+	{
+		VS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile(vsSourceP, (UINT)strlen(vsSourceP), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		if (hr != S_OK) {
+
+			if (errorBlob) {
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+
+			if (VS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		if (hr != S_OK) {
+			printf("Error Creating Vertex Shader\n");
+			return;
+		}
+	}
+
+	{
+		FS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile(fsSourceP, (UINT)strlen(fsSourceP), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		if (hr != S_OK) {
+			if (errorBlob) {
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+
+			if (FS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		if (hr != S_OK) {
+			printf("Error Creating Pixel Shader\n");
+			return;
+		}
+	}
+#endif
+
 	// +Y SIDE
 	vertices[0] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[1] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -69,11 +127,6 @@ void CubeGL::Create() {
 	vertices[21] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 0.0f };
 	vertices[22] = { -1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f };
 	vertices[23] = {  1.0f, -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, -1.0f, 1.0f,  1.0f, 1.0f };
-
-	glGenBuffers(1, &VB);
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(CVertex), &vertices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// +X
 	indices[0] = 8;
@@ -130,19 +183,85 @@ void CubeGL::Create() {
 		indices[i+2] = id0;
 	}
 
+#ifdef USING_OPENGL_ES
+	glGenBuffers(1, &VB);
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(CVertex), &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glGenBuffers(1, &IB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#elif defined(USING_D3D11)
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+
+	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
+		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD" , 0, DXGI_FORMAT_R32G32_FLOAT,       0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+	if (hr != S_OK) {
+		printf("Error Creating Input Layout\n");
+		return;
+	}
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+
+	D3D11_BUFFER_DESC bdesc = { 0 };
+	bdesc.Usage = D3D11_USAGE_DEFAULT;
+	bdesc.ByteWidth = sizeof(Cube::CBuffer);
+	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	if (hr != S_OK) {
+		printf("Error Creating Buffer Layout\n");
+		return;
+	}
+
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+
+	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
+	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+
+	D3D11_BUFFER_DESC bdesc = { 0 };
+	bdesc.ByteWidth = sizeof(CVertex) * 24;
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
+
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
+	if (hr != S_OK) {
+		printf("Error Creating Vertex Buffer\n");
+		return;
+	}
+
+	bdesc = { 0 };
+	bdesc.ByteWidth = 36 * sizeof(USHORT);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	subData = { indices, 0, 0 };
+
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB);
+	if (hr != S_OK) {
+		printf("Error Creating Index Buffer\n");
+		return;
+	}
+#endif
 
 	XMatIdentity(transform);
 }
 
-void CubeGL::Transform(float *t) {
+void Cube::Transform(float *t) {
 	transform = t;
 }
 
-void CubeGL::Draw(float *t,float *vp) {
+void Cube::Draw(float *t,float *vp) {
 
 	glUseProgram(shaderID);
 
@@ -196,6 +315,6 @@ void CubeGL::Draw(float *t,float *vp) {
 	glUseProgram(0);
 }
 
-void CubeGL::Destroy() {
+void Cube::Destroy() {
 	glDeleteProgram(shaderID);
 }

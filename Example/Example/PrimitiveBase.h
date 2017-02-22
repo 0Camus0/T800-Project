@@ -1,6 +1,8 @@
 #ifndef UAD_PRIMITIVEBASE_H
 #define UAD_PRIMITIVEBASE_H
 
+#include "Config.h"
+
 #ifndef BUFFER_OFFSET
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #endif

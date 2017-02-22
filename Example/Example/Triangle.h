@@ -1,12 +1,14 @@
 #ifndef UAD_TRIANGLEGL_H
 #define UAD_TRIANGLEGL_H
 
+#include "Config.h"
+
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <xMaths.h>
 
 #include "PrimitiveBase.h"
-#include "UtilsGL.h"
+#include "Utils.h"
 
 
 //#define USE_ARRAY_OF_STRUCTS
@@ -30,9 +32,9 @@ struct triVertex {
 	#endif
 #endif
 
-class TrangleGL : public PrimitiveBase {
+class Trangle : public PrimitiveBase {
 public:
-	TrangleGL() : shaderID(0) {}
+	Trangle() : shaderID(0) {}
 	void Create();
 	void Create(char *) {}
 	void Transform(float *t);
