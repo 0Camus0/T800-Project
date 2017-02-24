@@ -22,9 +22,9 @@ void	TextureGL::SetTextureParams(unsigned int &params, unsigned int &target) {
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, glWrap);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, glWrap);
 
-	//int Max = 1;
-	//glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-	//glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+	int Max = 1;
+	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
+	glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
 }
 
 void TextureGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
