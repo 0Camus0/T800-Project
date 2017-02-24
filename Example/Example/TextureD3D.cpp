@@ -6,7 +6,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 void	TextureD3D::SetTextureParams(unsigned int &params, unsigned int &target){
 	D3D11_SAMPLER_DESC sdesc;
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	sdesc.MaxAnisotropy = 16;
+	sdesc.MaxAnisotropy = 1;
 	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;

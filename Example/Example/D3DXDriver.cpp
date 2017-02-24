@@ -9,6 +9,8 @@ ComPtr<IDXGISwapChain>			DXGISwapchain;
 ComPtr<ID3D11Device>            D3D11Device;
 ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;
+ComPtr<ID3D11DepthStencilView>  D3D11DepthStencilTargetView;
+ComPtr<ID3D11Texture2D>			D3D11DepthTex;
 
 void D3DXDriver::InitDriver(){
 	DXGI_MODE_DESC BackBufferDesc;
@@ -29,7 +31,7 @@ void D3DXDriver::InitDriver(){
 	SwapChainDesc.SampleDesc.Count = 1;
 	SwapChainDesc.SampleDesc.Quality = 0;
 	SwapChainDesc.OutputWindow = hwnd;
-	SwapChainDesc.Windowed = false;
+	SwapChainDesc.Windowed = true;
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
@@ -44,11 +46,34 @@ void D3DXDriver::InitDriver(){
 	ComPtr<ID3D11Texture2D> BackBuffer;
 	hr = DXGISwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), &BackBuffer);
 
+	D3D11_TEXTURE2D_DESC descDepth;
+	descDepth.Width = Width;
+	descDepth.Height = Height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = D3D11Device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
+	ZeroMemory(&dsvd, sizeof(dsvd));
+
+	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+
+	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
+
+
 
 	hr = D3D11Device->CreateRenderTargetView(BackBuffer.Get(), NULL, &D3D11RenderTargetView);
 
 
-	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), NULL);
+	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
 
 
 	D3D11_VIEWPORT viewport = { 0 };
@@ -95,6 +120,7 @@ void D3DXDriver::Clear(){
 	rgba[3] = 1.0f;
 
 	D3D11DeviceContext->ClearRenderTargetView(D3D11RenderTargetView.Get(), rgba);
+	D3D11DeviceContext->ClearDepthStencilView(D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH , 1.0f, 0);
 }
 
 void D3DXDriver::SwapBuffers(){

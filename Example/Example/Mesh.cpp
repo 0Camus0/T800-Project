@@ -38,7 +38,7 @@ void Mesh::Create(char *filename) {
 
 		vstr = Defines + vstr;
 		fstr = Defines + fstr;
-
+#ifdef USING_OPENGL_ES
 		it->ShaderProg = glCreateProgram();
 
 		GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
@@ -62,7 +62,9 @@ void Mesh::Create(char *filename) {
 
 		it->matWorldViewProjUniformLoc = glGetUniformLocation(it->ShaderProg, "WVP");
 		it->matWorldUniformLoc = glGetUniformLocation(it->ShaderProg, "World");
+#elif defined(USING_D3D11)
 
+#endif
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
 		
@@ -89,13 +91,19 @@ void Mesh::Create(char *filename) {
 							std::string ttstr = std::string(ttex->optname);
 							if(ttstr== path){
 								subinfo->IdTex = ttex->id;
+#ifdef USING_OPENGL_ES
 								subinfo->IdTexUniformLoc = glGetUniformLocation(it->ShaderProg, "diffuse");
+#endif
 								found=true;
 								break;
 							}
 						}
 						if(!found){
+#ifdef USING_OPENGL_ES
 							Texture *tex = new TextureGL;
+#elif defined(USING_D3D11)
+							Texture *tex = new TextureD3D;
+#endif
 							int id = tex->LoadTexture((char*)path.c_str());
 							if (id != -1) {
 							#if DEBUG_MODEL
@@ -103,7 +111,9 @@ void Mesh::Create(char *filename) {
 							#endif
 								Textures.push_back(tex);
 								subinfo->IdTex = id;
+#ifdef USING_OPENGL_ES
 								subinfo->IdTexUniformLoc = glGetUniformLocation(it->ShaderProg, "diffuse");
+#endif
 							}
 							else {
 								std::cout << "Texture not Found" << std::endl;
@@ -136,18 +146,21 @@ void Mesh::Create(char *filename) {
 					#endif
 				}
 			}
-
+#ifdef USING_OPENGL_ES
 			glGenBuffers(1, &subinfo->Id);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subinfo->Id);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, subinfo->NumTris * 3 * sizeof(unsigned short), tmpIndexex, GL_STATIC_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#endif
 			delete[] tmpIndexex;
 		}
-
+#ifdef USING_OPENGL_ES
 		glGenBuffers(1, &it->Id);
 		glBindBuffer(GL_ARRAY_BUFFER, it->Id);
 		glBufferData(GL_ARRAY_BUFFER, pActual->NumVertices*it->VertexSize, &it->pData[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+
 #if CHANGE_TO_RH
 		for (std::size_t a = 0; a < pActual->Triangles.size(); a += 3) {
 			unsigned short i0 = pActual->Triangles[a + 0];
@@ -156,10 +169,13 @@ void Mesh::Create(char *filename) {
 			pActual->Triangles[a + 2] = i0;
 		}	
 #endif
+
+#ifdef USING_OPENGL_ES
 		glGenBuffers(1, &it->IdIBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, it->IdIBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, pActual->Triangles.size() * sizeof(unsigned short), &pActual->Triangles[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#endif
 	}
 
 	XMatIdentity(transform);
@@ -173,7 +189,7 @@ void Mesh::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-
+#ifdef USING_OPENGL_ES
 	for (std::size_t i = 0; i <  xFile.MeshInfo.size();  i++) {
 		XMATRIX44 VP = XMATRIX44(vp);
 		XMATRIX44 WVP = transform*VP;
@@ -259,13 +275,16 @@ void Mesh::Draw(float *t, float *vp) {
 		
 		glUseProgram(0);
 	}
+#elif defined(USING_D3D11)
 
-	
+#endif
 }
 
 void Mesh::Destroy() {
+#ifdef USING_OPENGL_ES
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 		xFinalGeometry *it = &xFile.MeshInfo[i];
 		glDeleteProgram(it->ShaderProg);
 	}
+#endif
 }

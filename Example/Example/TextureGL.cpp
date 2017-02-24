@@ -11,8 +11,8 @@ void	TextureGL::SetTextureParams(unsigned int &params, unsigned int &target) {
 //		glFiltering = GL_NEAREST_MIPMAP_LINEAR;
 //		glFiltering = GL_LINEAR_MIPMAP_NEAREST;
 //		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
-		glFiltering = GL_NEAREST;	
-//		glFiltering = GL_LINEAR;
+//		glFiltering = GL_NEAREST;	
+		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
 		
 		glWrap = GL_CLAMP_TO_EDGE;	
 //		glWrap = GL_REPEAT;
@@ -51,7 +51,7 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	else
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
+	
 	glTexImage2D(glTarget, 0, glFormat, this->x, this->y, 0, glFormat, glChannel, (void*)(buffer));
 
 	glGenerateMipmap(glTarget);

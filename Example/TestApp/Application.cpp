@@ -13,7 +13,7 @@ void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 	int indexCube = PrimitiveMgr.CreateCube();
 	Cubes[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
-	Cubes[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
+	/*Cubes[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
 	int indexTriangle = PrimitiveMgr.CreateTriangle();
 	Triangles[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexTriangle), &VP);
 	int indexCerdo = PrimitiveMgr.CreateMesh("NuCroc.X");
@@ -23,7 +23,7 @@ void TestApp::CreateAssets() {
 	Cubes[1].SetVisible(true);
 	Pigs[0].SetVisible(false);
 
-	
+	*/
 	UpdateVP();
 }
 
@@ -48,6 +48,15 @@ void TestApp::OnUpdate() {
 
 	OnInput();
 
+	PrimitiveInst *Sel = &Cubes[0];
+	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
+	Sel->RotateXAbsolute(Orientation.x);
+	Sel->RotateYAbsolute(Orientation.y);
+	Sel->RotateZAbsolute(Orientation.z);
+	Sel->ScaleAbsolute(Orientation.z);
+	Sel->ScaleAbsolute(Scaling.x);
+	Sel->Update();
+/*
 	PrimitiveInst *Sel = &Cubes[0];
 	switch (SelectedMesh){
 		case DRAW_CUBE_BIG:{
@@ -78,7 +87,7 @@ void TestApp::OnUpdate() {
 	Cubes[1].RotateZRelative(180.0f*DtTimer.GetDTSecs());
 	Cubes[1].ScaleAbsolute(0.15f);
 	Cubes[1].Update();
-
+	*/
 	OnDraw();
 }
 
@@ -86,10 +95,10 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 	
 	Cubes[0].Draw();
-	Cubes[1].Draw();
+	/*Cubes[1].Draw();
 	Pigs[0].Draw();
 
-
+	*/
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
@@ -158,7 +167,7 @@ void TestApp::OnInput() {
 	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
 		Orientation.z += 60.0f*speedFactor*DtTimer.GetDTSecs();
 	}
-
+/*
 	if (IManager.PressedOnceKey(SDLK_SPACE)) {
 		SelectedMesh++;
 		if (SelectedMesh > DRAW_ALL)
@@ -194,7 +203,7 @@ void TestApp::OnInput() {
 		}
 	}
 
-	
+	*/
 	
 }
 

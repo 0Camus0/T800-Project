@@ -3,6 +3,7 @@
 
 
 void Trangle::Create() {
+#ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS_tri.glsl");
@@ -73,6 +74,19 @@ void Trangle::Create() {
 		colors[5] = { 1.0f, 0.0f, 0.0f };
 	#endif
 #endif
+#elif defined(USING_D3D11)
+	vertices[0] = { -0.5f,  0.5f, 0.0f , 0.0f, 0.0f, 1.0f };
+	vertices[1] = { -0.5f, -0.5f, 0.0f , 0.0f, 1.0f, 0.0f };
+	vertices[2] = { 0.5f, -0.5f, 0.0f , 1.0f, 0.0f, 1.0f };
+	vertices[3] = { 0.5f,  0.5f, 0.0f , 1.0f, 0.0f, 0.0f };
+
+	indices[0] = 2;
+	indices[1] = 1;
+	indices[2] = 0;
+	indices[3] = 3;
+	indices[4] = 2;
+	indices[5] = 0;
+#endif
 		XMatIdentity(transform);
 }
 
@@ -81,11 +95,12 @@ void Trangle::Transform(float *t) {
 }
 
 void Trangle::Draw(float *t,float *vp) {
-	glUseProgram(shaderID);
+	
 	
 	if (t)
 		transform = t;
-
+#ifdef USING_OPENGL_ES
+	glUseProgram(shaderID);
 	glUniformMatrix4fv(matUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 
 #ifdef USE_VBO
@@ -125,8 +140,12 @@ void Trangle::Draw(float *t,float *vp) {
 	glDisableVertexAttribArray(colorAttribLoc);
 
 	glUseProgram(0);
+#elif defined(USING_D3D11)
+#endif
 }
 
 void Trangle::Destroy() {
+#ifdef USING_OPENGL_ES
 	glDeleteProgram(shaderID);
+#endif
 }

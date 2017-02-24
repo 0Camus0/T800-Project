@@ -3,14 +3,20 @@
 
 #include "Config.h"
 
+#ifdef USING_OPENGL_ES
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include "TextureGL.h"
+#elif defined(USING_D3D11)
+#include "TextureD3D.h"
+#endif
+
 #include <xMaths.h>
 #include <XDataBase.h>
 
 #include "PrimitiveBase.h"
 #include "Utils.h"
-#include "TextureGL.h"
+
 
 #include <vector>
 

@@ -70,6 +70,8 @@ public:
 	ComPtr<ID3DBlob>            FS_blob;
 	ComPtr<ID3D11InputLayout>   Layout;
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
+
+	Cube::CBuffer	CnstBuffer;
 #endif
 
 	int		TexId;

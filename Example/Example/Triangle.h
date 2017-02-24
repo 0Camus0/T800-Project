@@ -3,8 +3,12 @@
 
 #include "Config.h"
 
+#ifdef USING_OPENGL_ES
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#elif defined(USING_D3D11)
+#endif
+
 #include <xMaths.h>
 
 #include "PrimitiveBase.h"
@@ -34,13 +38,20 @@ struct triVertex {
 
 class Trangle : public PrimitiveBase {
 public:
-	Trangle() : shaderID(0) {}
+	Trangle()
+#ifdef USING_OPENGL_ES
+		: shaderID(0) {}
+#elif defined(USING_D3D11)
+	{}
+#endif
+
 	void Create();
 	void Create(char *) {}
 	void Transform(float *t);
 	void Draw(float *t,float *vp);
 	void Destroy();
 
+#ifdef USING_OPENGL_ES
 	GLuint	shaderID;
 	GLuint	vertexAttribLoc;
 	GLuint	colorAttribLoc;
@@ -59,6 +70,11 @@ public:
 		triVertex	colors[6];
 	#endif
 #endif
+#elif defined(USING_D3D11)
+	triVertex		vertices[4];
+	unsigned short	indices[6];
+#endif
+
 	XMATRIX44	transform;
 };
 

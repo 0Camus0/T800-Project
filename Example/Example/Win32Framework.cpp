@@ -1,5 +1,9 @@
 #include "Win32Framework.h"
+#ifdef USING_OPENGL_ES
 #include "GLDriver.h"
+#elif defined(USING_D3D11)
+#include "D3DXDriver.h"
+#endif
 // SDL
 #include <SDL/SDL.h>
 // Windows 
@@ -20,8 +24,12 @@ void Win32Framework::OnCreateApplication(){
 	int width = 1280;
 	int height = 720;
 	SDL_SetVideoMode(width, height, 32, flags);
-
+#ifdef USING_OPENGL_ES
 	pVideoDriver = new GLDriver;
+#elif defined(USING_D3D11)
+	pVideoDriver = new D3DXDriver;
+	pVideoDriver->SetDimensions(width, height);
+#endif
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 

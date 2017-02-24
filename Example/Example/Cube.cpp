@@ -45,6 +45,10 @@ void Cube::Create() {
 #elif defined(USING_D3D11)
 	char *vsSourceP = file2string("VS.hlsl");
 	char *fsSourceP = file2string("FS.hlsl");
+
+	if (!vsSourceP || !fsSourceP)
+		exit(32);
+
 	HRESULT hr;
 	{
 		VS_blob = nullptr;
@@ -230,7 +234,7 @@ void Cube::Create() {
 	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 
 
-	D3D11_BUFFER_DESC bdesc = { 0 };
+	bdesc = { 0 };
 	bdesc.ByteWidth = sizeof(CVertex) * 24;
 	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
@@ -262,7 +266,7 @@ void Cube::Transform(float *t) {
 }
 
 void Cube::Draw(float *t,float *vp) {
-
+#ifdef USING_OPENGL_ES
 	glUseProgram(shaderID);
 
 	if (t)
@@ -270,7 +274,7 @@ void Cube::Draw(float *t,float *vp) {
 
 	XMATRIX44 VP = XMATRIX44(vp);
 	XMATRIX44 WVP = transform*VP;
-
+	
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 
@@ -313,8 +317,42 @@ void Cube::Draw(float *t,float *vp) {
 	}
 
 	glUseProgram(0);
+#elif defined(USING_D3D11)
+	if (t)
+		transform = t;
+
+	XMATRIX44 VP = XMATRIX44(vp);
+	XMATRIX44 WVP = transform*VP;
+	CnstBuffer.WVP = WVP;
+	CnstBuffer.World = transform;
+
+	UINT stride = sizeof(CVertex);
+	UINT offset = 0;
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+	
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+	
+	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+
+	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
+	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D11DeviceContext->DrawIndexed(36, 0, 0);
+#endif
 }
 
 void Cube::Destroy() {
+#ifdef USING_OPENGL_ES
 	glDeleteProgram(shaderID);
+#elif defined(USING_D3D11)
+#endif
 }
