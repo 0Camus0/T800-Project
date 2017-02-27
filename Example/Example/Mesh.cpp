@@ -104,7 +104,25 @@ void Mesh::Create(char *filename) {
 #elif defined(USING_D3D11)
 							Texture *tex = new TextureD3D;
 #endif
-							int id = tex->LoadTexture((char*)path.c_str());
+							unsigned int id = tex->LoadTexture((char*)path.c_str());
+
+							for (unsigned int m = 0; m < material->EffectInstance.pDefaults.size(); m++) {
+								xEffectDefault *mDef_2 = &material->EffectInstance.pDefaults[m];
+								if(mDef_2->Type== xF::xEFFECTENUM::STDX_DWORDS){
+									if (mDef_2->NameParam == "Tiled") {
+										int value = mDef_2->CaseDWORD;
+										unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS;
+										if(value)
+											params |= TEXT_BASIC_PARAMS::TILED;
+										else
+											params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
+
+										tex->params = params;
+										tex->SetTextureParams(id);
+									}
+								}
+							}
+
 							if (id != -1) {
 							#if DEBUG_MODEL
 								std::cout << "Texture Loaded index " << id << std::endl;

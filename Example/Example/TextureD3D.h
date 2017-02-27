@@ -16,7 +16,7 @@ class TextureD3D : public Texture {
 public:
 	TextureD3D() {}
 
-	void	SetTextureParams(unsigned int &params, unsigned int &target);
+	void	SetTextureParams(unsigned int &target);
 	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);
 
 	void	LoadAPITexture(unsigned char* buffer);

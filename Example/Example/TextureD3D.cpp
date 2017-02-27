@@ -3,7 +3,7 @@
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
-void	TextureD3D::SetTextureParams(unsigned int &params, unsigned int &target){
+void	TextureD3D::SetTextureParams(unsigned int &target){
 	D3D11_SAMPLER_DESC sdesc;
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sdesc.MaxAnisotropy = 1;
@@ -60,7 +60,7 @@ void	TextureD3D::LoadAPITexture(unsigned char* buffer){
 	D3D11DeviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData.SysMemPitch, 0);
 	D3D11DeviceContext->GenerateMips(pSRVTex.Get());
 
-	SetTextureParams(this->params, this->params);
+	SetTextureParams(this->params);
 	static int texid = 0;
 	this->id = texid;
 	texid++;

@@ -3,7 +3,10 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-void	TextureGL::SetTextureParams(unsigned int &params, unsigned int &target) {
+void	TextureGL::SetTextureParams(unsigned int &target) {
+
+	glBindTexture(GL_TEXTURE_2D, target);
+
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
 	
@@ -11,20 +14,27 @@ void	TextureGL::SetTextureParams(unsigned int &params, unsigned int &target) {
 //		glFiltering = GL_NEAREST_MIPMAP_LINEAR;
 //		glFiltering = GL_LINEAR_MIPMAP_NEAREST;
 //		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
-//		glFiltering = GL_NEAREST;	
+//		glFiltering = GL_NEAREST;
+	
+	if(params & TEXT_BASIC_PARAMS::MIPMAPS)
 		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
-		
-		glWrap = GL_CLAMP_TO_EDGE;	
-//		glWrap = GL_REPEAT;
 
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, glFiltering);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, glFiltering);
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, glWrap);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, glWrap);
+	if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE)
+		glWrap = GL_CLAMP_TO_EDGE;	
+	
+	if (params & TEXT_BASIC_PARAMS::TILED)
+		glWrap = GL_REPEAT;
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glFiltering);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glFiltering);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrap);
 
 	int Max = 1;
 	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-	glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void TextureGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
@@ -56,7 +66,7 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 
 	glGenerateMipmap(glTarget);
 
-	SetTextureParams(this->params, glTarget);
+	SetTextureParams(glTarget);
 
 	this->id = static_cast<unsigned short>(id);
 
