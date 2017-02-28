@@ -37,8 +37,8 @@ void Cube::Create() {
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
 
-	delete[] vsSourceP;
-	delete[] fsSourceP;
+	free(vsSourceP);
+	free(fsSourceP);
 
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
@@ -106,6 +106,9 @@ void Cube::Create() {
 			return;
 		}
 	}
+
+	free(vsSourceP);
+	free(fsSourceP);
 #endif
 
 	// +Y SIDE

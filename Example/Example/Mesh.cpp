@@ -74,8 +74,8 @@ void Mesh::Create(char *filename) {
 		GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
 		GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
 
-		delete[] vsSourceP;
-		delete[] fsSourceP;
+		free(vsSourceP);
+		free(fsSourceP);
 
 		glAttachShader(ShaderProg, vshader_id);
 		glAttachShader(ShaderProg, fshader_id);
@@ -140,6 +140,9 @@ void Mesh::Create(char *filename) {
 				return;
 			}
 		}
+
+		free(vsSourceP);
+		free(fsSourceP);
 
 		int offset = 0;
 		D3D11_INPUT_ELEMENT_DESC elementDesc;

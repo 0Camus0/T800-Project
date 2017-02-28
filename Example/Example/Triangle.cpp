@@ -12,6 +12,7 @@
 
 #include "Triangle.h"
 
+// Global D3D11 Main Objects
 #ifdef USING_D3D11
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
@@ -19,21 +20,27 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 void Trangle::Create() {
 #ifdef USING_OPENGL_ES
+	//	Create the Program, return the ID of the created program
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("Shaders/VS_tri.glsl");
 	char *fsSourceP = file2string("Shaders/FS_tri.glsl");
 
+	// Compile the shader from the char* source
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
 
-	delete [] vsSourceP;
-	delete [] fsSourceP;
+	// Once the shader programs are created we can safely free the buffers
+	free(vsSourceP);
+	free(fsSourceP);
 
+	// We attach the id of the vertex and pixel shader to this shader program
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
 
+	// Link the object
 	glLinkProgram(shaderID);
+	// We use the program now, it is bounded now
 	glUseProgram(shaderID);
 
 	vertexAttribLoc = glGetAttribLocation(shaderID, "MyVertex");
@@ -141,6 +148,9 @@ void Trangle::Create() {
 			return;
 		}
 	}
+
+	free(vsSourceP);
+	free(fsSourceP);
 
 	vertices[0] = { -0.5f,  0.5f, 0.0f , 0.0f, 0.0f, 1.0f };
 	vertices[1] = { -0.5f, -0.5f, 0.0f , 0.0f, 1.0f, 0.0f };
