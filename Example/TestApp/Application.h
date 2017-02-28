@@ -3,8 +3,10 @@
 #include <PrimitiveInstance.h>
 
 #include <xMaths.h>
+#include <xCamera.h>
+
 #include <Timer.h>
-#include <Camera.h>
+
 
 enum {
 	DRAW_CUBE_SPINNING = 0,
@@ -36,7 +38,7 @@ public:
 	PrimitiveInst	Triangles[10];
 	PrimitiveInst   Pigs[10];
 
-	Camera			Cam;
+	xCamera			Cam;
 
 	XVECTOR3		Position;
 	XVECTOR3		Orientation;

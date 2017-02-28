@@ -43,7 +43,7 @@ void TestApp::OnUpdate() {
 	
 	OnInput();
 
-	Cam.Update();
+	Cam.Update(DtTimer.GetDTSecs());
 	VP = Cam.VP;
 
 	PrimitiveInst *Sel = &Pigs[1];
@@ -134,19 +134,19 @@ void TestApp::OnInput() {
 	}
 
 	if (IManager.PressedKey(SDLK_w)) {
-		Cam.MoveForward();
+		Cam.MoveForward(DtTimer.GetDTSecs());
 	}
 
 	if (IManager.PressedKey(SDLK_s)) {
-		Cam.MoveBackward();
+		Cam.MoveBackward(DtTimer.GetDTSecs());
 	}
 
 	if (IManager.PressedKey(SDLK_a)) {
-		Cam.StrafeLeft();
+		Cam.StrafeLeft(DtTimer.GetDTSecs());
 	}
 
 	if (IManager.PressedKey(SDLK_d)) {
-		Cam.StrafeRight();
+		Cam.StrafeRight(DtTimer.GetDTSecs());
 	}
 	
 	float yaw = 0.01f*static_cast<float>(IManager.xDelta);
