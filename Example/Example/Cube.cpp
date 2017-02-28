@@ -11,7 +11,7 @@ void Cube::Create() {
 #elif defined(USING_D3D11)
 	tex = new TextureD3D;
 #endif
-	TexId = tex->LoadTexture("cerdo_D.tga");
+	TexId = tex->LoadTexture("Textures/cerdo_D.tga");
 	if (TexId == -1) {
 		delete tex;
 	}
@@ -19,8 +19,8 @@ void Cube::Create() {
 #ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 
-	char *vsSourceP = file2string("VS.glsl");
-	char *fsSourceP = file2string("FS.glsl");
+	char *vsSourceP = file2string("Shaders/VS.glsl");
+	char *fsSourceP = file2string("Shaders/FS.glsl");
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
@@ -43,8 +43,8 @@ void Cube::Create() {
 
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
 #elif defined(USING_D3D11)
-	char *vsSourceP = file2string("VS.hlsl");
-	char *fsSourceP = file2string("FS.hlsl");
+	char *vsSourceP = file2string("Shaders/VS.hlsl");
+	char *fsSourceP = file2string("Shaders/FS.hlsl");
 
 	if (!vsSourceP || !fsSourceP)
 		exit(32);

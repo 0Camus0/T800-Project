@@ -10,11 +10,9 @@ void	TextureGL::SetTextureParams(unsigned int &target) {
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
 	
-//		glFiltering = GL_NEAREST_MIPMAP_NEAREST;
-//		glFiltering = GL_NEAREST_MIPMAP_LINEAR;
-//		glFiltering = GL_LINEAR_MIPMAP_NEAREST;
-//		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
-//		glFiltering = GL_NEAREST;
+
+	glFiltering = GL_NEAREST;
+	glWrap = GL_CLAMP_TO_EDGE;
 	
 	if(params & TEXT_BASIC_PARAMS::MIPMAPS)
 		glFiltering = GL_LINEAR_MIPMAP_LINEAR;

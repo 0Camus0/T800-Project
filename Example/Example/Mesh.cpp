@@ -32,11 +32,11 @@ void Mesh::Create(char *filename) {
 		MeshInfo  *it_MeshInfo = &Info[i];
 
 #ifdef USING_OPENGL_ES
-		char *vsSourceP = file2string("VS_Mesh.glsl");
-		char *fsSourceP = file2string("FS_Mesh.glsl");
+		char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
+		char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
 #elif defined(USING_D3D11)
-		char *vsSourceP = file2string("VS_Mesh.hlsl");
-		char *fsSourceP = file2string("FS_Mesh.hlsl");
+		char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+		char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
 #endif
 		std::string vstr = std::string(vsSourceP);
 		std::string fstr = std::string(fsSourceP);

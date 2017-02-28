@@ -9,3 +9,5 @@
 *.obj
 *.ilk
 *.sdf
+/Example/bin/*.iobj
+/Example/bin/*.ipdb

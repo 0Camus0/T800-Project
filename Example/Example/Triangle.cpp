@@ -10,8 +10,8 @@ void Trangle::Create() {
 #ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 
-	char *vsSourceP = file2string("VS_tri.glsl");
-	char *fsSourceP = file2string("FS_tri.glsl");
+	char *vsSourceP = file2string("Shaders/VS_tri.glsl");
+	char *fsSourceP = file2string("Shaders/FS_tri.glsl");
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
@@ -79,8 +79,8 @@ void Trangle::Create() {
 	#endif
 #endif
 #elif defined(USING_D3D11)
-	char *vsSourceP = file2string("VS_tri.hlsl");
-	char *fsSourceP = file2string("FS_tri.hlsl");
+	char *vsSourceP = file2string("Shaders/VS_tri.hlsl");
+	char *fsSourceP = file2string("Shaders/FS_tri.hlsl");
 
 	if (!vsSourceP || !fsSourceP)
 		exit(32);

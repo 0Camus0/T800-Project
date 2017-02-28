@@ -14,10 +14,10 @@ void TestApp::CreateAssets() {
 
 
 	
-	int indexScene= PrimitiveMgr.CreateMesh("Scene.X");
+	int indexScene= PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexScene), &VP);
 
-	int indexCerdo = PrimitiveMgr.CreateMesh("NuCroc.X");
+	int indexCerdo = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
 	
 	UpdateVP();

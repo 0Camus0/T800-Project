@@ -1,10 +1,13 @@
 #include "Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <string>
 
 int		Texture::LoadTexture(char *fn){
+	std::string path = "Textures/";
+	path += std::string(fn);
 	int x = 0, y = 0, channels = 0;
-	unsigned char *buffer = stbi_load(fn, &x, &y, &channels, 0);
+	unsigned char *buffer = stbi_load(path.c_str(), &x, &y, &channels, 0);
 
 	if(!buffer)
 		return -1;
