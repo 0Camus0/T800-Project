@@ -12,19 +12,14 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexCube = PrimitiveMgr.CreateTriangle();
-	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
 
-	indexCube = PrimitiveMgr.CreateCube();
-	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCube), &VP);
-
-	/*
+	
 	int indexScene= PrimitiveMgr.CreateMesh("Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexScene), &VP);
 
 	int indexCerdo = PrimitiveMgr.CreateMesh("NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
-	*/
+	
 	UpdateVP();
 }
 
@@ -49,7 +44,6 @@ void TestApp::OnUpdate() {
 
 	OnInput();
 
-	//PrimitiveInst *Sel = &Pigs[1];
 	PrimitiveInst *Sel = &Pigs[1];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);

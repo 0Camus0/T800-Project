@@ -5,11 +5,31 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 void	TextureD3D::SetTextureParams(unsigned int &target){
 	D3D11_SAMPLER_DESC sdesc;
-	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
 	sdesc.MaxAnisotropy = 1;
-	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	if (params & TEXT_BASIC_PARAMS::MIPMAPS) {
+		sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		sdesc.MaxAnisotropy = 16;
+	}
+
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE) {
+		sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	}
+
+	if (params & TEXT_BASIC_PARAMS::TILED) {
+		sdesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
+		sdesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
+		sdesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
+	}
+
 	sdesc.BorderColor[0] = 0.0f;
 	sdesc.BorderColor[1] = 0.0f;
 	sdesc.BorderColor[2] = 0.0f;
