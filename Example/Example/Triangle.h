@@ -7,6 +7,8 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif defined(USING_D3D11)
+#include "TextureD3D.h"
+#include <D3Dcompiler.h>
 #endif
 
 #include <xMaths.h>
@@ -45,6 +47,13 @@ public:
 	{}
 #endif
 
+#ifdef USING_D3D11
+	struct CBuffer {
+		XMATRIX44 WVP;
+		XMATRIX44 World;
+	};
+#endif
+
 	void Create();
 	void Create(char *) {}
 	void Transform(float *t);
@@ -71,6 +80,16 @@ public:
 	#endif
 #endif
 #elif defined(USING_D3D11)
+	ComPtr<ID3D11Buffer>		IB;
+	ComPtr<ID3D11Buffer>		VB;
+	ComPtr<ID3D11VertexShader>  pVS;
+	ComPtr<ID3D11PixelShader>   pFS;
+	ComPtr<ID3DBlob>            VS_blob;
+	ComPtr<ID3DBlob>            FS_blob;
+	ComPtr<ID3D11InputLayout>   Layout;
+	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
+
+	Trangle::CBuffer	CnstBuffer;
 	triVertex		vertices[4];
 	unsigned short	indices[6];
 #endif

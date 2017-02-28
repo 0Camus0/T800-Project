@@ -1,6 +1,10 @@
 
 #include "Triangle.h"
 
+#ifdef USING_D3D11
+extern ComPtr<ID3D11Device>            D3D11Device;
+extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+#endif
 
 void Trangle::Create() {
 #ifdef USING_OPENGL_ES
@@ -75,6 +79,58 @@ void Trangle::Create() {
 	#endif
 #endif
 #elif defined(USING_D3D11)
+	char *vsSourceP = file2string("VS_tri.hlsl");
+	char *fsSourceP = file2string("FS_tri.hlsl");
+
+	if (!vsSourceP || !fsSourceP)
+		exit(32);
+
+	HRESULT hr;
+	{
+		VS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile(vsSourceP, (UINT)strlen(vsSourceP), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		if (hr != S_OK) {
+
+			if (errorBlob) {
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+
+			if (VS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		if (hr != S_OK) {
+			printf("Error Creating Vertex Shader\n");
+			return;
+		}
+	}
+
+	{
+		FS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile(fsSourceP, (UINT)strlen(fsSourceP), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		if (hr != S_OK) {
+			if (errorBlob) {
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+
+			if (FS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		if (hr != S_OK) {
+			printf("Error Creating Pixel Shader\n");
+			return;
+		}
+	}
+
 	vertices[0] = { -0.5f,  0.5f, 0.0f , 0.0f, 0.0f, 1.0f };
 	vertices[1] = { -0.5f, -0.5f, 0.0f , 0.0f, 1.0f, 0.0f };
 	vertices[2] = { 0.5f, -0.5f, 0.0f , 1.0f, 0.0f, 1.0f };
@@ -86,6 +142,59 @@ void Trangle::Create() {
 	indices[3] = 3;
 	indices[4] = 2;
 	indices[5] = 0;
+
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+
+	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
+		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+	if (hr != S_OK) {
+		printf("Error Creating Input Layout\n");
+		return;
+	}
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+
+	D3D11_BUFFER_DESC bdesc = { 0 };
+	bdesc.Usage = D3D11_USAGE_DEFAULT;
+	bdesc.ByteWidth = sizeof(Trangle::CBuffer);
+	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	if (hr != S_OK) {
+		printf("Error Creating Buffer Layout\n");
+		return;
+	}
+
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+
+	bdesc = { 0 };
+	bdesc.ByteWidth = sizeof(triVertex) * 4;
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
+
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
+	if (hr != S_OK) {
+		printf("Error Creating Vertex Buffer\n");
+		return;
+	}
+
+	bdesc = { 0 };
+	bdesc.ByteWidth = 6 * sizeof(USHORT);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	subData = { indices, 0, 0 };
+
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB);
+	if (hr != S_OK) {
+		printf("Error Creating Index Buffer\n");
+		return;
+	}
 #endif
 		XMatIdentity(transform);
 }
@@ -141,6 +250,29 @@ void Trangle::Draw(float *t,float *vp) {
 
 	glUseProgram(0);
 #elif defined(USING_D3D11)
+
+	XMATRIX44 VP = XMATRIX44(vp);
+	XMATRIX44 WVP = transform*VP;
+	CnstBuffer.WVP = WVP;
+	CnstBuffer.World = transform;
+
+	UINT stride = sizeof(triVertex);
+	UINT offset = 0;
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+
+	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D11DeviceContext->DrawIndexed(6, 0, 0);
 #endif
 }
 
