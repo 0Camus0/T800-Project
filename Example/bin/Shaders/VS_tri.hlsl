@@ -15,7 +15,7 @@ struct VS_OUTPUT{
 
 VS_OUTPUT VS( VS_INPUT input ){
     VS_OUTPUT OUT;
-    OUT.hposition = mul( World , float4(input.position,1.0) );
+    OUT.hposition = float4(input.position,1.0);
 	OUT.hnormal = float4(input.normal,1.0);
     return OUT;
 }

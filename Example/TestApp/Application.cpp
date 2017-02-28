@@ -1,3 +1,15 @@
+/*********************************************************
+* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
+* All Rights Reserved
+*
+* You may use, distribute and modify this code under the
+* following terms:
+* ** Do not claim that you wrote this software
+* ** A mention would be appreciated but not needed
+* ** I do not and will not provide support, this software is "as is"
+* ** Enjoy, learn and share.
+*********************************************************/
+
 #include "Application.h"
 
 void TestApp::InitVars() {
@@ -8,7 +20,7 @@ void TestApp::InitVars() {
 	SelectedMesh = 0;
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.01f, 100000.0f);
-	Cam.Speed = 25.0f;
+	Cam.Speed = 2500.0f;
 
 	XVECTOR3 Target = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Cam.SetLookAt(Target);
@@ -18,11 +30,14 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexScene= PrimitiveMgr.CreateMesh("Models/Scene.X");
+	int indexScene = PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexScene), &VP);
 
 	int indexCerdo = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
+
+	int indexSprite = PrimitiveMgr.CreateTriangle();
+	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(indexSprite), &VP);
 }
 
 void TestApp::DestroyAssets() {
@@ -53,6 +68,7 @@ void TestApp::OnDraw() {
 	
 	Pigs[0].Draw();
 	Pigs[1].Draw();
+	Pigs[2].Draw();
 
 	pFramework->pVideoDriver->SwapBuffers();
 	FirstFrame = false;

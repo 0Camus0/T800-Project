@@ -1,3 +1,15 @@
+/*********************************************************
+* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
+* All Rights Reserved
+*
+* You may use, distribute and modify this code under the
+* following terms:
+* ** Do not claim that you wrote this software
+* ** A mention would be appreciated but not needed
+* ** I do not and will not provide support, this software is "as is"
+* ** Enjoy, learn and share.
+*********************************************************/
+
 #include "Mesh.h"
 #include <iostream>
 
@@ -509,6 +521,8 @@ void Mesh::Draw(float *t, float *vp) {
 		UINT offset = 0;
 		D3D11DeviceContext->VSSetShader(it_MeshInfo->pVS.Get(), 0, 0);
 		D3D11DeviceContext->PSSetShader(it_MeshInfo->pFS.Get(), 0, 0);
+
+		D3D11DeviceContext->IASetInputLayout(it_MeshInfo->Layout.Get());
 
 		D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
 

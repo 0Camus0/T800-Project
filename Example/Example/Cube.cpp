@@ -1,3 +1,15 @@
+/*********************************************************
+* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
+* All Rights Reserved
+*
+* You may use, distribute and modify this code under the
+* following terms:
+* ** Do not claim that you wrote this software
+* ** A mention would be appreciated but not needed
+* ** I do not and will not provide support, this software is "as is"
+* ** Enjoy, learn and share.
+*********************************************************/
+
 #include "Cube.h"
 
 #ifdef USING_D3D11
@@ -11,7 +23,7 @@ void Cube::Create() {
 #elif defined(USING_D3D11)
 	tex = new TextureD3D;
 #endif
-	TexId = tex->LoadTexture("Textures/cerdo_D.tga");
+	TexId = tex->LoadTexture("cerdo_D.tga");
 	if (TexId == -1) {
 		delete tex;
 	}
