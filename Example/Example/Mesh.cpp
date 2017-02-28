@@ -368,7 +368,7 @@ void Mesh::Create(char *filename) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(USING_D3D11)
 		bdesc = { 0 };
-		bdesc.ByteWidth = pActual->Triangles.size() * sizeof(unsigned short) * sizeof(USHORT);
+		bdesc.ByteWidth = pActual->Triangles.size() * sizeof(unsigned short);
 		bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		subData = { &pActual->Triangles[0], 0, 0 };
 

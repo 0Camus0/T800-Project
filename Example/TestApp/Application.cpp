@@ -6,14 +6,13 @@ void TestApp::InitVars() {
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Scaling = XVECTOR3(1.0f, 1.0f, 1.0f);
 	SelectedMesh = 0;
-
+	Cam.Init(XVECTOR3(0.0f, 1.0f, -5.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.01f, 100000.0f);
+	Cam.SetLookAt(XVECTOR3(0.0001f, 0.0001f, 0.0001f));
 }
 
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-
-	
 	int indexScene= PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexScene), &VP);
 
@@ -32,7 +31,7 @@ void TestApp::UpdateVP() {
 
 	XMATRIX44 Proj;
 	XMatPerspectiveLH(Proj, Deg2Rad(45.0f), 1280.0f / 720.0f, 0.01f, 100000.0f);
-	VP = View*Proj;
+	VP = Proj;
 }
 
 void TestApp::DestroyAssets() {
@@ -41,8 +40,11 @@ void TestApp::DestroyAssets() {
 
 void TestApp::OnUpdate() {
 	DtTimer.Update();
-
+	
 	OnInput();
+
+	Cam.Update();
+	VP = Cam.VP;
 
 	PrimitiveInst *Sel = &Pigs[1];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
@@ -130,7 +132,30 @@ void TestApp::OnInput() {
 	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
 		Orientation.z += 60.0f*speedFactor*DtTimer.GetDTSecs();
 	}
+
+	if (IManager.PressedKey(SDLK_w)) {
+		Cam.MoveForward();
+	}
+
+	if (IManager.PressedKey(SDLK_s)) {
+		Cam.MoveBackward();
+	}
+
+	if (IManager.PressedKey(SDLK_a)) {
+		Cam.StrafeLeft();
+	}
+
+	if (IManager.PressedKey(SDLK_d)) {
+		Cam.StrafeRight();
+	}
 	
+	float yaw = 0.01f*static_cast<float>(IManager.xDelta);
+	Cam.MoveYaw(yaw);
+
+	float pitch = 0.01f*static_cast<float>(IManager.yDelta);
+	Cam.MovePitch(pitch);
+	
+
 }
 
 void TestApp::OnPause() {

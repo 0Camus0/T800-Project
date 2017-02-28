@@ -11,6 +11,8 @@ InputManager::InputManager() {
 			MouseButtonStates[i][j] = false;
 		}
 	}
+	xDelta = 0;
+	yDelta = 0;
 }
 
 bool InputManager::PressedOnceKey(int key) {

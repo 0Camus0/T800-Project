@@ -35,6 +35,8 @@ void Win32Framework::OnCreateApplication(){
 
 	pBaseApp->InitVars();
 	pBaseApp->CreateAssets();
+
+	
 }
 void Win32Framework::OnDestroyApplication() {
 	pBaseApp->DestroyAssets();
@@ -66,8 +68,24 @@ void Win32Framework::ProcessInput() {
 				pBaseApp->IManager.KeyStates[0][evento.key.keysym.sym] = false;
 				pBaseApp->IManager.KeyStates[1][evento.key.keysym.sym] = false;
 			}break;
+	
 		}
 	}
+	static int xDelta = 0;
+	static int yDelta = 0;
+	int x = 0, y = 0;
+
+	SDL_GetMouseState(&x,&y);
+
+	xDelta = x - xDelta;
+	yDelta = y - yDelta;
+
+	pBaseApp->IManager.xDelta = xDelta;
+	pBaseApp->IManager.yDelta = yDelta;
+
+	xDelta = x;
+	yDelta = y;
 }
+
 void Win32Framework::ResetApplication() {
 }
