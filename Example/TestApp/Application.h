@@ -31,8 +31,6 @@ public:
 
 	void OnReset();
 
-	void UpdateVP();
-
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	Cubes[10];
 	PrimitiveInst	Triangles[10];
@@ -47,7 +45,9 @@ public:
 	XMATRIX44		View;
 	XMATRIX44		Projection;
 	XMATRIX44		VP;
-
+	
+	bool			FirstFrame;
 	Timer			DtTimer;
+	float			DtSecs;
 	int				SelectedMesh;
 };

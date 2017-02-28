@@ -4,7 +4,7 @@
 #define D3DX 1
 #define OGLES 2
 
-#define DRIVER_SELECTED OGLES
+#define DRIVER_SELECTED D3DX
 
 #if   DRIVER_SELECTED == OGLES
 #define USING_OPENGL_ES
