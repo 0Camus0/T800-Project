@@ -36,7 +36,7 @@ void TestApp::CreateAssets() {
 	int indexCerdo = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
 
-	int indexSprite = PrimitiveMgr.CreateTriangle();
+	int indexSprite = PrimitiveMgr.CreateMesh("Models/Piramid.X");
 	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(indexSprite), &VP);
 }
 
