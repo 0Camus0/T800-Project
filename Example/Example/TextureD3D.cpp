@@ -18,7 +18,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 void	TextureD3D::SetTextureParams(unsigned int &target){
 	D3D11_SAMPLER_DESC sdesc;
 
-	sdesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sdesc.MaxAnisotropy = 1;
 
 	if (params & TEXT_BASIC_PARAMS::MIPMAPS) {

@@ -19,8 +19,8 @@ void TestApp::InitVars() {
 	Scaling = XVECTOR3(0.05f, 0.05f, 0.05f);
 	SelectedMesh = 0;
 
-	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.01f, 100000.0f);
-	Cam.Speed = 2500.0f;
+	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
+	Cam.Speed = 250.0f;
 
 	XVECTOR3 Target = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Cam.SetLookAt(Target);
@@ -30,14 +30,20 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexScene = PrimitiveMgr.CreateMesh("Models/Scene.X");
-	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexScene), &VP);
+	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
+	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	int indexCerdo = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
-	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
+	index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
+	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	int indexSprite = PrimitiveMgr.CreateMesh("Models/Piramid.X");
-	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(indexSprite), &VP);
+	index = PrimitiveMgr.CreateMesh("Models/Link.X");
+	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+
+	index = PrimitiveMgr.CreateMesh("Models/House.X");
+	Pigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+
+	index = PrimitiveMgr.CreateMesh("Models/Drone.X");
+	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 }
 
 void TestApp::DestroyAssets() {
@@ -52,7 +58,7 @@ void TestApp::OnUpdate() {
 	Cam.Update(DtSecs);
 	VP = Cam.VP;
 
-	PrimitiveInst *Sel = &Pigs[1];
+	PrimitiveInst *Sel = &Pigs[2];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
 	Sel->RotateYAbsolute(Orientation.y);
@@ -69,6 +75,8 @@ void TestApp::OnDraw() {
 	Pigs[0].Draw();
 	Pigs[1].Draw();
 	Pigs[2].Draw();
+	Pigs[3].Draw();
+	Pigs[4].Draw();
 
 	pFramework->pVideoDriver->SwapBuffers();
 	FirstFrame = false;
