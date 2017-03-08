@@ -9,7 +9,7 @@ class xCamera {
 public:	
 	xCamera();
 
-	void	Init(XVECTOR3 position,float fov,float ratio,float np,float fp);
+	void	Init(XVECTOR3 position,float fov,float ratio,float np,float fp,bool lf=true);
 	void	CreatePojection();
 
 	void	SetLookAt(XVECTOR3 v);
@@ -45,6 +45,8 @@ public:
 
 	float		Speed;
 	float		Friction;
+
+	bool		LeftHanded;
 
 	XVECTOR3	Eye;
 	XVECTOR3	Look;

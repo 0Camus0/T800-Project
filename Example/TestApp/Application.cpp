@@ -19,6 +19,7 @@ enum {
 	HOUSE_L,
 	HOUSE_R,
 	DRONE,
+	CERDO,
 	TOTAL_INSTANCES
 };
 
@@ -30,7 +31,7 @@ void TestApp::InitVars() {
 	SelectedMesh = 0;
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
-	Cam.Speed = 250.0f;
+	Cam.Speed = 2500.0f;
 	Cam.Eye = XVECTOR3(-18.804996f, 38.739578f, -250.309113f);
 	Cam.Pitch = 0.060000f;
 	Cam.Roll  = 0.0f;
@@ -62,6 +63,8 @@ void TestApp::CreateAssets() {
 	index = PrimitiveMgr.CreateMesh("Models/Drone.X");
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
+	index = PrimitiveMgr.CreateMesh("Models/Cerdo.X");
+	Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 
 }
@@ -120,6 +123,22 @@ void TestApp::OnUpdate() {
 
 	freq += DtSecs;
 
+	Pigs[CERDO].TranslateAbsolute(-14.064236f, -3.514139f, -29.351925f);
+	Pigs[CERDO].RotateXAbsolute(0.0f);
+	Pigs[CERDO].RotateYAbsolute(0.0f);
+	Pigs[CERDO].RotateXAbsolute(0.0f);
+	Pigs[CERDO].ScaleAbsolute(27.208776f);
+	Pigs[CERDO].Update();
+	
+	/*
+	PrimitiveInst *Sel = &Pigs[6];
+	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
+	Sel->RotateXAbsolute(Orientation.x);
+	Sel->RotateYAbsolute(Orientation.y);
+	Sel->RotateZAbsolute(Orientation.z);
+	Sel->ScaleAbsolute(Scaling.x);
+	Sel->Update();
+	*/
 /*
 	PrimitiveInst *Sel = &Pigs[DRONE];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
@@ -139,7 +158,6 @@ void TestApp::OnDraw() {
 		Pigs[i].Draw();
 	}
 
-	
 	pFramework->pVideoDriver->SwapBuffers();
 	FirstFrame = false;
 }
