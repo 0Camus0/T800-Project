@@ -138,9 +138,9 @@ void D3DXDriver::SetDimensions(int w, int h){
 
 void D3DXDriver::Clear(){
 	float rgba[4];
-	rgba[0] = 0.0f;
-	rgba[1] = 0.0f;
-	rgba[2] = 0.0f;
+	rgba[0] = 0.5f;
+	rgba[1] = 0.5f;
+	rgba[2] = 0.5f;
 	rgba[3] = 1.0f;
 
 	// Clearing the Main Render Target View

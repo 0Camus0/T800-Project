@@ -4,6 +4,19 @@ uniform highp vec4 LightColor;
 uniform highp vec4 CameraPosition;
 uniform highp vec4 Ambient;
 
+
+#define PHONG 1
+#define BLINN 2
+
+#define SPECULAR_MODEL BLINN
+
+#if   SPECULAR_MODEL == PHONG
+#define USING_PHONG
+#elif SPECULAR_MODEL == BLINN
+#define USING_BLINN
+#endif
+
+
 #ifdef USE_TEXCOORD0
 varying highp vec2 vecUVCoords;
 #endif
@@ -35,34 +48,35 @@ void main(){
 	#ifdef USE_NORMALS
 		lowp vec4 Ambiental = color*Ambient;
 	
-		lowp vec4   Diffuse = LightColor;
+		lowp vec4   Lambert  = LightColor;
 		lowp vec4	LightDir = normalize(LightPos-wPos);
 		lowp vec4	normal   = normalize(hnormal);  
 		lowp float  att		 = dot(normal,LightDir);
 		att				 = clamp( att , 0.0 , 1.0 );
-		Diffuse	*= att;
-		Diffuse *= color;
+		Lambert			*= color*att;
 		
 		lowp vec4   Specular = LightColor;
 		lowp vec4   EyeDir = normalize(CameraPosition-wPos);
 		
-		highp float  specular  = 0.0;
-	
-		
-		lowp vec4 	ReflectedLight = reflect(-LightDir,normal);
-		specular = dot(EyeDir,ReflectedLight);
-	
-/*
-		highp vec4 floatvector = normalize(EyeDir+LightDir); 
-		specular = dot(floatvector,normal);
-	*/
-		specular = max( specular , 0.0 );
-		specular = pow( specular , 2.0);
-		
+		highp float specular  = 0.0;
+		highp float specIntesivity = 5.0;
+		highp float shinness = 7.0;
 
+	#ifdef USING_PHONG
+		lowp vec3 ReflectedLight = reflect(-LightDir,normal).xyz;
+		specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+		specular = pow( specular ,shinness);		
+	#elif defined(USING_BLINN)
+		lowp vec3 ReflectedLight = normalize(EyeDir+LightDir).xyz; 
+		specular = max ( dot(ReflectedLight,normal.xyz), 0.0);	
+		specular = pow( specular ,shinness);	
+	#endif
+		
+		specular *= att; 
+		specular *= specIntesivity;
 		Specular *= specular;
 		
-		lowp vec4  Final = /*Ambiental + Diffuse + */Specular;
+		lowp vec4  Final = Lambert + Specular;
 		color = Final;
 		
 		

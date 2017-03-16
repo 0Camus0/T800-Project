@@ -7,6 +7,18 @@ cbuffer ConstantBuffer{
 	float4	 Ambient;
 }
 
+#define PHONG 1
+#define BLINN 2
+
+#define SPECULAR_MODEL BLINN
+
+#if   SPECULAR_MODEL == PHONG
+#define USING_PHONG
+#elif SPECULAR_MODEL == BLINN
+#define USING_BLINN
+#endif
+
+
 Texture2D TextureRGB : register(t0);
 
 SamplerState SS;
@@ -40,12 +52,38 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	color = TextureRGB.Sample( SS, input.texture0 );	
 	
 	#ifdef USE_NORMALS
+	float4 Ambiental = color*Ambient;
+	
+	float4  Lambert  = LightColor;
 	float4	LightDir = normalize(LightPos-input.wPos);
 	float4	normal   = normalize(input.hnormal);  
 	float   att		 = dot(normal,LightDir);
 	att				 = clamp( att , 0.0 , 1.0 );
-	float4  Lambert  = Ambient*color + LightColor*color*att;
-	color			 = Lambert;
+	Lambert			*= color*att;
+	
+	float4   Specular = LightColor;
+	float4   EyeDir = normalize(CameraPosition-input.wPos);
+	
+	float  specular  = 0.0;
+	float specIntesivity = 5.0;
+	float shinness = 7.0;
+
+#ifdef USING_PHONG
+	float3 	ReflectedLight = reflect(-LightDir,normal).xyz;
+	specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+	specular = pow( specular ,shinness);		
+#elif defined(USING_BLINN)
+	float3 ReflectedLight = normalize(EyeDir+LightDir).xyz; 
+	specular = max ( dot(ReflectedLight,normal.xyz), 0.0);	
+	specular = pow( specular ,shinness);	
+#endif
+
+	specular *= att;
+	specular *= specIntesivity;
+	Specular *= specular;
+	
+	float4  Final = Lambert+Specular;
+	color = Final;
 	#endif
 #endif		
 	
