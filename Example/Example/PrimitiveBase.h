@@ -15,6 +15,8 @@
 
 #include "Config.h"
 
+#include "SceneProp.h"
+
 #ifndef BUFFER_OFFSET
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #endif
@@ -26,6 +28,10 @@ public:
 	virtual void Transform(float *t) = 0;
 	virtual void Draw(float *t,float *vp) = 0;
 	virtual void Destroy() = 0;
+
+
+	void SetSceneProps(SceneProps *p) { pScProp = p; }
+	SceneProps	*pScProp;
 };
 
 

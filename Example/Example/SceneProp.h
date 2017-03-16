@@ -38,6 +38,8 @@ struct SceneProps{
 	std::vector<Light>	   Lights;
 	std::vector<xCamera*> pCameras;
 
+	XVECTOR3			AmbientColor;
+
 	int	ActiveLights;
 	int ActiveCamera;
 };

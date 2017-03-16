@@ -43,6 +43,10 @@ public:
 	struct CBuffer {
 		XMATRIX44 WVP;
 		XMATRIX44 World;
+		XVECTOR3  Light0Pos;
+		XVECTOR3  Light0Col;
+		XVECTOR3  CameraPos;
+		XVECTOR3  Ambient;
 	};
 #endif
 
@@ -72,8 +76,8 @@ public:
 		unsigned int ShaderProg;
 		unsigned int			 Id;
 		unsigned int			 IdIBO;
-		unsigned int			 matWorldViewProjUniformLoc;
-		unsigned int			 matWorldUniformLoc;
+		int			 matWorldViewProjUniformLoc;
+		int			 matWorldUniformLoc;
 
 		int			 vertexAttribLoc;
 		int			 normalAttribLoc;
@@ -81,6 +85,13 @@ public:
 		int			 binormalAttribLoc;
 		int			 uvAttribLoc;
 		int			 uvSecAttribLoc;
+
+		int			Light0Pos_Loc;
+		int			Light0Color_Loc;
+
+		int			CameraPos_Loc;
+
+		int			Ambient_loc;
 			
 #elif defined(USING_D3D11)
 		ComPtr<ID3D11Buffer>		IB;
@@ -113,7 +124,8 @@ public:
 	XDataBase	xFile;
 	std::vector<Texture*> Textures;
 	std::vector<MeshInfo> Info;
-;
+
+
 };
 
 

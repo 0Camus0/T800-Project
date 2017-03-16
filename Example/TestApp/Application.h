@@ -16,6 +16,7 @@
 
 #include <xMaths.h>
 #include <xCamera.h>
+#include <SceneProp.h>
 
 #include <Timer.h>
 
@@ -58,6 +59,8 @@ public:
 	XMATRIX44		Projection;
 	XMATRIX44		VP;
 	
+	SceneProps		SceneProp;
+
 	bool			FirstFrame;
 	Timer			DtTimer;
 	float			DtSecs;

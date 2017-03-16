@@ -1,6 +1,10 @@
 cbuffer ConstantBuffer{
-    float4x4 World;
     float4x4 WVP;
+	float4x4 World;  
+	float4	 LightPos;
+	float4 	 LightColor;
+	float4   CameraPosition;
+	float4	 Ambient;
 }
 
 Texture2D TextureRGB : register(t0);
@@ -25,20 +29,25 @@ struct VS_OUTPUT{
 #ifdef USE_TEXCOORD0
     float2 texture0  : TEXCOORD;
 #endif
+	
+	float4 wPos		: TEXCOORD1;
 };
 
 float4 FS( VS_OUTPUT input ) : SV_TARGET  {
-    float4 color;
+    float4 color = float4(0.0,0.0,0.0,1.0);
 	
 #ifdef USE_TEXCOORD0
 	color = TextureRGB.Sample( SS, input.texture0 );	
-#else
+	
 	#ifdef USE_NORMALS
-		color = normalize( input.hnormal );
-	#else
-		color = float4(0.5,0.5,0.5,1.0);
+	float4	LightDir = normalize(LightPos-input.wPos);
+	float4	normal   = normalize(input.hnormal);  
+	float   att		 = dot(normal,LightDir);
+	att				 = clamp( att , 0.0 , 1.0 );
+	float4  Lambert  = Ambient*color + LightColor*color*att;
+	color			 = Lambert;
 	#endif
-#endif
-
+#endif		
+	
     return color;
 }

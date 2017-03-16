@@ -18,6 +18,7 @@
 #include <vector>
 #include <xMaths.h>
 #include "PrimitiveBase.h"
+#include "SceneProp.h"
 
 class PrimitiveManager {
 public:
@@ -27,6 +28,8 @@ public:
 	int  CreateTriangle();
 	int	 CreateCube();
 	int	 CreateMesh(char *fname);
+
+	void SetSceneProps(SceneProps *p);
 
 	void DrawPrimitives();
 	void DestroyPrimitives();

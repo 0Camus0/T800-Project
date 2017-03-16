@@ -1,6 +1,10 @@
 cbuffer ConstantBuffer{
     float4x4 WVP;
-	float4x4 World;    
+	float4x4 World;  
+	float4	 LightPos;
+	float4 	 LightColor;
+	float4   CameraPosition;
+	float4	 Ambient;
 }
 
 struct VS_INPUT{
@@ -41,27 +45,33 @@ struct VS_OUTPUT{
 #ifdef USE_TEXCOORD0
     float2 texture0  : TEXCOORD;
 #endif
+
+	float4 wPos		: TEXCOORD1;
 };
 
 VS_OUTPUT VS( VS_INPUT input ){
     VS_OUTPUT OUT;
     OUT.hposition = mul( WVP , input.position );
 	
+	float3x3 RotWorld = (float3x3)World;
+	
 #ifdef USE_NORMALS	
-	OUT.hnormal = normalize( mul( World , input.normal ) );
+	OUT.hnormal  = float4(normalize( mul( RotWorld, input.normal.xyz ) ) , 1.0);
 #endif
 
 #ifdef USE_TANGENTS	
-	OUT.htangent = normalize( mul( World , input.tangent ) );
+	OUT.htangent = float4(normalize( mul( RotWorld , input.tangent.xyz ) ) , 1.0);
 #endif
 
 #ifdef USE_BINORMALS	
-	OUT.hbinormal = normalize( mul( World , input.binormal ) );
+	OUT.hbinormal = float4(normalize( mul( RotWorld , input.binormal.xyz ) ) , 1.0);
 #endif
 	
 #ifdef USE_TEXCOORD0
     OUT.texture0 = input.texture0;
 #endif
+
+	OUT.wPos	= mul( World , input.position );
 
     return OUT;
 }

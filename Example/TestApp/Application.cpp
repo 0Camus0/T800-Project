@@ -20,6 +20,7 @@ enum {
 	HOUSE_R,
 	DRONE,
 	CERDO,
+	CERDOLIGHT,
 	TOTAL_INSTANCES
 };
 
@@ -38,6 +39,9 @@ void TestApp::InitVars() {
 	Cam.Yaw = 0.02000f;
 	Cam.Update(0.0f);
 
+	SceneProp.AddCamera(&Cam);
+	SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(1.0f, 1.0f, 1.0f), true);
+	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
 
 	FirstFrame = true;
 }
@@ -65,7 +69,10 @@ void TestApp::CreateAssets() {
 
 	index = PrimitiveMgr.CreateMesh("Models/Cerdo.X");
 	Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	Pigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
+
+	PrimitiveMgr.SetSceneProps(&SceneProp);
 
 }
 
@@ -130,15 +137,17 @@ void TestApp::OnUpdate() {
 	Pigs[CERDO].ScaleAbsolute(27.208776f);
 	Pigs[CERDO].Update();
 	
-	/*
-	PrimitiveInst *Sel = &Pigs[6];
+
+	SceneProp.Lights[0].Position = Position;
+	
+	PrimitiveInst *Sel = &Pigs[CERDOLIGHT];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
 	Sel->RotateYAbsolute(Orientation.y);
 	Sel->RotateZAbsolute(Orientation.z);
 	Sel->ScaleAbsolute(Scaling.x);
 	Sel->Update();
-	*/
+	
 /*
 	PrimitiveInst *Sel = &Pigs[DRONE];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
@@ -168,7 +177,7 @@ void TestApp::OnInput() {
 		return;
 
 	bool changed = false;
-	const float speedFactor = 10.0f;
+	const float speedFactor = 100.0f;
 	if (IManager.PressedKey(SDLK_UP)) {
 		Position.y += 1.0f*speedFactor*DtSecs;
 		changed = true;

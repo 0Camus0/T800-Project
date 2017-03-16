@@ -92,6 +92,12 @@ void Mesh::Create(char *filename) {
 
 		it_MeshInfo->matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
 		it_MeshInfo->matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
+
+		it_MeshInfo->Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
+		it_MeshInfo->Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
+		it_MeshInfo->CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
+		it_MeshInfo->Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
+
 #elif defined(USING_D3D11)
 		if (!vsSourceP || !fsSourceP)
 			exit(32);
@@ -436,6 +442,22 @@ void Mesh::Draw(float *t, float *vp) {
 		glUniformMatrix4fv(it_MeshInfo->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 		glUniformMatrix4fv(it_MeshInfo->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 
+		if (it_MeshInfo->Light0Pos_Loc != -1) {
+			glUniform4fv(it_MeshInfo->Light0Pos_Loc, 1, &pScProp->Lights[0].Position.v[0]);		
+		}
+
+		if (it_MeshInfo->Light0Color_Loc != -1) {
+			glUniform4fv(it_MeshInfo->Light0Color_Loc, 1, &pScProp->Lights[0].Color.v[0]);
+		}
+
+		if (it_MeshInfo->CameraPos_Loc != -1) {
+			glUniform4fv(it_MeshInfo->CameraPos_Loc, 1, &pScProp->pCameras[0]->Eye.v[0]);
+		}
+
+		if (it_MeshInfo->Ambient_loc != -1) {
+			glUniform4fv(it_MeshInfo->Ambient_loc, 1, &pScProp->AmbientColor.v[0]);
+		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, it_MeshInfo->Id);
 
 		glEnableVertexAttribArray(it_MeshInfo->vertexAttribLoc);
@@ -519,6 +541,10 @@ void Mesh::Draw(float *t, float *vp) {
 		XMATRIX44 WVP = transform*VP;
 		it_MeshInfo->CnstBuffer.WVP = WVP;
 		it_MeshInfo->CnstBuffer.World = transform;
+		it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
+		it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
+		it_MeshInfo->CnstBuffer.CameraPos = pScProp->pCameras[0]->Eye;
+		it_MeshInfo->CnstBuffer.Ambient	  = pScProp->AmbientColor;
 
 		UINT stride = it_MeshInfo->VertexSize;
 		UINT offset = 0;
