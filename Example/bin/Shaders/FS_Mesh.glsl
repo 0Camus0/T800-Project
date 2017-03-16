@@ -21,6 +21,8 @@ varying highp vec4 htangent;
 varying highp vec4 hbinormal;
 #endif
 
+
+
 varying highp vec4 wPos;
 
 void main(){
@@ -31,12 +33,39 @@ void main(){
 	color = texture2D(diffuse,vecUVCoords);
 	
 	#ifdef USE_NORMALS
+		lowp vec4 Ambiental = color*Ambient;
+	
+		lowp vec4   Diffuse = LightColor;
 		lowp vec4	LightDir = normalize(LightPos-wPos);
 		lowp vec4	normal   = normalize(hnormal);  
 		lowp float  att		 = dot(normal,LightDir);
 		att				 = clamp( att , 0.0 , 1.0 );
-		lowp vec4  Lambert  = Ambient*color + LightColor*color*att;
-		color			 = Lambert;
+		Diffuse	*= att;
+		Diffuse *= color;
+		
+		lowp vec4   Specular = LightColor;
+		lowp vec4   EyeDir = normalize(CameraPosition-wPos);
+		
+		highp float  specular  = 0.0;
+	
+		
+		lowp vec4 	ReflectedLight = reflect(-LightDir,normal);
+		specular = dot(EyeDir,ReflectedLight);
+	
+/*
+		highp vec4 floatvector = normalize(EyeDir+LightDir); 
+		specular = dot(floatvector,normal);
+	*/
+		specular = max( specular , 0.0 );
+		specular = pow( specular , 2.0);
+		
+
+		Specular *= specular;
+		
+		lowp vec4  Final = /*Ambiental + Diffuse + */Specular;
+		color = Final;
+		
+		
 	#endif
 #endif
 	gl_FragColor = color;
