@@ -66,11 +66,12 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	
 	float  specular  = 0.0;
 	float specIntesivity = 5.0;
-	float shinness = 7.0;
+	float shinness = 4.0;
 
 #ifdef USING_PHONG
 	float3 	ReflectedLight = reflect(-LightDir,normal).xyz;
-	specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+	//specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+	specular = dot(ReflectedLight,EyeDir.xyz)*0.5 + 0.5;	
 	specular = pow( specular ,shinness);		
 #elif defined(USING_BLINN)
 	float3 ReflectedLight = normalize(EyeDir+LightDir).xyz; 
@@ -82,7 +83,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	specular *= specIntesivity;
 	Specular *= specular;
 	
-	float4  Final = Lambert+Specular;
+	float4  Final = Ambiental + Lambert + Specular;
 	color = Final;
 	#endif
 #endif		

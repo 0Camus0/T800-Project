@@ -60,11 +60,12 @@ void main(){
 		
 		highp float specular  = 0.0;
 		highp float specIntesivity = 5.0;
-		highp float shinness = 7.0;
+		highp float shinness = 4.0;
 
 	#ifdef USING_PHONG
 		lowp vec3 ReflectedLight = reflect(-LightDir,normal).xyz;
-		specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+		//specular = max ( dot(ReflectedLight,EyeDir.xyz), 0.0);	
+		specular =  dot(ReflectedLight,EyeDir.xyz)*0.5 + 0.5;	
 		specular = pow( specular ,shinness);		
 	#elif defined(USING_BLINN)
 		lowp vec3 ReflectedLight = normalize(EyeDir+LightDir).xyz; 
@@ -76,7 +77,7 @@ void main(){
 		specular *= specIntesivity;
 		Specular *= specular;
 		
-		lowp vec4  Final = Lambert + Specular;
+		lowp vec4  Final = Ambiental + Lambert + Specular;
 		color = Final;
 		
 		
