@@ -44,112 +44,8 @@ void Mesh::Create(char *filename) {
 		MeshInfo  *it_MeshInfo = &Info[i];
 
 #ifdef USING_OPENGL_ES
-		char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
-		char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
-#elif defined(USING_D3D11)
-		char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
-		char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
-#endif
-		std::string vstr = std::string(vsSourceP);
-		std::string fstr = std::string(fsSourceP);
-		std::string Defines = "";
-
-		if(pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL)
-			Defines += "#define USE_NORMALS\n\n";
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD0)
-			Defines += "#define USE_TEXCOORD0\n\n";
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD1)
-			Defines += "#define USE_TEXCOORD1\n\n";
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT)
-			Defines += "#define USE_TANGENTS\n\n";
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_BINORMAL)
-			Defines += "#define USE_BINORMALS\n\n";
-
-		vstr = Defines + vstr;
-		fstr = Defines + fstr;
-#ifdef USING_OPENGL_ES
-		unsigned int ShaderProg = glCreateProgram();
-		it_MeshInfo->ShaderProg = ShaderProg;
-
-		GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
-		GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
-
-		free(vsSourceP);
-		free(fsSourceP);
-
-		glAttachShader(ShaderProg, vshader_id);
-		glAttachShader(ShaderProg, fshader_id);
-
-		glLinkProgram(ShaderProg);
-		glUseProgram(ShaderProg);
-
-		it_MeshInfo->vertexAttribLoc = glGetAttribLocation(ShaderProg, "Vertex");
-		it_MeshInfo->normalAttribLoc = glGetAttribLocation(ShaderProg, "Normal");
-		it_MeshInfo->uvAttribLoc = glGetAttribLocation(ShaderProg, "UV");
-		it_MeshInfo->uvSecAttribLoc = glGetAttribLocation(ShaderProg, "UV_Sec");
-		it_MeshInfo->tangentAttribLoc = glGetAttribLocation(ShaderProg, "Tangent");
-		it_MeshInfo->binormalAttribLoc = glGetAttribLocation(ShaderProg, "Binormal");
-
-		it_MeshInfo->matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
-		it_MeshInfo->matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
-
-		it_MeshInfo->Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
-		it_MeshInfo->Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
-		it_MeshInfo->CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
-		it_MeshInfo->Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
 
 #elif defined(USING_D3D11)
-		if (!vsSourceP || !fsSourceP)
-			exit(32);
-		
-		{
-			it_MeshInfo->VS_blob = nullptr;
-			ComPtr<ID3DBlob> errorBlob = nullptr;
-			hr = D3DCompile(vstr.c_str(), vstr.size(), 0, 0, 0, "VS", "vs_5_0", 0, 0, &it_MeshInfo->VS_blob, &errorBlob);
-			if (hr != S_OK) {
-
-				if (errorBlob) {
-					printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-					return;
-				}
-
-				if (it_MeshInfo->VS_blob) {
-					return;
-				}
-			}
-
-			hr = D3D11Device->CreateVertexShader(it_MeshInfo->VS_blob->GetBufferPointer(), it_MeshInfo->VS_blob->GetBufferSize(), 0, &it_MeshInfo->pVS);
-			if (hr != S_OK) {
-				printf("Error Creating Vertex Shader\n");
-				return;
-			}
-		}
-
-		{
-			it_MeshInfo->FS_blob = nullptr;
-			ComPtr<ID3DBlob> errorBlob = nullptr;
-			hr = D3DCompile(fstr.c_str(), fstr.size(), 0, 0, 0, "FS", "ps_5_0", 0, 0, &it_MeshInfo->FS_blob, &errorBlob);
-			if (hr != S_OK) {
-				if (errorBlob) {
-					printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-					return;
-				}
-
-				if (it_MeshInfo->FS_blob) {
-					return;
-				}
-			}
-
-			hr = D3D11Device->CreatePixelShader(it_MeshInfo->FS_blob->GetBufferPointer(), it_MeshInfo->FS_blob->GetBufferSize(), 0, &it_MeshInfo->pFS);
-			if (hr != S_OK) {
-				printf("Error Creating Pixel Shader\n");
-				return;
-			}
-		}
-
-		free(vsSourceP);
-		free(fsSourceP);
-
 		int offset = 0;
 		D3D11_INPUT_ELEMENT_DESC elementDesc;
 		elementDesc.SemanticName		 = "POSITION";
@@ -256,8 +152,7 @@ void Mesh::Create(char *filename) {
 							std::string ttstr = std::string(ttex->optname);
 							if(ttstr== path){
 #ifdef USING_OPENGL_ES
-								it_subsetinfo->IdTex = ttex->id;
-								it_subsetinfo->IdTexUniformLoc = glGetUniformLocation(it->ShaderProg, "diffuse");
+								it_subsetinfo->IdDiffuseTex = ttex->id;
 #elif defined(USING_D3D11)
 								it_subsetinfo->DiffTex = ttex;
 #endif
@@ -297,7 +192,6 @@ void Mesh::Create(char *filename) {
 								Textures.push_back(tex);
 #ifdef USING_OPENGL_ES
 								it_subsetinfo->IdTex = id;
-								it_subsetinfo->IdTexUniformLoc = glGetUniformLocation(it->ShaderProg, "diffuse");
 #elif defined(USING_D3D11)
 								it_subsetinfo->DiffTex = tex;
 #endif
@@ -405,18 +299,191 @@ void Mesh::Create(char *filename) {
 }
 
 void Mesh::GatherInfo() {
+#ifdef USING_OPENGL_ES
+	char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
+	char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
+#elif defined(USING_D3D11)
+	char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
+#endif
+	
+
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 		xFinalGeometry *it = &xFile.MeshInfo[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+		int Sig = 0;
+
+		if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL)
+			Sig |= Signature::HAS_NORMALS;
+		if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD0)
+			Sig |= Signature::HAS_TEXCOORDS0;
+		if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD1)
+			Sig |= Signature::HAS_TEXCOORDS1;
+		if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT)
+			Sig |= Signature::HAS_TANGENTS;
+		if (pActual->VertexAttributes&xMeshGeometry::HAS_BINORMAL)
+			Sig |= Signature::HAS_BINORMALS;
+
 		MeshInfo tmp;
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		for (int j = 0; j < NumMaterials; j++) {
 			xSubsetInfo *subinfo = &it->Subsets[j];
+			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo stmp;
+			
+			std::string vstr = std::string(vsSourceP);
+			std::string fstr = std::string(fsSourceP);
+			std::string Defines = "";
+
+			for (unsigned int k = 0; k < material->EffectInstance.pDefaults.size(); k++) {
+				xEffectDefault *mDef = &material->EffectInstance.pDefaults[k];
+				if (mDef->Type == xF::xEFFECTENUM::STDX_STRINGS) {
+					if (mDef->NameParam == "diffuseMap") {
+						Sig |= Signature::DIFFUSE_MAP;
+					}
+
+					if (mDef->NameParam == "specularMap") {
+						Sig |= Signature::SPECULAR_MAP;
+					}
+
+					if (mDef->NameParam == "glossMap") {
+						Sig |= Signature::GLOSS_MAP;
+					}
+
+					if (mDef->NameParam == "normalMap") {
+						Sig |= Signature::NORMAL_MAP;
+					}
+				}
+			}
+
+			bool found=false;
+			for(unsigned int k = 0; k < tmp.Shaders.size(); k++){
+				if(Sig==tmp.Shaders[k].Sig){
+					found=true;
+					break;
+				}
+			}
+
+			if(!found){
+				Shader t_sh;
+				t_sh.Sig=Sig;
+				t_sh.MeshIndex=i;
+				if (Sig&Signature::HAS_NORMALS)
+					Defines += "#define USE_NORMALS\n\n";
+				if (Sig&Signature::HAS_TEXCOORDS0)
+					Defines += "#define USE_TEXCOORD0\n\n";
+				if (Sig&Signature::HAS_TEXCOORDS1)
+					Defines += "#define USE_TEXCOORD1\n\n";
+				if (Sig&Signature::HAS_TANGENTS)
+					Defines += "#define USE_TANGENTS\n\n";
+				if (Sig&Signature::HAS_BINORMALS)
+					Defines += "#define USE_BINORMALS\n\n";
+				if (Sig&Signature::DIFFUSE_MAP)
+					Defines += "#define DIFFUSE_MAP\n\n";
+				if (Sig&Signature::SPECULAR_MAP)
+					Defines += "#define SPECULAR_MAP\n\n";
+				if (Sig&Signature::GLOSS_MAP)
+					Defines += "#define GLOSS_MAP\n\n";
+				if (Sig&Signature::NORMAL_MAP)
+					Defines += "#define NORMAL_MAP\n\n";
+				if (Sig&Signature::REFLECT_MAP)
+					Defines += "#define REFLECT_MAP\n\n";
+
+				vstr = Defines + vstr;
+				fstr = Defines + fstr;
+				#ifdef USING_OPENGL_ES
+				unsigned int ShaderProg = glCreateProgram();
+				t_sh.ShaderProg = ShaderProg;
+
+				GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
+				GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
+
+				glAttachShader(ShaderProg, vshader_id);
+				glAttachShader(ShaderProg, fshader_id);
+
+				glLinkProgram(ShaderProg);
+				glUseProgram(ShaderProg);
+
+				t_sh.vertexAttribLoc = glGetAttribLocation(ShaderProg, "Vertex");
+				t_sh.normalAttribLoc = glGetAttribLocation(ShaderProg, "Normal");
+				t_sh.uvAttribLoc = glGetAttribLocation(ShaderProg, "UV");
+				t_sh.uvSecAttribLoc = glGetAttribLocation(ShaderProg, "UV_Sec");
+				t_sh.tangentAttribLoc = glGetAttribLocation(ShaderProg, "Tangent");
+				t_sh.binormalAttribLoc = glGetAttribLocation(ShaderProg, "Binormal");
+
+				t_sh.matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
+				t_sh.matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
+
+				t_sh.Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
+				t_sh.Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
+				t_sh.CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
+				t_sh.Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
+
+				t_sh.DiffuseTex_loc = glGetUniformLocation(ShaderProg, "DiffuseTex");
+				t_sh.SpecularTex_loc = glGetUniformLocation(ShaderProg, "SpecularTex");
+				t_sh.GlossTex_loc = glGetUniformLocation(ShaderProg, "GlossTex");
+				t_sh.NormalTex_loc = glGetUniformLocation(ShaderProg, "NormalTex");
+				t_sh.ReflectTex_loc = glGetUniformLocation(ShaderProg, "ReflectTex");
+				#elif defined(USING_D3D11)
+				HRESULT hr = S_OK;
+				{
+					t_sh.VS_blob = nullptr;
+					ComPtr<ID3DBlob> errorBlob = nullptr;
+					hr = D3DCompile(vstr.c_str(), vstr.size(), 0, 0, 0, "VS", "vs_5_0", 0, 0, &t_sh.VS_blob, &errorBlob);
+					if (hr != S_OK) {
+
+						if (errorBlob) {
+							printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+							exit(666);
+						}
+
+						if (t_sh.VS_blob) {
+							exit(666);
+						}
+					}
+
+					hr = D3D11Device->CreateVertexShader(t_sh.VS_blob->GetBufferPointer(), t_sh.VS_blob->GetBufferSize(), 0, &t_sh.pVS);
+					if (hr != S_OK) {
+						printf("Error Creating Vertex Shader\n");
+						exit(666);
+					}
+				}
+
+				{
+					t_sh.FS_blob = nullptr;
+					ComPtr<ID3DBlob> errorBlob = nullptr;
+					hr = D3DCompile(fstr.c_str(), fstr.size(), 0, 0, 0, "FS", "ps_5_0", 0, 0, &t_sh.FS_blob, &errorBlob);
+					if (hr != S_OK) {
+						if (errorBlob) {
+							printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+							exit(666);
+						}
+
+						if (t_sh.FS_blob) {
+							exit(666);
+						}
+					}
+
+					hr = D3D11Device->CreatePixelShader(t_sh.FS_blob->GetBufferPointer(), t_sh.FS_blob->GetBufferSize(), 0, &t_sh.pFS);
+					if (hr != S_OK) {
+						printf("Error Creating Pixel Shader\n");
+						exit(666);
+					}
+				}
+			#endif
+				tmp.Shaders.push_back(t_sh);
+			}
+		
+			
+
 			tmp.SubSets.push_back(stmp);
 		}	
 		Info.push_back(tmp);
 	}
+}
+
+void Mesh::CreateShaders(){
+
 }
 
 void Mesh::Transform(float *t) {

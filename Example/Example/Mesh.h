@@ -39,16 +39,26 @@ class Mesh : public PrimitiveBase {
 public:
 	Mesh()  {}
 
-	enum {
+	enum Signature {
 		DIFFUSE_MAP = 1,
 		SPECULAR_MAP = 2,
 		GLOSS_MAP = 4,
 		NORMAL_MAP = 8,
 		REFLECT_MAP = 16,
+
+		HAS_NORMALS		= 32,
+		HAS_TANGENTS	= 64,
+		HAS_BINORMALS	= 128,
+		HAS_TEXCOORDS0	= 256,
+		HAS_TEXCOORDS1  = 512,
 	};
 
 	struct Shader {
-		int							MapFlags;
+		Shader() : Sig(0), MeshIndex(0){
+
+		}
+		int							Sig;
+		int							MeshIndex;
 #ifdef USING_D3D11
 		ComPtr<ID3D11VertexShader>  pVS;
 		ComPtr<ID3D11PixelShader>   pFS;
@@ -73,6 +83,12 @@ public:
 		int			CameraPos_Loc;
 
 		int			Ambient_loc;
+
+		int			DiffuseTex_loc;
+		int			SpecularTex_loc;
+		int			GlossTex_loc;
+		int			NormalTex_loc;
+		int			ReflectTex_loc;
 #endif
 	};
 #ifdef USING_D3D11
@@ -90,11 +106,19 @@ public:
 #ifdef USING_OPENGL_ES
 		unsigned long		VertexAttrib;
 		unsigned int		Id;
-		unsigned int		IdTex;
+		unsigned int		IdDiffuseTex;
+		unsigned int		IdSpecularTex;
+		unsigned int		IdGlossTex;
+		unsigned int		IdNormalTex;
+		unsigned int		IdReflectTex;
 		unsigned int		IdTexUniformLoc;
 #elif defined(USING_D3D11)
 		ComPtr<ID3D11Buffer>		IB;
-		Texture*					DiffTex;
+		Texture*					DiffuseTex;
+		Texture*					SpecularTex;
+		Texture*					GlossfTex;
+		Texture*					NormalTex;
+		Texture*					ReflectTex;
 #endif
 		unsigned int		VertexStart;
 		unsigned int		NumVertex;
@@ -153,6 +177,7 @@ public:
 
 	void Create() {}
 	void Create(char *);
+	void CreateShaders();
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
