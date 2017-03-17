@@ -39,6 +39,42 @@ class Mesh : public PrimitiveBase {
 public:
 	Mesh()  {}
 
+	enum {
+		DIFFUSE_MAP = 1,
+		SPECULAR_MAP = 2,
+		GLOSS_MAP = 4,
+		NORMAL_MAP = 8,
+		REFLECT_MAP = 16,
+	};
+
+	struct Shader {
+		int							MapFlags;
+#ifdef USING_D3D11
+		ComPtr<ID3D11VertexShader>  pVS;
+		ComPtr<ID3D11PixelShader>   pFS;
+		ComPtr<ID3DBlob>            VS_blob;
+		ComPtr<ID3DBlob>            FS_blob;
+#elif defined(USING_OPENGL_ES)
+		unsigned int ShaderProg;
+
+		int			 matWorldViewProjUniformLoc;
+		int			 matWorldUniformLoc;
+
+		int			 vertexAttribLoc;
+		int			 normalAttribLoc;
+		int			 tangentAttribLoc;
+		int			 binormalAttribLoc;
+		int			 uvAttribLoc;
+		int			 uvSecAttribLoc;
+
+		int			Light0Pos_Loc;
+		int			Light0Color_Loc;
+
+		int			CameraPos_Loc;
+
+		int			Ambient_loc;
+#endif
+	};
 #ifdef USING_D3D11
 	struct CBuffer {
 		XMATRIX44 WVP;
@@ -73,9 +109,11 @@ public:
 		unsigned int			 NumVertex;
 
 #ifdef USING_OPENGL_ES
-		unsigned int ShaderProg;
 		unsigned int			 Id;
 		unsigned int			 IdIBO;
+
+		unsigned int ShaderProg;
+		
 		int			 matWorldViewProjUniformLoc;
 		int			 matWorldUniformLoc;
 
@@ -107,6 +145,7 @@ public:
 
 		Mesh::CBuffer				CnstBuffer;
 #endif
+		std::vector<Shader>		Shaders;
 		std::vector<SubSetInfo>	SubSets;
 	};
 
