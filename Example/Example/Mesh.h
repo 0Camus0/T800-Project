@@ -55,7 +55,28 @@ public:
 
 	struct Shader {
 		Shader() : Sig(0), MeshIndex(0){
+#ifdef USING_D3D11
+#elif defined(USING_OPENGL_ES)
+			matWorldViewProjUniformLoc = -1;
+			matWorldUniformLoc = -1;
 
+			vertexAttribLoc = -1;
+			normalAttribLoc = -1;
+			tangentAttribLoc = -1;
+			binormalAttribLoc = -1;
+			uvAttribLoc = -1;
+			uvSecAttribLoc = -1;
+
+			Light0Pos_Loc = -1;
+			Light0Color_Loc = -1;
+			CameraPos_Loc = -1;
+			Ambient_loc = -1;
+			DiffuseTex_loc = -1;
+			SpecularTex_loc = -1;
+			GlossTex_loc = -1;
+			NormalTex_loc = -1;
+			ReflectTex_loc = -1;
+#endif
 		}
 		int							Sig;
 		int							MeshIndex;
@@ -105,6 +126,8 @@ public:
 	struct SubSetInfo {
 #ifdef USING_OPENGL_ES
 		unsigned long		VertexAttrib;
+
+		unsigned int		Sig;
 		unsigned int		Id;
 		unsigned int		IdDiffuseTex;
 		unsigned int		IdSpecularTex;
@@ -177,12 +200,12 @@ public:
 
 	void Create() {}
 	void Create(char *);
-	void CreateShaders();
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
 
 	void GatherInfo();
+	Texture* LoadTex(std::string p, xF::xMaterial *mat);
 
 	XMATRIX44	transform;
 	XDataBase	xFile;

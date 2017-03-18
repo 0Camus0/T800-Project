@@ -21,6 +21,13 @@ extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
+std::string RemovePath(std::string p) {
+	std::string path = p;
+	int firstSlash = path.find_last_of("\\") + 1;
+	int Length = path.size() - firstSlash;
+	path = path.substr(firstSlash, Length);
+	return path;
+}
 
 void Mesh::Create(char *filename) {
 
@@ -139,68 +146,17 @@ void Mesh::Create(char *filename) {
 					std::cout << "[" <<mDef->NameParam << "]" << std::endl;
 				#endif
 					if(mDef->NameParam=="diffuseMap"){
-						std::string path = mDef->CaseString;
-						int firstSlash = path.find_last_of("\\") + 1;
-						int Length = path.size() - firstSlash;
-						path = path.substr(firstSlash, Length);
+						std::string path = RemovePath(mDef->CaseString);
 					#if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 					#endif
-						bool found=false;
-						for(std::size_t f=0;f<Textures.size();f++){
-							Texture *ttex = Textures[f];
-							std::string ttstr = std::string(ttex->optname);
-							if(ttstr== path){
 #ifdef USING_OPENGL_ES
-								it_subsetinfo->IdDiffuseTex = ttex->id;
+						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
+						it_subsetinfo->IdDiffuseTex = tex->id;
 #elif defined(USING_D3D11)
-								it_subsetinfo->DiffTex = ttex;
-#endif
-								found=true;
-								break;
-							}
-						}
-						if(!found){
-#ifdef USING_OPENGL_ES
-							Texture *tex = new TextureGL;
-#elif defined(USING_D3D11)
-							Texture *tex = new TextureD3D;
-#endif
-							unsigned int id = tex->LoadTexture((char*)path.c_str());
-
-							for (unsigned int m = 0; m < material->EffectInstance.pDefaults.size(); m++) {
-								xEffectDefault *mDef_2 = &material->EffectInstance.pDefaults[m];
-								if(mDef_2->Type== xF::xEFFECTENUM::STDX_DWORDS){
-									if (mDef_2->NameParam == "Tiled") {
-										int value = mDef_2->CaseDWORD;
-										unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS;
-										if(value)
-											params |= TEXT_BASIC_PARAMS::TILED;
-										else
-											params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
-
-										tex->params = params;
-										tex->SetTextureParams(id);
-									}
-								}
-							}
-
-							if (id != -1) {
-							#if DEBUG_MODEL
-								std::cout << "Texture Loaded index " << id << std::endl;
-							#endif
-								Textures.push_back(tex);
-#ifdef USING_OPENGL_ES
-								it_subsetinfo->IdTex = id;
-#elif defined(USING_D3D11)
-								it_subsetinfo->DiffTex = tex;
-#endif
-							}
-							else {
-								std::cout << "Texture not Found" << std::endl;
-								delete tex;
-							}
-						}					  
+						TextureD3D *tex = dynamic_cast<TextureD3D*>(LoadTex(path, material));
+						it_subsetinfo->DiffuseTex = tex;
+#endif									  
 					}
 				}
 			}
@@ -475,15 +431,59 @@ void Mesh::GatherInfo() {
 			}
 		
 			
-
+			stmp.Sig = Sig;
 			tmp.SubSets.push_back(stmp);
 		}	
 		Info.push_back(tmp);
 	}
 }
 
-void Mesh::CreateShaders(){
+Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {
 
+	for (std::size_t f = 0; f < Textures.size(); f++) {
+		Texture *ttex = Textures[f];
+		std::string ttstr = std::string(ttex->optname);
+		if (ttstr == p) {
+			return ttex;
+		}
+	}
+
+#ifdef USING_OPENGL_ES
+		Texture *tex = new TextureGL;
+#elif defined(USING_D3D11)
+		Texture *tex = new TextureD3D;
+#endif
+		unsigned int id = tex->LoadTexture((char*)p.c_str());
+
+		for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
+			xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
+			if (mDef_2->Type == xF::xEFFECTENUM::STDX_DWORDS) {
+				if (mDef_2->NameParam == "Tiled") {
+					int value = mDef_2->CaseDWORD;
+					unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS;
+					if (value)
+						params |= TEXT_BASIC_PARAMS::TILED;
+					else
+						params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
+
+					tex->params = params;
+					tex->SetTextureParams(id);
+				}
+			}
+		}
+
+		if (id != -1) {
+#if DEBUG_MODEL
+			std::cout << "Texture Loaded index " << id << std::endl;
+#endif
+			Textures.push_back(tex);
+			return tex;
+		}
+		else {
+			std::cout << "Texture not Found" << std::endl;		
+		}
+	
+		return 0;
 }
 
 void Mesh::Transform(float *t) {
@@ -503,101 +503,116 @@ void Mesh::Draw(float *t, float *vp) {
 		MeshInfo  *it_MeshInfo = &Info[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 
-
-		glUseProgram(it_MeshInfo->ShaderProg);
-
-		glUniformMatrix4fv(it_MeshInfo->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
-		glUniformMatrix4fv(it_MeshInfo->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
-
-		if (it_MeshInfo->Light0Pos_Loc != -1) {
-			glUniform4fv(it_MeshInfo->Light0Pos_Loc, 1, &pScProp->Lights[0].Position.v[0]);		
-		}
-
-		if (it_MeshInfo->Light0Color_Loc != -1) {
-			glUniform4fv(it_MeshInfo->Light0Color_Loc, 1, &pScProp->Lights[0].Color.v[0]);
-		}
-
-		if (it_MeshInfo->CameraPos_Loc != -1) {
-			glUniform4fv(it_MeshInfo->CameraPos_Loc, 1, &pScProp->pCameras[0]->Eye.v[0]);
-		}
-
-		if (it_MeshInfo->Ambient_loc != -1) {
-			glUniform4fv(it_MeshInfo->Ambient_loc, 1, &pScProp->AmbientColor.v[0]);
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, it_MeshInfo->Id);
-
-		glEnableVertexAttribArray(it_MeshInfo->vertexAttribLoc);
-		glVertexAttribPointer(it_MeshInfo->vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(0));
-	
-		if (it_MeshInfo->normalAttribLoc != -1){
-			glEnableVertexAttribArray(it_MeshInfo->normalAttribLoc);
-			glVertexAttribPointer(it_MeshInfo->normalAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(16));
-		}
-
-		if (it_MeshInfo->tangentAttribLoc != -1){
-			glEnableVertexAttribArray(it_MeshInfo->tangentAttribLoc);
-			glVertexAttribPointer(it_MeshInfo->tangentAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(32));
-		}
-
-		if (it_MeshInfo->binormalAttribLoc != -1){
-			glEnableVertexAttribArray(it_MeshInfo->binormalAttribLoc);
-			glVertexAttribPointer(it_MeshInfo->binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(48));
-		}
-
-		if (it_MeshInfo->uvAttribLoc != -1){
-			int offset = 32;
-			if(pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT){
-				offset = 64;
-			}
-			glEnableVertexAttribArray(it_MeshInfo->uvAttribLoc);
-			glVertexAttribPointer(it_MeshInfo->uvAttribLoc, 2, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(offset));
-		}
-
-		if (it_MeshInfo->uvSecAttribLoc != -1){
-			int offset = 40;
-			if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
-				offset = 72;
-			}
-			glEnableVertexAttribArray(it_MeshInfo->uvSecAttribLoc);
-			glVertexAttribPointer(it_MeshInfo->uvSecAttribLoc, 2, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(offset));
-		}
-	
+		int Sig = -1;
+		Shader *s = 0;
 		for(std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++){
-			//xSubsetInfo *sbIfo = &it->Subsets[k];
 			SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
+			bool update = false;
+			for (std::size_t a = 0; a < it_MeshInfo->Shaders.size(); a++) {
+				if (sub_info->Sig == it_MeshInfo->Shaders[a].Sig) {
+					s = &it_MeshInfo->Shaders[a];
+					break;
+				}
+			}
+			if (Sig != s->Sig)
+				update = true;
+
+			if (update) {
+				glUseProgram(s->ShaderProg);
+
+				glUniformMatrix4fv(s->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
+				glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
+
+				if (s->Light0Pos_Loc != -1) {
+					glUniform4fv(s->Light0Pos_Loc, 1, &pScProp->Lights[0].Position.v[0]);
+				}
+
+				if (s->Light0Color_Loc != -1) {
+					glUniform4fv(s->Light0Color_Loc, 1, &pScProp->Lights[0].Color.v[0]);
+				}
+
+				if (s->CameraPos_Loc != -1) {
+					glUniform4fv(s->CameraPos_Loc, 1, &pScProp->pCameras[0]->Eye.v[0]);
+				}
+
+				if (s->Ambient_loc != -1) {
+					glUniform4fv(s->Ambient_loc, 1, &pScProp->AmbientColor.v[0]);
+				}
+
+				glBindBuffer(GL_ARRAY_BUFFER, it_MeshInfo->Id);
+
+				glEnableVertexAttribArray(s->vertexAttribLoc);
+				glVertexAttribPointer(s->vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(0));
+
+				if (s->normalAttribLoc != -1) {
+					glEnableVertexAttribArray(s->normalAttribLoc);
+					glVertexAttribPointer(s->normalAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(16));
+				}
+
+				if (s->tangentAttribLoc != -1) {
+					glEnableVertexAttribArray(s->tangentAttribLoc);
+					glVertexAttribPointer(s->tangentAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(32));
+				}
+
+				if (s->binormalAttribLoc != -1) {
+					glEnableVertexAttribArray(s->binormalAttribLoc);
+					glVertexAttribPointer(s->binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(48));
+				}
+
+				if (s->uvAttribLoc != -1) {
+					int offset = 32;
+					if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
+						offset = 64;
+					}
+					glEnableVertexAttribArray(s->uvAttribLoc);
+					glVertexAttribPointer(s->uvAttribLoc, 2, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(offset));
+				}
+
+				if (s->uvSecAttribLoc != -1) {
+					int offset = 40;
+					if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
+						offset = 72;
+					}
+					glEnableVertexAttribArray(s->uvSecAttribLoc);
+					glVertexAttribPointer(s->uvSecAttribLoc, 2, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(offset));
+				}
+			}
+	
+
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sub_info->Id);
 
-			if(sub_info->IdTex!=-1){
+			if(sub_info->IdDiffuseTex!=-1){
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, sub_info->IdTex);
-				glUniform1i(sub_info->IdTexUniformLoc, 0);
+				glBindTexture(GL_TEXTURE_2D, sub_info->IdDiffuseTex);
+				glUniform1i(s->DiffuseTex_loc, 0);
 			}
 
 			glDrawElements(GL_TRIANGLES, sub_info->NumVertex, GL_UNSIGNED_SHORT, 0);
+
+			if (update) {
+				glDisableVertexAttribArray(s->vertexAttribLoc);
+				if (s->normalAttribLoc != -1) {
+					glDisableVertexAttribArray(s->normalAttribLoc);
+				}
+				if (s->tangentAttribLoc != -1) {
+					glDisableVertexAttribArray(s->tangentAttribLoc);
+				}
+				if (s->binormalAttribLoc != -1) {
+					glDisableVertexAttribArray(s->binormalAttribLoc);
+				}
+				if (s->uvAttribLoc != -1) {
+					glDisableVertexAttribArray(s->uvAttribLoc);
+				}
+				if (s->uvSecAttribLoc != -1) {
+					glDisableVertexAttribArray(s->uvSecAttribLoc);
+				}
+
+				glUseProgram(0);
+			}
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		glDisableVertexAttribArray(it_MeshInfo->vertexAttribLoc);
-		if (it_MeshInfo->normalAttribLoc != -1) {
-			glDisableVertexAttribArray(it_MeshInfo->normalAttribLoc);
-		}
-		if (it_MeshInfo->tangentAttribLoc != -1) {
-			glDisableVertexAttribArray(it_MeshInfo->tangentAttribLoc);
-		}
-		if (it_MeshInfo->binormalAttribLoc != -1) {
-			glDisableVertexAttribArray(it_MeshInfo->binormalAttribLoc);
-		}
-		if (it_MeshInfo->uvAttribLoc != -1) {
-			glDisableVertexAttribArray(it_MeshInfo->uvAttribLoc);
-		}
-		if (it_MeshInfo->uvSecAttribLoc != -1) {
-			glDisableVertexAttribArray(it_MeshInfo->uvSecAttribLoc);
-		}
-		
-		glUseProgram(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);	
 	}
 #elif defined(USING_D3D11)
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
