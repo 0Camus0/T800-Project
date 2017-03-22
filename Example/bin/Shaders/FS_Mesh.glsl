@@ -32,6 +32,30 @@ uniform highp vec4 Ambient;
 #endif
 
 
+#define AMBIENT
+#define DIFFUSE
+#define SPECULAR
+#define FRESNEL 
+/*
+
+#ifdef DIFFUSE_MAP
+#undef DIFFUSE_MAP
+#endif
+
+#ifdef SPECULAR_MAP
+#undef SPECULAR_MAP
+#endif
+
+#ifdef GLOSS_MAP
+#undef GLOSS_MAP
+#endif 
+
+#ifdef NORMAL_MAP
+#undef NORMAL_MAP
+#endif
+
+*/
+
 #ifdef USE_TEXCOORD0
 varying highp vec2 vecUVCoords;
 #endif
@@ -55,10 +79,13 @@ varying highp vec4 wPos;
 
 void main(){
 
-	lowp vec4 color = vec4(0.0,0.0,0.0,1.0);
+	lowp vec4 color = vec4(0.5,0.5,0.5,1.0);
+	lowp vec4 Final = vec4(0.0,0.0,0.0,1.0);
 	
 #ifdef USE_TEXCOORD0
+	#ifdef DIFFUSE_MAP
 	color = texture2D(DiffuseTex,vecUVCoords);
+	#endif
 	
 	#ifdef SPECULAR_MAP
 	lowp vec4 specularmap = texture2D(SpecularTex,vecUVCoords);
@@ -68,8 +95,12 @@ void main(){
 		lowp vec4 Ambiental = color*Ambient;
 	
 		lowp vec4   Lambert  = LightColor;
+		lowp vec4 	Specular = LightColor;
+		lowp vec4	Fresnel  = LightColor;
 		lowp vec3	LightDir = normalize(LightPos-wPos).xyz;
+		lowp vec3   EyeDir   = normalize(CameraPosition-wPos).xyz;
 		lowp vec3	normal   = normalize(hnormal).xyz;  
+		mediump float att			 = 1.0;
 		
 		
 	#ifdef NORMAL_MAP	
@@ -84,21 +115,21 @@ void main(){
 		normal			 = normalize(normal);
 	#endif
 	
-	
-		lowp float  att		 = dot(normal,LightDir);
+	#ifdef DIFFUSE
+		att		 	     = dot(normal,LightDir)*0.5 + 0.5;
+		att				 = pow( att , 2.0 );	
 		att				 = clamp( att , 0.0 , 1.0 );
 		Lambert			*= color*att;
-		
-		lowp vec4   Specular = LightColor;
-		lowp vec3   EyeDir = normalize(CameraPosition-wPos).xyz;
-		
-		highp float specular  = 0.0;
-		highp float specIntesivity = 2.0;
-		highp float shinness = 4.0;
-		
-	#ifdef GLOSS_MAP
-		shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
 	#endif
+	
+	#ifdef SPECULAR
+		highp float specular  = 0.0;
+		highp float specIntesivity = 0.8;
+		highp float shinness = 8.0;
+		
+		#ifdef GLOSS_MAP
+			shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
+		#endif
 
 	#ifdef USING_PHONG
 		lowp vec3 ReflectedLight = reflect(-LightDir,normal);
@@ -107,7 +138,7 @@ void main(){
 		specular = pow( specular ,shinness);		
 	#elif defined(USING_BLINN)
 		lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
-		specular = max ( dot(ReflectedLight,normal), 0.0);	
+		specular = max ( dot(ReflectedLight,normal)*0.5 + 0.5, 0.0);	
 		specular = pow( specular ,shinness);	
 	#endif
 		
@@ -116,12 +147,49 @@ void main(){
 		Specular *= specular;
 		
 		#ifdef SPECULAR_MAP
-		Specular.xyz *= specularmap.xyz;
+			Specular.xyz *= specularmap.xyz;
 		#endif
-		
-		lowp vec4  Final =  Lambert + Specular;
-		color = Final;
-		
+			
+	#endif
+	
+#ifdef FRESNEL
+	mediump float  FresnelAtt	= dot(normal,EyeDir);
+	lowp float  FresnelIntensity = 1.0;
+	#ifdef SPECULAR_MAP
+		lowp vec4 FresnelCol = vec4(specularmap.xyz,1.0);
+	#else
+		lowp vec4 FresnelCol = vec4(1.0,1.0,1.0,1.0);	
+	#endif
+	FresnelAtt		= abs(FresnelAtt);
+	FresnelAtt 		= 1.0 - FresnelAtt;
+	FresnelAtt 		= clamp( FresnelAtt , 0.0 , 1.0 );
+	FresnelAtt		= pow( FresnelAtt , 4.0 );	
+	FresnelAtt 		= clamp(FresnelAtt , 0.0 , 1.0 );
+	Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt; 
+#endif
+	
+	#ifdef AMBIENT
+		Final += Ambiental;
+	#endif
+	
+	#ifdef DIFFUSE
+		Final += Lambert;
+	#endif
+	
+	#ifdef SPECULAR
+		Final += Specular;
+	#endif
+	
+	#ifdef SPECULAR
+		Final += Specular;
+	#endif
+	
+	#ifdef FRESNEL
+		Final += Fresnel;
+	#endif
+	
+	color = Final;
+	
 	#endif
 #endif
 	gl_FragColor = color;

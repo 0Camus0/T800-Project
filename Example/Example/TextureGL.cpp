@@ -22,12 +22,12 @@ void	TextureGL::SetTextureParams(unsigned int &target) {
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
 
-	glFiltering = GL_LINEAR_MIPMAP_LINEAR;
+	glFiltering = GL_LINEAR;
 	glWrap = GL_CLAMP_TO_EDGE;
-	/*
+	
 	if(params & TEXT_BASIC_PARAMS::MIPMAPS)
 		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
-*/
+
 	if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE)
 		glWrap = GL_CLAMP_TO_EDGE;	
 	

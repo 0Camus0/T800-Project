@@ -40,7 +40,7 @@ void TestApp::InitVars() {
 	*/
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.1f, 10000.0f);
 	Cam.Speed = 250.0f;
-	Cam.Eye = XVECTOR3(0.0f, 0.5f, -1.8f);
+	Cam.Eye = XVECTOR3(0.0f, 0.5f, -0.396732f);
 	Cam.Pitch = 0.0f;
 	Cam.Roll = 0.0f;
 	Cam.Yaw = 0.0f;
@@ -56,7 +56,7 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-	int index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
+	int index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	index = PrimitiveMgr.CreateCube();
@@ -106,7 +106,7 @@ void TestApp::OnUpdate() {
 	Pigs[0].RotateXAbsolute(0.0f);
 	Pigs[0].RotateYAbsolute(0.0f);
 	Pigs[0].RotateZAbsolute(0.0f);
-	Pigs[0].ScaleAbsolute(0.015f);
+	Pigs[0].ScaleAbsolute(0.0075f);
 	Pigs[0].Update();
 
 	/*

@@ -513,6 +513,11 @@ Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {
 					tex->params = params;
 					tex->SetTextureParams(id);
 				}
+				else {
+					unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS | TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
+					tex->params = params;
+					tex->SetTextureParams(id);
+				}
 			}
 		}
 
@@ -624,20 +629,24 @@ void Mesh::Draw(float *t, float *vp) {
 	
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sub_info->Id);
-
+			
 			int slot_active = GL_TEXTURE0;
 			int index = 0;
 			if(sub_info->IdDiffuseTex!=-1){
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdDiffuseTex);
+				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->DiffuseTex_loc, index);
 				slot_active++;
 				index++;
 			}
-
+			
 			if (sub_info->IdSpecularTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdSpecularTex);
+			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->SpecularTex_loc, index);
 				slot_active++;
 				index++;
@@ -646,6 +655,8 @@ void Mesh::Draw(float *t, float *vp) {
 			if (sub_info->IdGlossTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdGlossTex);
+				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->GlossTex_loc, index);
 				slot_active++;
 				index++;
@@ -654,12 +665,16 @@ void Mesh::Draw(float *t, float *vp) {
 			if (sub_info->IdNormalTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdNormalTex);
+			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->NormalTex_loc, index);
 				slot_active++;
 				index++;
 			}
-
+			
 			glDrawElements(GL_TRIANGLES, sub_info->NumVertex, GL_UNSIGNED_SHORT, 0);
+
+			
 
 			if (update) {
 				glDisableVertexAttribArray(s->vertexAttribLoc);
