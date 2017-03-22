@@ -112,8 +112,9 @@ void Mesh::Create(char *filename) {
 			offset += 8;
 			it_MeshInfo->VertexDecl.push_back(elementDesc);
 		}
+		Shader *s = &it_MeshInfo->Shaders[0];
 
-		hr = D3D11Device->CreateInputLayout(&it_MeshInfo->VertexDecl[0], it_MeshInfo->VertexDecl.size(), it_MeshInfo->VS_blob->GetBufferPointer(), it_MeshInfo->VS_blob->GetBufferSize(), &it_MeshInfo->Layout);
+		hr = D3D11Device->CreateInputLayout(&it_MeshInfo->VertexDecl[0], it_MeshInfo->VertexDecl.size(), s->VS_blob->GetBufferPointer(), s->VS_blob->GetBufferSize(), &it_MeshInfo->Layout);
 		if (hr != S_OK) {
 			printf("Error Creating Input Layout\n");
 			return;
@@ -615,45 +616,60 @@ void Mesh::Draw(float *t, float *vp) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);	
 	}
 #elif defined(USING_D3D11)
-	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-		MeshInfo  *it_MeshInfo = &Info[i];
-		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 
-		XMATRIX44 VP = XMATRIX44(vp);
-		XMATRIX44 WVP = transform*VP;
-		it_MeshInfo->CnstBuffer.WVP = WVP;
-		it_MeshInfo->CnstBuffer.World = transform;
-		it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
-		it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
-		it_MeshInfo->CnstBuffer.CameraPos = pScProp->pCameras[0]->Eye;
-		it_MeshInfo->CnstBuffer.Ambient	  = pScProp->AmbientColor;
+		for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
+			MeshInfo  *it_MeshInfo = &Info[i];
+			xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+			XMATRIX44 VP = XMATRIX44(vp);
+			XMATRIX44 WVP = transform*VP;
 
-		UINT stride = it_MeshInfo->VertexSize;
-		UINT offset = 0;
-		D3D11DeviceContext->VSSetShader(it_MeshInfo->pVS.Get(), 0, 0);
-		D3D11DeviceContext->PSSetShader(it_MeshInfo->pFS.Get(), 0, 0);
+			it_MeshInfo->CnstBuffer.WVP = WVP;
+			it_MeshInfo->CnstBuffer.World = transform;
+			it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
+			it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
+			it_MeshInfo->CnstBuffer.CameraPos = pScProp->pCameras[0]->Eye;
+			it_MeshInfo->CnstBuffer.Ambient = pScProp->AmbientColor;
 
-		D3D11DeviceContext->IASetInputLayout(it_MeshInfo->Layout.Get());
+			UINT stride = it_MeshInfo->VertexSize;
+			UINT offset = 0;
 
-		D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
+			int Sig = -1;
+			Shader *s = 0;
 
-		D3D11DeviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);		
-		D3D11DeviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
-		D3D11DeviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+			D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
 
-		for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
-			SubSetInfo *it_subsetinfo = &it_MeshInfo->SubSets[k];
+			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
+				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
+				bool update = false;
+				for (std::size_t a = 0; a < it_MeshInfo->Shaders.size(); a++) {
+					if (sub_info->Sig == it_MeshInfo->Shaders[a].Sig) {
+						s = &it_MeshInfo->Shaders[a];
+						break;
+					}
+				}
+				if (Sig != s->Sig)
+					update = true;							
 
-			TextureD3D *texd3d = dynamic_cast<TextureD3D*>(it_subsetinfo->DiffTex);
-			D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
-			D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+				if (update) {
+					D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+					D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+					D3D11DeviceContext->IASetInputLayout(it_MeshInfo->Layout.Get());					
+				}
 
-			D3D11DeviceContext->IASetIndexBuffer(it_subsetinfo->IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+				D3D11DeviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
+				D3D11DeviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+				D3D11DeviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
 
-			D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			D3D11DeviceContext->DrawIndexed(it_subsetinfo->NumVertex, 0, 0);
-		}
-	}
+				TextureD3D *texd3d = dynamic_cast<TextureD3D*>(sub_info->DiffuseTex);
+				D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+				D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+				D3D11DeviceContext->IASetIndexBuffer(sub_info->IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+				D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+				}
+			}
 #endif
 }
 

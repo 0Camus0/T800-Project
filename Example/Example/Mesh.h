@@ -124,10 +124,9 @@ public:
 #endif
 
 	struct SubSetInfo {
+		unsigned int		Sig;
 #ifdef USING_OPENGL_ES
 		unsigned long		VertexAttrib;
-
-		unsigned int		Sig;
 		unsigned int		Id;
 		unsigned int		IdDiffuseTex;
 		unsigned int		IdSpecularTex;
