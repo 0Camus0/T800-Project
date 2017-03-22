@@ -26,7 +26,7 @@ enum {
 
 void TestApp::InitVars() {
 	DtTimer.Init();
-	Position = XVECTOR3(0.0f, 0.05f, 0.0f);
+	Position = XVECTOR3(0.739940f, 0.28170f, -1.69879f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Scaling = XVECTOR3(0.01f, 0.01f, 0.01f);
 	SelectedMesh = 0;
@@ -56,7 +56,7 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
-	int index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
+	int index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	index = PrimitiveMgr.CreateCube();
@@ -105,7 +105,7 @@ void TestApp::OnUpdate() {
 	Pigs[0].TranslateAbsolute(0.0f, 0.0f, 0.0f);
 	Pigs[0].RotateXAbsolute(0.0f);
 	Pigs[0].RotateYAbsolute(0.0f);
-	Pigs[0].RotateXAbsolute(0.0f);
+	Pigs[0].RotateZAbsolute(0.0f);
 	Pigs[0].ScaleAbsolute(0.015f);
 	Pigs[0].Update();
 

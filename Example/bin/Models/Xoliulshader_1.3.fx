@@ -183,15 +183,6 @@ float UIMax = 3.0f;
 float UIStep = 1.0;
 > = 1;
 
-texture AlgoMap : DIFFUSEMAP
-<
-	string name ="";
-	string UIName = "     Algo Map";	
-	int Texcoord = 0;
-
->;
-
-
 //==========DIFFUSEMAP
 
 bool bUseDiffuseMap

@@ -159,6 +159,48 @@ void Mesh::Create(char *filename) {
 						it_subsetinfo->DiffuseTex = tex;
 #endif									  
 					}
+
+					if (mDef->NameParam == "specularMap") {
+						std::string path = RemovePath(mDef->CaseString);
+#if DEBUG_MODEL
+						std::cout << "path[" << path << "]" << std::endl;
+#endif
+#ifdef USING_OPENGL_ES
+						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
+						it_subsetinfo->IdSpecularTex = tex->id;
+#elif defined(USING_D3D11)
+						TextureD3D *tex = dynamic_cast<TextureD3D*>(LoadTex(path, material));
+						it_subsetinfo->SpecularTex = tex;
+#endif									  
+					}
+
+					if (mDef->NameParam == "glossMap") {
+						std::string path = RemovePath(mDef->CaseString);
+#if DEBUG_MODEL
+						std::cout << "path[" << path << "]" << std::endl;
+#endif
+#ifdef USING_OPENGL_ES
+						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
+						it_subsetinfo->IdGlossTex = tex->id;
+#elif defined(USING_D3D11)
+						TextureD3D *tex = dynamic_cast<TextureD3D*>(LoadTex(path, material));
+						it_subsetinfo->GlossfTex = tex;
+#endif									  
+					}
+
+					if (mDef->NameParam == "normalMap") {
+						std::string path = RemovePath(mDef->CaseString);
+#if DEBUG_MODEL
+						std::cout << "path[" << path << "]" << std::endl;
+#endif
+#ifdef USING_OPENGL_ES
+						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
+						it_subsetinfo->IdNormalTex = tex->id;
+#elif defined(USING_D3D11)
+						TextureD3D *tex = dynamic_cast<TextureD3D*>(LoadTex(path, material));
+						it_subsetinfo->NormalTex = tex;
+#endif									  
+					}
 				}
 			}
 			it_subsetinfo->NumTris   = subinfo->NumTris;
@@ -284,6 +326,7 @@ void Mesh::GatherInfo() {
 		MeshInfo tmp;
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		for (int j = 0; j < NumMaterials; j++) {
+			int CurrSig = Sig;
 			xSubsetInfo *subinfo = &it->Subsets[j];
 			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo stmp;
@@ -296,26 +339,26 @@ void Mesh::GatherInfo() {
 				xEffectDefault *mDef = &material->EffectInstance.pDefaults[k];
 				if (mDef->Type == xF::xEFFECTENUM::STDX_STRINGS) {
 					if (mDef->NameParam == "diffuseMap") {
-						Sig |= Signature::DIFFUSE_MAP;
+						CurrSig |= Signature::DIFFUSE_MAP;
 					}
 
 					if (mDef->NameParam == "specularMap") {
-						Sig |= Signature::SPECULAR_MAP;
+						CurrSig |= Signature::SPECULAR_MAP;
 					}
 
 					if (mDef->NameParam == "glossMap") {
-						Sig |= Signature::GLOSS_MAP;
+						CurrSig |= Signature::GLOSS_MAP;
 					}
 
 					if (mDef->NameParam == "normalMap") {
-						Sig |= Signature::NORMAL_MAP;
+						CurrSig |= Signature::NORMAL_MAP;
 					}
 				}
 			}
 
 			bool found=false;
 			for(unsigned int k = 0; k < tmp.Shaders.size(); k++){
-				if(Sig==tmp.Shaders[k].Sig){
+				if(CurrSig==tmp.Shaders[k].Sig){
 					found=true;
 					break;
 				}
@@ -323,27 +366,27 @@ void Mesh::GatherInfo() {
 
 			if(!found){
 				Shader t_sh;
-				t_sh.Sig=Sig;
+				t_sh.Sig= CurrSig;
 				t_sh.MeshIndex=i;
-				if (Sig&Signature::HAS_NORMALS)
+				if (CurrSig&Signature::HAS_NORMALS)
 					Defines += "#define USE_NORMALS\n\n";
-				if (Sig&Signature::HAS_TEXCOORDS0)
+				if (CurrSig&Signature::HAS_TEXCOORDS0)
 					Defines += "#define USE_TEXCOORD0\n\n";
-				if (Sig&Signature::HAS_TEXCOORDS1)
+				if (CurrSig&Signature::HAS_TEXCOORDS1)
 					Defines += "#define USE_TEXCOORD1\n\n";
-				if (Sig&Signature::HAS_TANGENTS)
+				if (CurrSig&Signature::HAS_TANGENTS)
 					Defines += "#define USE_TANGENTS\n\n";
-				if (Sig&Signature::HAS_BINORMALS)
+				if (CurrSig&Signature::HAS_BINORMALS)
 					Defines += "#define USE_BINORMALS\n\n";
-				if (Sig&Signature::DIFFUSE_MAP)
+				if (CurrSig&Signature::DIFFUSE_MAP)
 					Defines += "#define DIFFUSE_MAP\n\n";
-				if (Sig&Signature::SPECULAR_MAP)
+				if (CurrSig&Signature::SPECULAR_MAP)
 					Defines += "#define SPECULAR_MAP\n\n";
-				if (Sig&Signature::GLOSS_MAP)
+				if (CurrSig&Signature::GLOSS_MAP)
 					Defines += "#define GLOSS_MAP\n\n";
-				if (Sig&Signature::NORMAL_MAP)
+				if (CurrSig&Signature::NORMAL_MAP)
 					Defines += "#define NORMAL_MAP\n\n";
-				if (Sig&Signature::REFLECT_MAP)
+				if (CurrSig&Signature::REFLECT_MAP)
 					Defines += "#define REFLECT_MAP\n\n";
 
 				vstr = Defines + vstr;
@@ -432,7 +475,7 @@ void Mesh::GatherInfo() {
 			}
 		
 			
-			stmp.Sig = Sig;
+			stmp.Sig = CurrSig;
 			tmp.SubSets.push_back(stmp);
 		}	
 		Info.push_back(tmp);
@@ -582,10 +625,38 @@ void Mesh::Draw(float *t, float *vp) {
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sub_info->Id);
 
+			int slot_active = GL_TEXTURE0;
+			int index = 0;
 			if(sub_info->IdDiffuseTex!=-1){
-				glActiveTexture(GL_TEXTURE0);
+				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdDiffuseTex);
-				glUniform1i(s->DiffuseTex_loc, 0);
+				glUniform1i(s->DiffuseTex_loc, index);
+				slot_active++;
+				index++;
+			}
+
+			if (sub_info->IdSpecularTex != -1) {
+				glActiveTexture(slot_active);
+				glBindTexture(GL_TEXTURE_2D, sub_info->IdSpecularTex);
+				glUniform1i(s->SpecularTex_loc, index);
+				slot_active++;
+				index++;
+			}
+
+			if (sub_info->IdGlossTex != -1) {
+				glActiveTexture(slot_active);
+				glBindTexture(GL_TEXTURE_2D, sub_info->IdGlossTex);
+				glUniform1i(s->GlossTex_loc, index);
+				slot_active++;
+				index++;
+			}
+
+			if (sub_info->IdNormalTex != -1) {
+				glActiveTexture(slot_active);
+				glBindTexture(GL_TEXTURE_2D, sub_info->IdNormalTex);
+				glUniform1i(s->NormalTex_loc, index);
+				slot_active++;
+				index++;
 			}
 
 			glDrawElements(GL_TRIANGLES, sub_info->NumVertex, GL_UNSIGNED_SHORT, 0);
@@ -662,6 +733,22 @@ void Mesh::Draw(float *t, float *vp) {
 
 				TextureD3D *texd3d = dynamic_cast<TextureD3D*>(sub_info->DiffuseTex);
 				D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+
+				if (s->Sig&Signature::SPECULAR_MAP){
+					texd3d = dynamic_cast<TextureD3D*>(sub_info->SpecularTex);
+					D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d->pSRVTex.GetAddressOf());
+				}
+
+				if (s->Sig&Signature::GLOSS_MAP) {
+					texd3d = dynamic_cast<TextureD3D*>(sub_info->GlossfTex);
+					D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d->pSRVTex.GetAddressOf());
+				}
+
+				if (s->Sig&Signature::NORMAL_MAP) {
+					texd3d = dynamic_cast<TextureD3D*>(sub_info->NormalTex);
+					D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d->pSRVTex.GetAddressOf());
+				}
+
 				D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 
 				D3D11DeviceContext->IASetIndexBuffer(sub_info->IB.Get(), DXGI_FORMAT_R16_UINT, 0);
