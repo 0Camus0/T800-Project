@@ -568,7 +568,7 @@ Frame Plane002 {
 
      EffectParamDWord {
       "NoLighting";
-      1;
+      0;
      }
 
      EffectParamDWord {
@@ -740,6 +740,11 @@ Frame Plane002 {
      EffectParamString {
       "diffuseMap";
       "Grass.tga";
+     }
+	 
+	 EffectParamString {
+      "specularMap";
+      "Black.tga";
      }
 
      EffectParamDWord {
