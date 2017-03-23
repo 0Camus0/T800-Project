@@ -354,6 +354,14 @@ void Mesh::GatherInfo() {
 						CurrSig |= Signature::NORMAL_MAP;
 					}
 				}
+
+				if (mDef->Type == xF::xEFFECTENUM::STDX_DWORDS) {
+					if (mDef->NameParam == "NoLighting") {
+						if (mDef->CaseDWORD == 1) {
+							CurrSig |= Signature::NO_LIGHT_AT_ALL;
+						}
+					}
+				}
 			}
 
 			bool found=false;
@@ -388,6 +396,8 @@ void Mesh::GatherInfo() {
 					Defines += "#define NORMAL_MAP\n\n";
 				if (CurrSig&Signature::REFLECT_MAP)
 					Defines += "#define REFLECT_MAP\n\n";
+				if (CurrSig&Signature::NO_LIGHT_AT_ALL)
+					Defines += "#define NO_LIGHT\n\n";
 
 				vstr = Defines + vstr;
 				fstr = Defines + fstr;
@@ -480,6 +490,9 @@ void Mesh::GatherInfo() {
 		}	
 		Info.push_back(tmp);
 	}
+
+	free(vsSourceP);
+	free(fsSourceP);
 }
 
 Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {
@@ -499,27 +512,28 @@ Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {
 #endif
 		unsigned int id = tex->LoadTexture((char*)p.c_str());
 
+		bool tiled = false;
 		for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
 			xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
 			if (mDef_2->Type == xF::xEFFECTENUM::STDX_DWORDS) {
-				if (mDef_2->NameParam == "Tiled") {
-					int value = mDef_2->CaseDWORD;
-					unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS;
-					if (value)
-						params |= TEXT_BASIC_PARAMS::TILED;
-					else
-						params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
-
-					tex->params = params;
-					tex->SetTextureParams(id);
-				}
-				else {
-					unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS | TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
-					tex->params = params;
-					tex->SetTextureParams(id);
-				}
+				if (mDef_2->NameParam == "Tiled") {					
+					if (mDef_2->CaseDWORD == 1) {
+						tiled = true;
+					}				
+					break;
+				}				
 			}
 		}
+
+		unsigned int params = TEXT_BASIC_PARAMS::MIPMAPS;
+
+		if (tiled)
+			params |= TEXT_BASIC_PARAMS::TILED;
+		else
+			params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
+
+		tex->params = params;
+		tex->SetTextureParams(id);
 
 		if (id != -1) {
 #if DEBUG_MODEL

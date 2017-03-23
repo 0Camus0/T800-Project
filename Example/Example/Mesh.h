@@ -51,6 +51,8 @@ public:
 		HAS_BINORMALS	= 128,
 		HAS_TEXCOORDS0	= 256,
 		HAS_TEXCOORDS1  = 512,
+
+		NO_LIGHT_AT_ALL = 1024
 	};
 
 	struct Shader {

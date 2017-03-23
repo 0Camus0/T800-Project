@@ -568,7 +568,7 @@ Frame Plane002 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -1290,7 +1290,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -1722,7 +1722,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -2154,7 +2154,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -2586,7 +2586,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -3018,7 +3018,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -3450,7 +3450,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
