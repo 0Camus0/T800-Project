@@ -29,7 +29,7 @@ void Win32Framework::InitGlobalVars() {
 
 void Win32Framework::OnCreateApplication(){
 	SDL_Init(SDL_INIT_VIDEO);
-	SDL_WM_SetCaption("UAD Framework Daniel", 0);
+	SDL_WM_SetCaption("T800 Project", 0);
 	int flags = SDL_HWSURFACE;
 	//flags |= SDL_FULLSCREEN;
 	//flags |= SDL_RESIZABLE;
