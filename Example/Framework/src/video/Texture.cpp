@@ -18,6 +18,7 @@
 int		Texture::LoadTexture(char *fn){
 	std::string path = "Textures/";
 	path += std::string(fn);
+	//path += "Checker.tga";
 	int x = 0, y = 0, channels = 0;
 	unsigned char *buffer = stbi_load(path.c_str(), &x, &y, &channels, 0);
 

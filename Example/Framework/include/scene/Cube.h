@@ -20,7 +20,7 @@
 #ifdef USING_OPENGL_ES
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include "TextureGL.h"
+#include <video/TextureGL.h>
 #elif defined(USING_D3D11)
 #include <video\TextureD3D.h>
 #include <D3Dcompiler.h>
