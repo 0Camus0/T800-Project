@@ -1,6 +1,6 @@
-# X-Project
+# T800-Project
 
-X Project is a small framework I started developing for multiple purposes,
+T800 Project is a small framework I started developing for multiple purposes,
 one of them, was to teach the basics of graphics programming. Now is at the
 stage of supporting some functionality like:
 
