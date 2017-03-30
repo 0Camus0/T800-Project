@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_WIN32FRAMEWORK_H
-#define UAD_WIN32FRAMEWORK_H
+#ifndef T800_WIN32FRAMEWORK_H
+#define T800_WIN32FRAMEWORK_H
 
 #include <Config.h>
 

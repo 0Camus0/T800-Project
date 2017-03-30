@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_CORE_H
-#define UAD_CORE_H
+#ifndef T800_CORE_H
+#define T800_CORE_H
 
 #include <Config.h>
 

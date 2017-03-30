@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_PRIMITIVE_INSTANCE_H
-#define UAD_PRIMITIVE_INSTANCE_H
+#ifndef T800_PRIMITIVE_INSTANCE_H
+#define T800_PRIMITIVE_INSTANCE_H
 
 #include <Config.h>
 

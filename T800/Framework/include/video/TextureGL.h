@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_TEXTURE_GL_H
-#define UAD_TEXTURE_GL_H
+#ifndef T800_TEXTURE_GL_H
+#define T800_TEXTURE_GL_H
 
 #include <Config.h>
 

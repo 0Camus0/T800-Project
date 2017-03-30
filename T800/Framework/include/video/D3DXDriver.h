@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_D3DXDRIVER_H
-#define UAD_D3DXDRIVER_H
+#ifndef T800_D3DXDRIVER_H
+#define T800_D3DXDRIVER_H
 
 #include <Config.h>
 
@@ -35,6 +35,10 @@ public:
 	void	DestroyDriver();
 	void	SetWindow(void *window);
 	void	SetDimensions(int, int);
+
+	int 	CreateRT(int nrt, int cf, int df, int w, int h);
+	void	PushRT(int id);
+	void	PopRT();
 
 	void	Clear();
 	void	SwapBuffers();

@@ -1,5 +1,5 @@
-#ifndef UAD_CAMERA_H
-#define UAD_CAMERA_H
+#ifndef T800_CAMERA_H
+#define T800_CAMERA_H
 
 #include <Config.h>
 

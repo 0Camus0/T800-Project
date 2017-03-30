@@ -10,24 +10,4 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef T800_TIMER_H
-#define T800_TIMER_H
-
-#include <Config.h>
-
-#include <windows.h>
-
-class Timer {
-public:
-	void Init();
-	void Update();
-	
-	float	GetDTSecs();
-	
-	LARGE_INTEGER	StartTime;
-	double			Frequency;
-	double			Dt;
-	double			DtSecs;
-};
-
-#endif
+#include <video\D3DXRT.h>

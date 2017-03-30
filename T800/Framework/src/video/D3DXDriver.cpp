@@ -153,3 +153,16 @@ void D3DXDriver::SwapBuffers(){
 	// Swap between back and front buffer
 	DXGISwapchain->Present(0, 0);
 }
+
+int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
+
+	return 0;
+}
+
+void D3DXDriver::PushRT(int id) {
+
+}
+
+void D3DXDriver::PopRT() {
+
+}

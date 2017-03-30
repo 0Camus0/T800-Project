@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_UTILS_GL_H
-#define UAD_UTILS_GL_H
+#ifndef T800_UTILS_GL_H
+#define T800_UTILS_GL_H
 
 #include <Config.h>
 

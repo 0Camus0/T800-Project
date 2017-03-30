@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_SCENEPROPS_H
-#define UAD_SCENEPROPS_H
+#ifndef T800_SCENEPROPS_H
+#define T800_SCENEPROPS_H
 
 #include <Config.h>
 

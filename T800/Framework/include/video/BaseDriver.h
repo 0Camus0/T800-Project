@@ -10,10 +10,42 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_BASEDRIVER_H
-#define UAD_BASEDRIVER_H
+#ifndef T800_BASEDRIVER_H
+#define T800_BASEDRIVER_H
 
 #include <Config.h>
+#include <vector>
+
+struct BaseRT {
+	enum ATTACHMENTS{
+		COLOR0_ATTACHMENT = 1,
+		COLOR1_ATTACHMENT = 2,
+		COLOR2_ATTACHMENT = 4,
+		COLOR3_ATTACHMENT = 8,
+		DEPTH_ATTACHMENT  = 16
+	};
+
+	enum FORMAT {
+		FD16 = 0,
+		F32,
+		RGB8,
+		RGBA8,
+		RGBA32F,
+		BGR8,
+		BGRA8,
+		BGRA32
+	};
+
+	void			LoadRT(int nrt, int cf, int df, int w, int h);
+	virtual void	LoadAPIRT() = 0;
+
+	int ID;
+	int w;
+	int h;
+	int number_RT;
+	int color_format;
+	int depth_format;
+};
 
 class BaseDriver {
 public:
@@ -27,6 +59,13 @@ public:
 	virtual void	SetDimensions(int,int) = 0;
 	virtual void	Clear() = 0;	
 	virtual void	SwapBuffers() = 0;
+
+	virtual int 	CreateRT(int nrt, int cf, int df,int w, int h) = 0;
+	virtual void	PushRT(int id) = 0;
+	virtual void	PopRT() = 0;
+
+
+	std::vector<BaseRT*> RTs;
 };
 
 #endif

@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_INPUT_MANAGER_H
-#define UAD_INPUT_MANAGER_H
+#ifndef T800_INPUT_MANAGER_H
+#define T800_INPUT_MANAGER_H
 
 #include <Config.h>
 

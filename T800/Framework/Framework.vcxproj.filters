@@ -104,6 +104,12 @@
     <ClInclude Include="include\utils\Camera.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\video\GLRT.h">
+      <Filter>Header Files\video</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\D3DXRT.h">
+      <Filter>Header Files\video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
@@ -162,6 +168,15 @@
     </ClCompile>
     <ClCompile Include="src\utils\Camera.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\GLRT.cpp">
+      <Filter>Source Files\video</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\D3DXRT.cpp">
+      <Filter>Source Files\video</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\BaseDriver.cpp">
+      <Filter>Source Files\video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

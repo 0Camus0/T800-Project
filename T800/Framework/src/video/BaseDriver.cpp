@@ -9,25 +9,13 @@
 * ** I do not and will not provide support, this software is "as is"
 * ** Enjoy, learn and share.
 *********************************************************/
+#include <video/BaseDriver.h>
 
-#ifndef T800_TIMER_H
-#define T800_TIMER_H
-
-#include <Config.h>
-
-#include <windows.h>
-
-class Timer {
-public:
-	void Init();
-	void Update();
-	
-	float	GetDTSecs();
-	
-	LARGE_INTEGER	StartTime;
-	double			Frequency;
-	double			Dt;
-	double			DtSecs;
-};
-
-#endif
+void BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
+	this->number_RT = nrt;
+	this->color_format = cf;
+	this->depth_format = df;
+	this->w = w;
+	this->h = h;
+	LoadAPIRT();
+}

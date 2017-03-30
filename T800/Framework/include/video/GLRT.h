@@ -10,24 +10,15 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef T800_TIMER_H
-#define T800_TIMER_H
+#ifndef T800_GLESXRT_H
+#define T800_GLESXRT_H
 
-#include <Config.h>
+#include <video/BaseDriver.h>
 
-#include <windows.h>
-
-class Timer {
+class GLES20RT : public BaseRT {
 public:
-	void Init();
-	void Update();
-	
-	float	GetDTSecs();
-	
-	LARGE_INTEGER	StartTime;
-	double			Frequency;
-	double			Dt;
-	double			DtSecs;
+
 };
+
 
 #endif

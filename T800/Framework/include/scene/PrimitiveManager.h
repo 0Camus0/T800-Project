@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_PRIMITIVEMANAGER_H
-#define UAD_PRIMITIVEMANAGER_H
+#ifndef T800_PRIMITIVEMANAGER_H
+#define T800_PRIMITIVEMANAGER_H
 
 #include <Config.h>
 

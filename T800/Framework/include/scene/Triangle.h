@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_TRIANGLEGL_H
-#define UAD_TRIANGLEGL_H
+#ifndef T800_TRIANGLEGL_H
+#define T800_TRIANGLEGL_H
 
 #include <Config.h>
 

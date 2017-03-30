@@ -126,3 +126,16 @@ void	GLDriver::Clear() {
 void	GLDriver::SwapBuffers() {
 	eglSwapBuffers(eglDisplay, eglSurface);
 }
+
+int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
+
+	return 0;
+}
+
+void GLDriver::PushRT(int id) {
+
+}
+
+void GLDriver::PopRT() {
+
+}

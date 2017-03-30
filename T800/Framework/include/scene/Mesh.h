@@ -10,8 +10,8 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef UAD_MESH_GL_H
-#define UAD_MESH_GL_H
+#ifndef T800_MESH_GL_H
+#define T800_MESH_GL_H
 
 #include <Config.h>
 

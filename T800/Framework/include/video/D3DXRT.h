@@ -10,34 +10,29 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#ifndef T800_TEXTURE_D3D_H
-#define T800_TEXTURE_D3D_H
+#ifndef T800_D3DXRT_H
+#define T800_D3DXRT_H
 
-#include <Config.h>
-
-#include <video\Texture.h>
-
-
+#include <video/BaseDriver.h>
 #include <d3d11.h>
+#include <dxgi.h>
+#include <vector>
+
 #include <wrl.h>
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
+struct D3DX_RT_OBJ {
+	std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
+	std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;
+	ComPtr<ID3D11Texture2D>							D3D11DepthTex;
+	ComPtr<ID3D11DepthStencilView>					D3D11DepthStencilTargetView; 
+};
 
-class TextureD3D : public Texture {
-public:
-	TextureD3D() {}
-
-	void	SetTextureParams(unsigned int &target);
-	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);
-
-	void	LoadAPITexture(unsigned char* buffer);
-	void	LoadAPITextureCompressed(unsigned char* buffer);
-
-	ComPtr<ID3D11Texture2D>				Tex;
-	ComPtr<ID3D11ShaderResourceView>    pSRVTex;
-	ComPtr<ID3D11SamplerState>          pSampler;
+class D3DXRT : public BaseRT {
+	public:
 
 };
+
 
 #endif
