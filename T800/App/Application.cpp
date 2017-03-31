@@ -12,24 +12,13 @@
 
 #include "Application.h"
 
-enum {
-	SCENE = 0,
-	CROC,
-	LINK,
-	HOUSE_L,
-	HOUSE_R,
-	DRONE,
-	CERDO,
-	CERDOLIGHT,
-	TOTAL_INSTANCES
-};
+
 
 void App::InitVars() {
 	DtTimer.Init();
-	Position = XVECTOR3(-0.580896f, 7.552873f, -18.135574f);
+	Position = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
-	Scaling = XVECTOR3(0.1f, 0.1f, 0.1f);
-	SelectedMesh = 0;
+	Scaling = XVECTOR3(1.0f, 1.0f, 1.0f);
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.1f, 10000.0f);
 	Cam.Speed = 100.0f;
@@ -48,28 +37,9 @@ void App::InitVars() {
 
 void App::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
-	
-	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
-	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
-	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
-	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
-	Pigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
-	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	index = PrimitiveMgr.CreateCube();
-	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	
+	int index = PrimitiveMgr.CreateTriangle();
+	Cubes.CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);	
 	PrimitiveMgr.SetSceneProps(&SceneProp);
-
 }
 
 void App::DestroyAssets() {
@@ -84,43 +54,8 @@ void App::OnUpdate() {
 	Cam.Update(DtSecs);
 	VP = Cam.VP;
 
-	int count = 1;
-	Pigs[count].TranslateAbsolute(-15.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
 	
-	Pigs[count].TranslateAbsolute(-5.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
-
-	Pigs[count].TranslateAbsolute(5.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
-
-	Pigs[count].TranslateAbsolute(18.0f, 4.2f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(60.0f);
-	Pigs[count].RotateZAbsolute(90.0f);
-	Pigs[count].ScaleAbsolute(3.0f);
-	Pigs[count].Update();
-	count++;
-
-
-	SceneProp.Lights[0].Position = Position;
-	
-	PrimitiveInst *Sel = &Pigs[5];
+	PrimitiveInst *Sel = &Cubes;
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
 	Sel->RotateYAbsolute(Orientation.y);
@@ -133,11 +68,7 @@ void App::OnUpdate() {
 
 void App::OnDraw() {
 	pFramework->pVideoDriver->Clear();
-	
-	for (int i = 0; i < 6; i++) {
-		Pigs[i].Draw();
-	}
-	
+	Cubes.Draw();	
 	pFramework->pVideoDriver->SwapBuffers();
 	FirstFrame = false;
 }

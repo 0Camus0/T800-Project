@@ -46,9 +46,7 @@ public:
 	void OnReset();
 
 	PrimitiveManager PrimitiveMgr;
-	PrimitiveInst	Cubes[10];
-	PrimitiveInst	Triangles[10];
-	PrimitiveInst   Pigs[10];
+	PrimitiveInst	Cubes;
 
 	Camera			Cam;
 
@@ -65,5 +63,4 @@ public:
 	bool			FirstFrame;
 	Timer			DtTimer;
 	float			DtSecs;
-	int				SelectedMesh;
 };
