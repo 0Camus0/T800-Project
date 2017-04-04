@@ -11,6 +11,8 @@
 *********************************************************/
 
 #include "Application.h"
+#include <video/Texture.h>
+#include <scene/Cube.h>
 
 enum {
 	SCENE = 0,
@@ -43,10 +45,14 @@ void App::InitVars() {
 	SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(1.0f, 1.0f, 1.0f), true);
 	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
 
+	RTIndex = -1;
 	FirstFrame = true;
 }
 
 void App::CreateAssets() {
+
+	pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+
 	PrimitiveMgr.SetVP(&VP);
 	
 	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
@@ -67,9 +73,12 @@ void App::CreateAssets() {
 	index = PrimitiveMgr.CreateCube();
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	
+	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
+
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
+	
 }
 
 void App::DestroyAssets() {
@@ -132,6 +141,14 @@ void App::OnUpdate() {
 }
 
 void App::OnDraw() {
+
+	pFramework->pVideoDriver->PushRT(0);
+	for (int i = 0; i < 5; i++) {
+		Pigs[i].Draw();
+	}
+	pFramework->pVideoDriver->PopRT();
+
+
 	pFramework->pVideoDriver->Clear();
 	
 	for (int i = 0; i < 6; i++) {

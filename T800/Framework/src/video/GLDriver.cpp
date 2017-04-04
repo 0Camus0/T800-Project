@@ -139,3 +139,7 @@ void GLDriver::PushRT(int id) {
 void GLDriver::PopRT() {
 
 }
+
+void GLDriver::DestroyRTs() {
+
+}

@@ -39,6 +39,7 @@ public:
 	int 	CreateRT(int nrt, int cf, int df, int w, int h);
 	void	PushRT(int id);
 	void	PopRT();
+	void	DestroyRTs();
 
 	void	Clear();
 	void	SwapBuffers();

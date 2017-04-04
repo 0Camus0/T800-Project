@@ -11,6 +11,7 @@
 *********************************************************/
 
 #include <video\D3DXDriver.h>
+#include <video\D3DXRT.h>
 
 #include <iostream>
 #include <string>
@@ -155,14 +156,50 @@ void D3DXDriver::SwapBuffers(){
 }
 
 int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
-
-	return 0;
+	D3DXRT	*pRT = new D3DXRT;
+	if (w == 0)
+		w = Width;
+	if (h == 0)
+		h = Height;
+	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+		RTs.push_back(pRT);
+		return (RTs.size() - 1);
+	}
+	else {
+		delete pRT;
+	}
+	return -1;
 }
 
 void D3DXDriver::PushRT(int id) {
+	if (id < 0 || id >= (int)RTs.size())
+		return;
+
+	D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
+	
+	D3D11DeviceContext->OMSetRenderTargets(1, pRT->vD3D11RenderTargetView[0].GetAddressOf(), pRT->D3D11DepthStencilTargetView.Get());
+	
+	float rgba[4];
+	rgba[0] = 0.5f;
+	rgba[1] = 0.5f;
+	rgba[2] = 0.5f;
+	rgba[3] = 1.0f;
+
+	for (int i = 0; i < pRT->number_RT; i++) {
+		D3D11DeviceContext->ClearRenderTargetView(pRT->vD3D11RenderTargetView[i].Get(), rgba);
+	}
+	
+	D3D11DeviceContext->ClearDepthStencilView(pRT->D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 }
 
 void D3DXDriver::PopRT() {
+	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
+}
 
+void D3DXDriver::DestroyRTs() {
+	for (unsigned int i = 0; i < RTs.size(); i++) {
+		D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[i]);
+		delete pRT;
+	}
 }

@@ -11,11 +11,11 @@
 *********************************************************/
 #include <video/BaseDriver.h>
 
-void BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
+bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
 	this->number_RT = nrt;
 	this->color_format = cf;
 	this->depth_format = df;
 	this->w = w;
 	this->h = h;
-	LoadAPIRT();
+	return LoadAPIRT();
 }

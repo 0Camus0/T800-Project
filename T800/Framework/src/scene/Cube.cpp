@@ -351,6 +351,7 @@ void Cube::Draw(float *t,float *vp) {
 	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 
 	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
+//	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
 	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 

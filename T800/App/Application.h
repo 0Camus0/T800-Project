@@ -66,4 +66,5 @@ public:
 	Timer			DtTimer;
 	float			DtSecs;
 	int				SelectedMesh;
+	int				RTIndex;
 };

@@ -14,6 +14,8 @@
 #define T800_D3DXRT_H
 
 #include <video/BaseDriver.h>
+#include <video/TextureD3D.h>
+
 #include <d3d11.h>
 #include <dxgi.h>
 #include <vector>
@@ -22,16 +24,15 @@
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
-struct D3DX_RT_OBJ {
-	std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
-	std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;
-	ComPtr<ID3D11Texture2D>							D3D11DepthTex;
-	ComPtr<ID3D11DepthStencilView>					D3D11DepthStencilTargetView; 
-};
 
 class D3DXRT : public BaseRT {
 	public:
+		bool			LoadAPIRT();
 
+		std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
+		std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;		
+		ComPtr<ID3D11Texture2D>							D3D11DepthTex;
+		ComPtr<ID3D11DepthStencilView>					D3D11DepthStencilTargetView;
 };
 
 

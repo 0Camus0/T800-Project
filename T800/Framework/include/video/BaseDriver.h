@@ -14,6 +14,7 @@
 #define T800_BASEDRIVER_H
 
 #include <Config.h>
+#include <video/Texture.h>
 #include <vector>
 
 struct BaseRT {
@@ -36,15 +37,17 @@ struct BaseRT {
 		BGRA32
 	};
 
-	void			LoadRT(int nrt, int cf, int df, int w, int h);
-	virtual void	LoadAPIRT() = 0;
+	bool			LoadRT(int nrt, int cf, int df, int w, int h);
+	virtual bool	LoadAPIRT() = 0;
 
-	int ID;
 	int w;
 	int h;
 	int number_RT;
 	int color_format;
 	int depth_format;
+
+	std::vector<Texture*>							vColorTextures;
+	Texture*										pDepthTexture;
 };
 
 class BaseDriver {
@@ -63,6 +66,7 @@ public:
 	virtual int 	CreateRT(int nrt, int cf, int df,int w, int h) = 0;
 	virtual void	PushRT(int id) = 0;
 	virtual void	PopRT() = 0;
+	virtual void	DestroyRTs() = 0;
 
 
 	std::vector<BaseRT*> RTs;
