@@ -73,9 +73,6 @@ void App::CreateAssets() {
 	index = PrimitiveMgr.CreateCube();
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
-
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
 	
@@ -142,11 +139,6 @@ void App::OnUpdate() {
 
 void App::OnDraw() {
 
-	pFramework->pVideoDriver->PushRT(0);
-	for (int i = 0; i < 5; i++) {
-		Pigs[i].Draw();
-	}
-	pFramework->pVideoDriver->PopRT();
 
 
 	pFramework->pVideoDriver->Clear();

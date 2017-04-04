@@ -50,7 +50,7 @@ void Mesh::Create(char *filename) {
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 		MeshInfo  *it_MeshInfo = &Info[i];
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 
 #elif defined(USING_D3D11)
 		int offset = 0;
@@ -151,7 +151,7 @@ void Mesh::Create(char *filename) {
 					#if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 					#endif
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
 						it_subsetinfo->IdDiffuseTex = tex->id;
 #elif defined(USING_D3D11)
@@ -165,7 +165,7 @@ void Mesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
 						it_subsetinfo->IdSpecularTex = tex->id;
 #elif defined(USING_D3D11)
@@ -179,7 +179,7 @@ void Mesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
 						it_subsetinfo->IdGlossTex = tex->id;
 #elif defined(USING_D3D11)
@@ -193,7 +193,7 @@ void Mesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 						TextureGL *tex = dynamic_cast<TextureGL*>(LoadTex(path, material));
 						it_subsetinfo->IdNormalTex = tex->id;
 #elif defined(USING_D3D11)
@@ -228,7 +228,7 @@ void Mesh::Create(char *filename) {
 					#endif
 				}
 			}
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 			glGenBuffers(1, &it_subsetinfo->Id);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, it_subsetinfo->Id);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, it_subsetinfo->NumTris * 3 * sizeof(unsigned short), tmpIndexex, GL_STATIC_DRAW);
@@ -249,7 +249,7 @@ void Mesh::Create(char *filename) {
 		}		
 
 		it_MeshInfo->VertexSize = it->VertexSize;
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		glGenBuffers(1, &it_MeshInfo->Id);
 		glBindBuffer(GL_ARRAY_BUFFER, it_MeshInfo->Id);
 		glBufferData(GL_ARRAY_BUFFER, pActual->NumVertices*it->VertexSize, &it->pData[0], GL_STATIC_DRAW);
@@ -275,7 +275,7 @@ void Mesh::Create(char *filename) {
 		}	
 #endif
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		glGenBuffers(1, &it_MeshInfo->IdIBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, it_MeshInfo->IdIBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, pActual->Triangles.size() * sizeof(unsigned short), &pActual->Triangles[0], GL_STATIC_DRAW);
@@ -298,7 +298,7 @@ void Mesh::Create(char *filename) {
 }
 
 void Mesh::GatherInfo() {
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
 	char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
 #elif defined(USING_D3D11)
@@ -401,7 +401,7 @@ void Mesh::GatherInfo() {
 
 				vstr = Defines + vstr;
 				fstr = Defines + fstr;
-				#ifdef USING_OPENGL_ES
+				#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 				unsigned int ShaderProg = glCreateProgram();
 				t_sh.ShaderProg = ShaderProg;
 
@@ -505,7 +505,7 @@ Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {
 		}
 	}
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		Texture *tex = new TextureGL;
 #elif defined(USING_D3D11)
 		Texture *tex = new TextureD3D;
@@ -558,7 +558,7 @@ void Mesh::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	for (std::size_t i = 0; i <  xFile.MeshInfo.size();  i++) {
 		XMATRIX44 VP = XMATRIX44(vp);
 		XMATRIX44 WVP = transform*VP;
@@ -790,7 +790,7 @@ void Mesh::Draw(float *t, float *vp) {
 }
 
 void Mesh::Destroy() {
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 		MeshInfo  *it_MeshInfo = &Info[i];
 		glDeleteProgram(it_MeshInfo->ShaderProg);

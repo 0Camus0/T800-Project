@@ -11,17 +11,19 @@
 *********************************************************/
 
 #ifndef T800_CONFIG_H
-#define T800_CONFIG_H
+	#define T800_CONFIG_H
 
-#define D3DX 1
-#define OGLES 2
+	#define D3DX 1
+	#define OGLES 2
+	#define OGL 3
 
-#define DRIVER_SELECTED D3DX
+	#define DRIVER_SELECTED OGL
 
-#if   DRIVER_SELECTED == OGLES
-#define USING_OPENGL_ES
-#elif DRIVER_SELECTED == D3DX
-#define USING_D3D11
-#endif
-
+	#if   DRIVER_SELECTED == OGLES
+		#define USING_OPENGL_ES
+	#elif DRIVER_SELECTED == D3DX
+		#define USING_D3D11
+	#elif DRIVER_SELECTED == OGL
+		#define USING_OPENGL
+	#endif
 #endif

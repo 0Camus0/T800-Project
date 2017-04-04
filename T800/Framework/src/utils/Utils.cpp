@@ -14,7 +14,7 @@
 #include <stdio.h>    
 #include <stdlib.h>
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 void checkcompilederrors(GLuint shader, GLenum type) {
 	GLint bShaderCompiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &bShaderCompiled);

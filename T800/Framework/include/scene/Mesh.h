@@ -19,6 +19,8 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <video/TextureGL.h>
+#elif defined(USING_OPENGL)
+#include <video/TextureGL.h>
 #elif defined(USING_D3D11)
 #include <video\TextureD3D.h>
 #include <D3Dcompiler.h>
@@ -59,7 +61,7 @@ public:
 	struct Shader {
 		Shader() : Sig(0), MeshIndex(0){
 #ifdef USING_D3D11
-#elif defined(USING_OPENGL_ES)
+#elif defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 			matWorldViewProjUniformLoc = -1;
 			matWorldUniformLoc = -1;
 
@@ -88,7 +90,7 @@ public:
 		ComPtr<ID3D11PixelShader>   pFS;
 		ComPtr<ID3DBlob>            VS_blob;
 		ComPtr<ID3DBlob>            FS_blob;
-#elif defined(USING_OPENGL_ES)
+#elif defined(USING_OPENGL_ES) || defined(USING_OPENGL)
 		unsigned int ShaderProg;
 
 		int			 matWorldViewProjUniformLoc;
@@ -128,7 +130,7 @@ public:
 
 	struct SubSetInfo {
 		unsigned int		Sig;
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		unsigned long		VertexAttrib;
 		unsigned int		Id;
 		unsigned int		IdDiffuseTex;
@@ -157,7 +159,7 @@ public:
 		unsigned int			 VertexSize;
 		unsigned int			 NumVertex;
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		unsigned int			 Id;
 		unsigned int			 IdIBO;
 

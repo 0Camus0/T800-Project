@@ -16,10 +16,18 @@
 #include <Config.h>
 
 #include <video\BaseDriver.h>
-
+#if defined(USING_OPENGL_ES)
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#pragma comment(lib,"libEGL.lib")
+#pragma comment(lib,"libGLESv2.lib")
+#else defined(USING_OPENGL)
+#include <GL/glew.h>
+#include <SDL/SDL.h>
+#pragma comment(lib,"glew.lib")
+#pragma comment(lib,"OpenGL32.Lib")
+#endif
 
 class GLDriver : public BaseDriver {
 public:
@@ -39,14 +47,14 @@ public:
 
 	void	Clear();
 	void	SwapBuffers();
-
+#if defined(USING_OPENGL_ES)
 	EGLDisplay			eglDisplay;
 	EGLConfig			eglConfig;
 	EGLSurface			eglSurface;
 	EGLContext			eglContext;
 
 	EGLNativeWindowType	eglWindow;
-
+#endif
 };
 
 #endif

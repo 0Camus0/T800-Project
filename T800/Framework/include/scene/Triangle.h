@@ -18,6 +18,8 @@
 #ifdef USING_OPENGL_ES
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
 #elif defined(USING_D3D11)
 #include <video\TextureD3D.h>
 #include <D3Dcompiler.h>
@@ -54,7 +56,7 @@ struct triVertex {
 class Trangle : public PrimitiveBase {
 public:
 	Trangle()
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		: shaderID(0) {}
 #elif defined(USING_D3D11)
 	{}
@@ -73,7 +75,7 @@ public:
 	void Draw(float *t,float *vp);
 	void Destroy();
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	GLuint	shaderID;
 	GLuint	vertexAttribLoc;
 	GLuint	colorAttribLoc;

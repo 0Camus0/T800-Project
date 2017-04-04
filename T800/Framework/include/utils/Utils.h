@@ -17,9 +17,14 @@
 
 #include <stdio.h>
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#else defined(USING_OPENGL)
+#include <GL/glew.h>
+#endif
+
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 
 void checkcompilederrors(GLuint shader, GLenum type);
 GLuint createShader(GLenum type, char* pSource);
