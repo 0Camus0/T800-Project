@@ -14,10 +14,20 @@
 #define T800_GLESXRT_H
 
 #include <video/BaseDriver.h>
+#include <vector>
+
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 
 class GLES20RT : public BaseRT {
 public:
 
+	bool	LoadAPIRT();
+
+	std::vector<GLuint>		vFrameBuffers;
+	std::vector<GLuint>		vGLColorTex;
+	GLuint					DepthFrameBuffer;
+	GLuint					DepthTexture;
 };
 
 
