@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include <core\Win32Framework.h>
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 #include <video\GLDriver.h>
 #elif defined(USING_D3D11)
 #include <video\D3DXDriver.h>
@@ -28,20 +28,29 @@ void Win32Framework::InitGlobalVars() {
 }
 
 void Win32Framework::OnCreateApplication(){
-	SDL_Init(SDL_INIT_VIDEO);
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		printf("Video initialization failed: %s\n",SDL_GetError());
+	}
 	SDL_WM_SetCaption("T800 Project", 0);
 	int flags = SDL_HWSURFACE;
+#if defined(USING_OPENGL)
+	flags = flags|SDL_OPENGL;
+#endif
 	//flags |= SDL_FULLSCREEN;
 	//flags |= SDL_RESIZABLE;
 	int width = 1280;
 	int height = 720;
-	SDL_SetVideoMode(width, height, 32, flags);
-#ifdef USING_OPENGL_ES
+	if (SDL_SetVideoMode(width, height, 32, flags) == 0) {
+		printf( "Video mode set failed: %s\n",SDL_GetError());
+	}
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	pVideoDriver = new GLDriver;
 #elif defined(USING_D3D11)
 	pVideoDriver = new D3DXDriver;
 	pVideoDriver->SetDimensions(width, height);
 #endif
+
+
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 

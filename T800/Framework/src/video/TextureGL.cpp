@@ -12,8 +12,12 @@
 
 #include <video\TextureGL.h>
 
+#if defined(USING_OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#else defined(USING_OPENGL)
+#include <GL/glew.h>
+#endif
 
 void	TextureGL::SetTextureParams(unsigned int &target) {
 

@@ -15,20 +15,31 @@
 #include <iostream>
 #include <string>
 
+#if defined(USING_OPENGL_ES)
+#pragma comment(lib,"libEGL.lib")
+#pragma comment(lib,"libGLESv2.lib")
+#else defined(USING_OPENGL)
+#pragma comment(lib,"glew.lib")
+#pragma comment(lib,"OpenGL32.Lib")
+#endif
+
+#if defined(USING_OPENGL_ES)
 void EGLError(const char* c_ptr) {
+
 	EGLint iErr = eglGetError();
 	if (iErr != EGL_SUCCESS) {
 		std::cout << "EGL CALL: " << c_ptr << " Error Code: " << iErr << std::endl;
 	}
-}
 
+}
 bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
 {
 	*nativedisp_out = (EGLNativeDisplayType)NULL;
 	return true;
 }
-
+#endif
 void	GLDriver::InitDriver() {
+#if defined(USING_OPENGL_ES)
 	EGLint numConfigs;
 
 	EGLNativeDisplayType nativeDisplay;
@@ -81,6 +92,19 @@ void	GLDriver::InitDriver() {
 
 	eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
 	eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
+#else defined(USING_OPENGL)
+	GLenum err = glewInit();
+	if (GLEW_OK != err) {
+		printf("Error: %s\n", glewGetErrorString(err));
+	}
+	else {
+		printf("GLEW OK\n");
+	}
+	SDL_Surface *sur = SDL_GetVideoSurface();	
+	width = sur->w;
+	height = sur->h;
+#endif
+	 
 	
 	std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
 	std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
@@ -107,13 +131,17 @@ void	GLDriver::Update() {
 }
 
 void	GLDriver::DestroyDriver() {
+#if defined(USING_OPENGL_ES)
 	eglDestroySurface(eglDisplay, eglSurface);
 	eglDestroyContext(eglDisplay, eglContext);
 	eglTerminate(eglDisplay);
+#endif
 }
 
 void	GLDriver::SetWindow(void *window) {
+#if defined(USING_OPENGL_ES)
 	eglWindow = GetActiveWindow();
+#endif
 }
 
 void	GLDriver::SetDimensions(int w, int h){
@@ -127,7 +155,11 @@ void	GLDriver::Clear() {
 }
 
 void	GLDriver::SwapBuffers() {
+#if defined(USING_OPENGL_ES)
 	eglSwapBuffers(eglDisplay, eglSurface);
+#elif defined(USING_OPENGL)
+	SDL_GL_SwapBuffers();
+#endif
 }
 
 int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {

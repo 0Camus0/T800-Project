@@ -21,6 +21,9 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <video/TextureGL.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
+#include <video/TextureGL.h>
 #elif defined(USING_D3D11)
 #include <video\TextureD3D.h>
 #include <D3Dcompiler.h>
@@ -42,7 +45,7 @@ struct CVertex {
 class Cube : public PrimitiveBase {
 public:
 	Cube() 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	: shaderID(0)
 #endif
 	 {}
@@ -60,7 +63,7 @@ public:
 	void Draw(float *t,float *vp);
 	void Destroy();
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	GLuint	shaderID;
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;

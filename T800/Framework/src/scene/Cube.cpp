@@ -18,7 +18,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
 void Cube::Create() {
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	tex = new TextureGL;
 #elif defined(USING_D3D11)
 	tex = new TextureD3D;
@@ -28,7 +28,7 @@ void Cube::Create() {
 		delete tex;
 	}
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("Shaders/VS.glsl");
@@ -202,7 +202,7 @@ void Cube::Create() {
 		indices[i+2] = id0;
 	}
 
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(CVertex), &vertices[0], GL_STATIC_DRAW);
@@ -281,7 +281,7 @@ void Cube::Transform(float *t) {
 }
 
 void Cube::Draw(float *t,float *vp) {
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	glUseProgram(shaderID);
 
 	if (t)
@@ -367,7 +367,7 @@ void Cube::Draw(float *t,float *vp) {
 }
 
 void Cube::Destroy() {
-#ifdef USING_OPENGL_ES
+#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	glDeleteProgram(shaderID);
 #elif defined(USING_D3D11)
 #endif
