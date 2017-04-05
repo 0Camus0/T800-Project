@@ -46,6 +46,9 @@ public:
 	EGLContext			eglContext;
 
 	EGLNativeWindowType	eglWindow;
+	GLint				CurrentFBO;
+
+	int	width, height;
 
 };
 

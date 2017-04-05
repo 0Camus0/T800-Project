@@ -11,6 +11,7 @@
 *********************************************************/
 
 #include <video\GLDriver.h>
+#include <video\GLRT.h>
 #include <iostream>
 #include <string>
 
@@ -28,7 +29,7 @@ bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
 }
 
 void	GLDriver::InitDriver() {
-	EGLint numConfigs, w, h;
+	EGLint numConfigs;
 
 	EGLNativeDisplayType nativeDisplay;
 
@@ -78,8 +79,8 @@ void	GLDriver::InitDriver() {
 		return;
 	}
 
-	eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &w);
-	eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &h);
+	eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
+	eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
 	
 	std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
 	std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
@@ -89,6 +90,8 @@ void	GLDriver::InitDriver() {
 	glClearDepthf(1.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);
 }
 
 void	GLDriver::CreateSurfaces() {
@@ -128,16 +131,36 @@ void	GLDriver::SwapBuffers() {
 }
 
 int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
-
-	return 0;
+	GLES20RT	*pRT = new GLES20RT;
+	if (w == 0)
+		w = width;
+	if (h == 0)
+		h = height;
+	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+		RTs.push_back(pRT);
+		return (RTs.size() - 1);
+	}
+	else {
+		delete pRT;
+	}
+	return -1;
 }
 
 void GLDriver::PushRT(int id) {
+	if (id < 0 || id >= (int)RTs.size())
+		return;
 
+	GLES20RT *pRT = dynamic_cast<GLES20RT*>(RTs[id]);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, pRT->vFrameBuffers[0]);
+
+	glClearColor(0.5, 0.5, 0.5, 1.0);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLDriver::PopRT() {
-
+	glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
 }
 
 void GLDriver::DestroyRTs() {

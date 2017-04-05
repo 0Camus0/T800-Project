@@ -75,6 +75,7 @@ void App::CreateAssets() {
 
 	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
 	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
+	//cube->tex = pFramework->pVideoDriver->RTs[0]->pDepthTexture;
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 

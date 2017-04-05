@@ -313,7 +313,7 @@ void Cube::Draw(float *t,float *vp) {
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, TexId);
+	glBindTexture(GL_TEXTURE_2D, tex->id);
 	glUniform1i(diffuseLoc, 0);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
