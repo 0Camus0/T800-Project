@@ -1,4 +1,14 @@
+#ifndef lowp 
+#define lowp
+#endif
 
+#ifndef mediump 
+#define mediump
+#endif
+
+#ifndef highp 
+#define highp
+#endif
 
 uniform mediump sampler2D DiffuseTex;
 
@@ -76,6 +86,11 @@ varying highp vec4 hbinormal;
 
 
 varying highp vec4 wPos;
+
+layout(location = 0) out vec4 out_color;
+layout(location = 1) out vec4 out_r;
+layout(location = 2) out vec4 out_g;
+layout(location = 3) out vec4 out_b;
 
 void main(){
 
@@ -195,5 +210,12 @@ void main(){
 		#endif
 	#endif
 #endif
-	gl_FragColor = color;
+//	gl_FragColor = color;
+	gl_FragData[0] = color;
+	#ifdef NORMAL_MAP	
+	gl_FragData[1] = vec4(normal,1.0 );
+	#endif
+	gl_FragData[2] = vec4( vec3(1.0,1.0,1.0) - color.xyz ,1.0 );
+	gl_FragData[3] = vec4(0.0,0.0,1.0,1.0 );
+
 }

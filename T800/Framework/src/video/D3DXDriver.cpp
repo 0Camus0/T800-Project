@@ -177,7 +177,12 @@ void D3DXDriver::PushRT(int id) {
 
 	D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
 	
-	D3D11DeviceContext->OMSetRenderTargets(1, pRT->vD3D11RenderTargetView[0].GetAddressOf(), pRT->D3D11DepthStencilTargetView.Get());
+	ID3D11RenderTargetView **RTVA[4];
+	for (int i = 0; i < pRT->number_RT; i++) {
+		RTVA[i] = pRT->vD3D11RenderTargetView[i].GetAddressOf();
+	}
+
+	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
 	
 	float rgba[4];
 	rgba[0] = 0.5f;

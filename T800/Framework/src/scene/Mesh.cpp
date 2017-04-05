@@ -558,6 +558,11 @@ void Mesh::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 
+#ifdef USING_OPENGL
+	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,  GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, drawBuffers);
+#endif
+
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 	for (std::size_t i = 0; i <  xFile.MeshInfo.size();  i++) {
 		XMATRIX44 VP = XMATRIX44(vp);

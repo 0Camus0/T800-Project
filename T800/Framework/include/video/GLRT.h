@@ -31,7 +31,6 @@ public:
 
 	std::vector<GLuint>		vFrameBuffers;
 	std::vector<GLuint>		vGLColorTex;
-	GLuint					DepthFrameBuffer;
 	GLuint					DepthTexture;
 };
 

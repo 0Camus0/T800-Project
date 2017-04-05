@@ -83,7 +83,14 @@ struct VS_OUTPUT{
 	float4 wPos		: TEXCOORD1;
 };
 
-float4 FS( VS_OUTPUT input ) : SV_TARGET  {
+struct FS_OUT{
+	float4 color0 : SV_TARGET0;
+	float4 color1 : SV_TARGET1;
+	float4 color2 : SV_TARGET2;
+	float4 color3 : SV_TARGET3;
+};
+
+FS_OUT FS( VS_OUTPUT input )   {
     float4  color = float4(0.5,0.5,0.5,1.0);
 	float4  Final = float4(0.0,0.0,0.0,1.0);
 #ifdef USE_TEXCOORD0
@@ -200,5 +207,14 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	#endif
 #endif		
 	
-    return color;
+	FS_OUT sout;
+	sout.color0 = color;
+	#ifdef NORMAL_MAP
+	sout.color1 = float4(normal,1.0);
+	#endif
+
+	sout.color2 = float4(1.0,0.0,0.0,1.0);
+	sout.color3 = float4(1.0,0.0,0.0,1.0);
+	
+    return sout;
 }

@@ -51,7 +51,7 @@ void App::InitVars() {
 
 void App::CreateAssets() {
 
-	pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 	PrimitiveMgr.SetVP(&VP);
 	
@@ -74,7 +74,7 @@ void App::CreateAssets() {
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[2];
 	//cube->tex = pFramework->pVideoDriver->RTs[0]->pDepthTexture;
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
