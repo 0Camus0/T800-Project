@@ -1,15 +1,3 @@
-#ifndef lowp 
-#define lowp
-#endif
-
-#ifndef mediump 
-#define mediump
-#endif
-
-#ifndef highp 
-#define highp
-#endif
-
 uniform mediump sampler2D DiffuseTex;
 
 #ifdef SPECULAR_MAP
@@ -86,11 +74,6 @@ varying highp vec4 hbinormal;
 
 
 varying highp vec4 wPos;
-
-layout(location = 0) out vec4 out_color;
-layout(location = 1) out vec4 out_r;
-layout(location = 2) out vec4 out_g;
-layout(location = 3) out vec4 out_b;
 
 void main(){
 
