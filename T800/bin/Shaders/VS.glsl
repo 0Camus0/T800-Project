@@ -9,5 +9,6 @@ uniform highp mat4 World;
 
 void main(){
 	vecUVCoords	= UV;
+	vecUVCoords.y = 1.0 - vecUVCoords.y;
 	gl_Position = WVP*Vertex;
 }
