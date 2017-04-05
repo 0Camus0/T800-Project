@@ -35,11 +35,13 @@ void Win32Framework::OnCreateApplication(){
 	int flags = SDL_HWSURFACE;
 #if defined(USING_OPENGL)
 	flags = flags|SDL_OPENGL;
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 #endif
 	//flags |= SDL_FULLSCREEN;
 	//flags |= SDL_RESIZABLE;
 	int width = 1280;
 	int height = 720;
+	
 	if (SDL_SetVideoMode(width, height, 32, flags) == 0) {
 		printf( "Video mode set failed: %s\n",SDL_GetError());
 	}
