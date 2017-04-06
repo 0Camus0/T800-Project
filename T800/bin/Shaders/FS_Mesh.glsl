@@ -193,12 +193,32 @@ void main(){
 		#endif
 	#endif
 #endif
-//	gl_FragColor = color;
+
+
+#ifdef NO_LIGHT
 	gl_FragData[0] = color;
-	#ifdef NORMAL_MAP	
-	gl_FragData[1] = vec4(normal,1.0 );
+	gl_FragData[1] = vec4(0.5,0.5,0.5,1.0 );
+	gl_FragData[2] = vec4(normalize(hnormal).xyz*0.5 + 0.5,1.0 );
+	gl_FragData[1] = vec4(0.5,0.5,0.5,1.0 );
+#else
+	gl_FragData[0] = color;
+	
+	#ifdef DIFFUSE
+	gl_FragData[1] = vec4(Fresnel.xyz, 1.0 );
 	#endif
-	gl_FragData[2] = vec4( vec3(1.0,1.0,1.0) - color.xyz ,1.0 );
-	gl_FragData[3] = vec4(0.0,0.0,1.0,1.0 );
+	
+	#ifdef NORMAL_MAP	
+	gl_FragData[2] = vec4(normal.xyz*0.5+0.5,1.0 );
+	#else
+	gl_FragData[2] = vec4(normalize(hnormal).xyz*0.5+0.5,1.0 );
+	#endif
+	
+	#ifdef SPECULAR
+	gl_FragData[3] = vec4(Specular.xyz ,1.0 );
+	#else
+	
+	#endif
+#endif
+	
 
 }

@@ -206,15 +206,27 @@ FS_OUT FS( VS_OUTPUT input )   {
 		#endif
 	#endif
 #endif		
-	
 	FS_OUT sout;
+#ifdef NO_LIGHT
 	sout.color0 = color;
-	#ifdef NORMAL_MAP
-	sout.color1 = float4(normal,1.0);
-	#endif
-
-	sout.color2 = float4(1.0,0.0,0.0,1.0);
-	sout.color3 = float4(1.0,0.0,0.0,1.0);
+	sout.color2 = float4(normalize(input.hnormal).xyz*0.5+0.5,1.0 );
+#else
+	sout.color0 = color;
 	
-    return sout;
+	#ifdef DIFFUSE
+	sout.color1 = float4(Fresnel.xyz, 1.0 );
+	#endif
+	
+	#ifdef NORMAL_MAP	
+	sout.color2 = float4(normal.xyz*0.5+0.5,1.0 );
+	#else
+	sout.color2 = float4(normalize(input.hnormal).xyz*0.5+0.5,1.0 );
+	#endif
+	
+	#ifdef SPECULAR
+	sout.color3 = float4(Specular.xyz ,1.0 );
+	#endif
+#endif
+
+	return sout;
 }

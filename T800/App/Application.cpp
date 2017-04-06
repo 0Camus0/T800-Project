@@ -28,9 +28,9 @@ enum {
 
 void App::InitVars() {
 	DtTimer.Init();
-	Position = XVECTOR3(-0.580896f, 7.552873f, -18.135574f);
+	Position = XVECTOR3(0.0f, 10.0f, -5.0f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
-	Scaling = XVECTOR3(0.1f, 0.1f, 0.1f);
+	Scaling = XVECTOR3(4.0f,4.0f,4.0f);
 	SelectedMesh = 0;
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.1f, 10000.0f);
@@ -72,11 +72,30 @@ void App::CreateAssets() {
 
 	index = PrimitiveMgr.CreateCube();
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
 	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[2];
-	//cube->tex = pFramework->pVideoDriver->RTs[0]->pDepthTexture;
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
 
+	index = PrimitiveMgr.CreateCube();
+	Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[1];
+
+	index = PrimitiveMgr.CreateCube();
+	Pigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[2];
+
+	index = PrimitiveMgr.CreateCube();
+	Pigs[8].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
+	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[3];
+
+	index = PrimitiveMgr.CreateCube();
+	Pigs[9].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
+	cube->tex = pFramework->pVideoDriver->RTs[0]->pDepthTexture;
+	
+	
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
 	
@@ -127,9 +146,51 @@ void App::OnUpdate() {
 	Pigs[count].Update();
 	count++;
 
+	// Cubes
+	Pigs[count].TranslateAbsolute(-15.0f + Position.x, 0.0f + Position.y, 3.0f + Position.z);
+	Pigs[count].RotateXAbsolute(Orientation.x);
+	Pigs[count].RotateYAbsolute(Orientation.y);
+	Pigs[count].RotateZAbsolute(Orientation.z);
+	Pigs[count].ScaleAbsolute(Scaling.x);
+	Pigs[count].Update();
+	count++;
+
+	Pigs[count].TranslateAbsolute(-5.0f + Position.x, 0.0f + Position.y, 3.0f + Position.z);
+	Pigs[count].RotateXAbsolute(Orientation.x);
+	Pigs[count].RotateYAbsolute(Orientation.y);
+	Pigs[count].RotateZAbsolute(Orientation.z);
+	Pigs[count].ScaleAbsolute(Scaling.x);
+	Pigs[count].Update();
+	count++;
+
+	Pigs[count].TranslateAbsolute(5.0f + Position.x, 0.0f + Position.y, 3.0f + Position.z);
+	Pigs[count].RotateXAbsolute(Orientation.x);
+	Pigs[count].RotateYAbsolute(Orientation.y);
+	Pigs[count].RotateZAbsolute(Orientation.z);
+	Pigs[count].ScaleAbsolute(Scaling.x);
+	Pigs[count].Update();
+	count++;
+
+	Pigs[count].TranslateAbsolute(15.0f + Position.x, 0.0f + Position.y, 3.0f + Position.z);
+	Pigs[count].RotateXAbsolute(Orientation.x);
+	Pigs[count].RotateYAbsolute(Orientation.y);
+	Pigs[count].RotateZAbsolute(Orientation.z);
+	Pigs[count].ScaleAbsolute(Scaling.x);
+	Pigs[count].Update();
+	count++;
+
+	Pigs[count].TranslateAbsolute(25.0f + Position.x, 0.0f + Position.y, 3.0f + Position.z);
+	Pigs[count].RotateXAbsolute(Orientation.x);
+	Pigs[count].RotateYAbsolute(Orientation.y);
+	Pigs[count].RotateZAbsolute(Orientation.z);
+	Pigs[count].ScaleAbsolute(Scaling.x);
+	Pigs[count].Update();
+	count++;
+
+
 
 	SceneProp.Lights[0].Position = Position;
-	
+	/*
 	PrimitiveInst *Sel = &Pigs[5];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
@@ -137,7 +198,7 @@ void App::OnUpdate() {
 	Sel->RotateZAbsolute(Orientation.z);
 	Sel->ScaleAbsolute(Scaling.x);
 	Sel->Update();
-	
+	*/
 	OnDraw();
 }
 
@@ -152,7 +213,7 @@ void App::OnDraw() {
 
 	pFramework->pVideoDriver->Clear();
 	
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		Pigs[i].Draw();
 	}
 	
