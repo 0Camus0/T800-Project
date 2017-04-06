@@ -1,9 +1,14 @@
 # T800-Project v0.1.0
 
 New on v0.1.0:
+
 	- Added Render Targets
+	
 	- Added Multiple Render Targets
+	
 	- Added Native GL Desktop API 4.0
+	
+	
 
 T800 Project is a small framework I started developing for multiple purposes,
 one of them, was to teach the basics of graphics programming. Now is at the
