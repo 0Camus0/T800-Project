@@ -15,13 +15,13 @@
 
 #include <Config.h>
 
-#include <video\Texture.h>
+#include <video\BaseDriver.h>
 
 class TextureGL : public Texture {
 public:
 	TextureGL() {}
 
-	void	SetTextureParams(unsigned int &target);
+	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
 	void	LoadAPITexture(unsigned char* buffer);

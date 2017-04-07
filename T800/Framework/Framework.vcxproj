@@ -23,7 +23,8 @@
     <ClInclude Include="include\core\Core.h" />
     <ClInclude Include="include\core\Win32Framework.h" />
     <ClInclude Include="include\scene\Cube.h" />
-    <ClInclude Include="include\scene\Mesh.h" />
+    <ClInclude Include="include\scene\GLMesh.h" />
+    <ClInclude Include="include\scene\D3DXMesh.h" />
     <ClInclude Include="include\scene\PrimitiveBase.h" />
     <ClInclude Include="include\scene\PrimitiveInstance.h" />
     <ClInclude Include="include\scene\PrimitiveManager.h" />
@@ -43,7 +44,6 @@
     <ClInclude Include="include\video\GLDriver.h" />
     <ClInclude Include="include\video\GLRT.h" />
     <ClInclude Include="include\video\GLShader.h" />
-    <ClInclude Include="include\video\Texture.h" />
     <ClInclude Include="include\video\TextureD3D.h" />
     <ClInclude Include="include\video\TextureGL.h" />
   </ItemGroup>
@@ -51,6 +51,7 @@
     <ClCompile Include="src\core\Core.cpp" />
     <ClCompile Include="src\core\Win32Framework.cpp" />
     <ClCompile Include="src\scene\Cube.cpp" />
+    <ClCompile Include="src\scene\GLMesh.cpp" />
     <ClCompile Include="src\scene\Mesh.cpp" />
     <ClCompile Include="src\scene\PrimitiveInstance.cpp" />
     <ClCompile Include="src\scene\PrimitiveManager.cpp" />
@@ -69,7 +70,6 @@
     <ClCompile Include="src\video\GLDriver.cpp" />
     <ClCompile Include="src\video\GLRT.cpp" />
     <ClCompile Include="src\video\GLShader.cpp" />
-    <ClCompile Include="src\video\Texture.cpp" />
     <ClCompile Include="src\video\TextureD3D.cpp" />
     <ClCompile Include="src\video\TextureGL.cpp" />
   </ItemGroup>

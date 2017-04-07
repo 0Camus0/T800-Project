@@ -15,7 +15,7 @@
 
 #include <Config.h>
 
-#include <video\Texture.h>
+#include <video\BaseDriver.h>
 
 
 #include <d3d11.h>
@@ -28,7 +28,7 @@ class TextureD3D : public Texture {
 public:
 	TextureD3D() {}
 
-	void	SetTextureParams(unsigned int &target);
+	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);
 
 	void	LoadAPITexture(unsigned char* buffer);

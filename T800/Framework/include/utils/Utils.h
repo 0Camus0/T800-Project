@@ -16,6 +16,8 @@
 #include <Config.h>
 
 #include <stdio.h>
+#include <iostream>
+#include <string>
 
 #if defined(USING_OPENGL_ES20)
 #include <GLES2/gl2.h>
@@ -35,6 +37,6 @@ unsigned int createShader(unsigned int type, char* pSource);
 #endif
 
 char *file2string(const char *path);
-
+std::string RemovePath(std::string p);
 
 #endif

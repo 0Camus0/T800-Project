@@ -24,9 +24,9 @@
 #include <SDL/SDL.h>
 #endif
 
-void	TextureGL::SetTextureParams(unsigned int &target) {
+void	TextureGL::SetTextureParams() {
 
-	glBindTexture(GL_TEXTURE_2D, target);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
@@ -63,7 +63,6 @@ void TextureGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsign
 }
 
 void TextureGL::LoadAPITexture(unsigned char* buffer) {
-	unsigned int id;
 	unsigned int glFormat = 0;
 	unsigned int glChannel = GL_UNSIGNED_BYTE;
 	unsigned int glTarget = GL_TEXTURE_2D;
@@ -88,9 +87,6 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 	glGenerateMipmap(glTarget);
 
 	SetTextureParams(glTarget);
-
-	this->id = static_cast<unsigned short>(id);
-
 }
 
 void TextureGL::LoadAPITextureCompressed(unsigned char* buffer) {

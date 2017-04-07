@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include "Application.h"
-#include <video/Texture.h>
+#include <video/BaseDriver.h>
 #include <scene/Cube.h>
 
 enum {

@@ -73,3 +73,11 @@ char *file2string(const char *path) {
 	fclose(fd);
 	return str;
 }
+
+std::string RemovePath(std::string p) {
+	std::string path = p;
+	int firstSlash = path.find_last_of("\\") + 1;
+	int Length = path.size() - firstSlash;
+	path = path.substr(firstSlash, Length);
+	return path;
+}

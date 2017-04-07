@@ -59,9 +59,6 @@
     <ClInclude Include="include\scene\Cube.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\Mesh.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\scene\PrimitiveBase.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
@@ -84,9 +81,6 @@
       <Filter>Header Files\video</Filter>
     </ClInclude>
     <ClInclude Include="include\video\GLDriver.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\Texture.h">
       <Filter>Header Files\video</Filter>
     </ClInclude>
     <ClInclude Include="include\video\TextureD3D.h">
@@ -116,6 +110,12 @@
     <ClInclude Include="include\video\D3DXShader.h">
       <Filter>Header Files\video</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\GLMesh.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\D3DXMesh.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
@@ -128,9 +128,6 @@
       <Filter>Source Files\video</Filter>
     </ClCompile>
     <ClCompile Include="src\video\GLDriver.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\Texture.cpp">
       <Filter>Source Files\video</Filter>
     </ClCompile>
     <ClCompile Include="src\video\TextureD3D.cpp">
@@ -189,6 +186,9 @@
     </ClCompile>
     <ClCompile Include="src\video\D3DXShader.cpp">
       <Filter>Source Files\video</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\GLMesh.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

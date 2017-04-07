@@ -15,7 +15,7 @@
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
-void	TextureD3D::SetTextureParams(unsigned int &target){
+void	TextureD3D::SetTextureParams(){
 	D3D11_SAMPLER_DESC sdesc;
 
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;

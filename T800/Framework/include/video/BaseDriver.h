@@ -14,8 +14,58 @@
 #define T800_BASEDRIVER_H
 
 #include <Config.h>
-#include <video/Texture.h>
 #include <vector>
+
+
+enum TEXT_BASIC_FORMAT {
+	CH_ALPHA = 1,
+	CH_RGB = 2,
+	CH_RGBA = 4
+};
+
+enum TEXT_BASIC_PARAMS {
+	TILED = 1,
+	CLAMP_TO_EDGE = 2,
+	MIPMAPS = 4
+};
+
+class Texture {
+public:
+	Texture() :
+		size(0),
+		props(0),
+		params(0),
+		x(0),
+		y(0),
+		id(0),
+		bounded(0),
+		mipmaps(0)
+	{
+
+	}
+
+
+	~Texture() {
+
+	}
+
+	int				LoadTexture(char *fn);
+
+	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
+	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
+
+	virtual void	SetTextureParams();
+	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
+
+	char			optname[128];
+	unsigned int	size;
+	unsigned int	props;
+	unsigned int	params;
+	unsigned short	x, y;
+	unsigned int	id;
+	unsigned char	bounded;
+	unsigned char	mipmaps;
+};
 
 struct BaseRT {
 	enum ATTACHMENTS{
@@ -83,20 +133,24 @@ public:
 class BaseDriver {
 public:
 	BaseDriver() {  }
-	virtual	void	InitDriver() = 0;
-	virtual void	CreateSurfaces() = 0;
-	virtual void	DestroySurfaces() = 0;
-	virtual void	Update() = 0;
-	virtual void	DestroyDriver() = 0;
-	virtual void	SetWindow(void *window) = 0;
-	virtual void	SetDimensions(int,int) = 0;
-	virtual void	Clear() = 0;	
-	virtual void	SwapBuffers() = 0;
+	virtual	void	 InitDriver() = 0;
+	virtual void	 CreateSurfaces() = 0;
+	virtual void	 DestroySurfaces() = 0;
+	virtual void	 Update() = 0;
+	virtual void	 DestroyDriver() = 0;
+	virtual void	 SetWindow(void *window) = 0;
+	virtual void	 SetDimensions(int,int) = 0;
+	virtual void	 Clear() = 0;	
+	virtual void	 SwapBuffers() = 0;
 
-	virtual int 	CreateRT(int nrt, int cf, int df,int w, int h) = 0;
-	virtual void	PushRT(int id) = 0;
-	virtual void	PopRT() = 0;
-	virtual void	DestroyRTs() = 0;
+	virtual int 	 CreateTexture(std::string) = 0;
+	virtual Texture* GetTexture(int id) = 0;
+	virtual void	 DestroyTexture() = 0;
+
+	virtual int 	 CreateRT(int nrt, int cf, int df,int w, int h) = 0;
+	virtual void	 PushRT(int id) = 0;
+	virtual void	 PopRT() = 0;
+	virtual void	 DestroyRTs() = 0;
 
 	virtual int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
 	virtual ShaderBase*	GetShaderSig(unsigned int sig) = 0;
@@ -105,6 +159,7 @@ public:
 
 	std::vector<ShaderBase*>	Shaders;
 	std::vector<BaseRT*>		RTs;	
+	std::vector<Texture*>		Textures;
 };
 
 

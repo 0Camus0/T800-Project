@@ -43,6 +43,10 @@ public:
 	void	SetWindow(void *window) ;
 	void	SetDimensions(int, int);
 
+	int 	 CreateTexture(std::string path);
+	Texture* GetTexture(int id);
+	void	 DestroyTexture();
+
 	int 	CreateRT(int nrt, int cf, int df, int w, int h);
 	void	PushRT(int id);
 	void	PopRT();
