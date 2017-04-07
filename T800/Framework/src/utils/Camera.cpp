@@ -121,7 +121,7 @@ void	Camera::Update(float dt) {
 
 	XVECTOR3 currentvelocity = Velocity.x*Right + Velocity.y*Up + Velocity.z*Look;
 	Velocity -= Velocity*Friction;
-	Eye += currentvelocity*dt;
+	Eye += currentvelocity;
 
 	XMatTranslation(T_, (-Eye));
 	View = T_*View;
@@ -139,7 +139,7 @@ void	Camera::Reset() {
 	Yaw = 0.0f;
 	Pitch = 0.0f;
 	Roll = 0.0f;
-	Friction = 0.01f;
+	Friction = 0.1f;
 	MaxRoll = 0.0f;
 	MaxPitch = Deg2Rad(89.0f);
 	MaxYaw = 0.0f;

@@ -29,16 +29,25 @@
 
 #define D3DX 1
 #define OGLES20 2
-#define OGL 3
+#define OGLES30 3
+#define OGL 4
 
-#define DRIVER_SELECTED D3DX
+#define DRIVER_SELECTED OGL
 
 #if   DRIVER_SELECTED == OGLES20
-	#define USING_OPENGL_ES
+	#define USING_OPENGL_ES20
+#elif DRIVER_SELECTED == OGLES30
+	#define USING_OPENGL_ES30
 #elif DRIVER_SELECTED == D3DX
 	#define USING_D3D11
 #elif DRIVER_SELECTED == OGL
 	#define USING_OPENGL
+#else
+	#define USING_OPENGL // Default GL
+#endif
+
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL)
+	#define USING_GL_COMMON
 #endif
 
 #endif

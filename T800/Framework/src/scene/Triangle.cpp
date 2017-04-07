@@ -19,7 +19,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
 void Trangle::Create() {
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 	//	Create the Program, return the ID of the created program
 	shaderID = glCreateProgram();
 
@@ -252,7 +252,7 @@ void Trangle::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 // We instruct GLES that we will use the program we created bounded to this primitive, rather than another primitive's program
 	glUseProgram(shaderID);
 	// We send the current matrix to the shader using the uniform location we've got
@@ -336,7 +336,7 @@ void Trangle::Draw(float *t, float *vp) {
 }
 
 void Trangle::Destroy() {
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 	glDeleteProgram(shaderID);
 #endif
 }

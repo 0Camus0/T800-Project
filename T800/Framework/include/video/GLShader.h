@@ -17,11 +17,14 @@
 
 #include <video/BaseDriver.h>
 
-#if defined(USING_OPENGL_ES)
-#include <EGL/egl.h>
+#if defined(USING_OPENGL_ES20)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#else defined(USING_OPENGL)
+#elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl31.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
+#else
 #include <GL/glew.h>
 #include <SDL/SDL.h>
 #endif

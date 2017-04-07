@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include <core\Win32Framework.h>
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 #include <video\GLDriver.h>
 #elif defined(USING_D3D11)
 #include <video\D3DXDriver.h>
@@ -45,7 +45,7 @@ void Win32Framework::OnCreateApplication(){
 	if (SDL_SetVideoMode(width, height, 32, flags) == 0) {
 		printf( "Video mode set failed: %s\n",SDL_GetError());
 	}
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 	pVideoDriver = new GLDriver;
 #elif defined(USING_D3D11)
 	pVideoDriver = new D3DXDriver;

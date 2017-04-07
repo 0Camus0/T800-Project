@@ -12,8 +12,9 @@
 
 #include <video\GLRT.h>
 #include <video\TextureGL.h>
+#include <video\GLDriver.h>
 
-bool GLES20RT::LoadAPIRT(){
+bool GLRT::LoadAPIRT(){
 	GLint cfmt, dfmt;
 
 	cfmt = GL_RGB;
@@ -40,8 +41,13 @@ bool GLES20RT::LoadAPIRT(){
 	pTextureDepth->id = dtex;
 	this->pDepthTexture = pTextureDepth;
 	DepthTexture = dtex;
-#ifdef USING_OPENGL_ES
-	number_RT = 1;
+
+#if defined(USING_OPENGL_ES30)
+	int	Attachments[8];
+	Attachments[0] = GL_COLOR_ATTACHMENT0;
+	for(int i=1;i<8;i++){
+		Attachments[i] = GL_COLOR_ATTACHMENT1 + (i-1);
+	}
 #endif
 	for (int i = 0; i < number_RT; i++) {
 		
@@ -56,13 +62,25 @@ bool GLES20RT::LoadAPIRT(){
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);			
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, ctex, 0);
-		
 		TextureGL *pTextureColor = new TextureGL;
+#if defined(USING_OPENGL_ES20)
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ctex, 0);
+		for (int i = 0; i < number_RT; i++) {
+			pTextureColor->id = ctex;
+			vColorTextures.push_back(pTextureColor);
+			vFrameBuffers.push_back(fbo);
+			vGLColorTex.push_back(ctex);
+		}
+		break;		
+#elif  defined(USING_OPENGL_ES30) 
+		glFramebufferTexture2D(GL_FRAMEBUFFER, Attachments[i], GL_TEXTURE_2D, ctex, 0);		
+#else
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+ i, GL_TEXTURE_2D, ctex, 0);
+#endif	
 		pTextureColor->id = ctex;
 		vColorTextures.push_back(pTextureColor);
 		vFrameBuffers.push_back(fbo);
-		vGLColorTex.push_back(ctex);
+		vGLColorTex.push_back(ctex);				
 	}
 
 

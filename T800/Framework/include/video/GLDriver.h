@@ -16,11 +16,18 @@
 #include <Config.h>
 
 #include <video\BaseDriver.h>
-#if defined(USING_OPENGL_ES)
+
+#if defined(USING_OPENGL_ES20)
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#else defined(USING_OPENGL)
+#elif defined(USING_OPENGL_ES30)
+#include <EGL/egl.h>
+#include <GLES3/gl31.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
+#include <SDL/SDL.h>
+#else
 #include <GL/glew.h>
 #include <SDL/SDL.h>
 #endif
@@ -48,7 +55,8 @@ public:
 
 	void	Clear();
 	void	SwapBuffers();
-#if defined(USING_OPENGL_ES)
+	bool	CheckExtension(std::string s);
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	EGLDisplay			eglDisplay;
 	EGLConfig			eglConfig;
 	EGLSurface			eglSurface;
@@ -57,8 +65,13 @@ public:
 	EGLNativeWindowType	eglWindow;
 #endif
 	GLint				CurrentFBO;
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+	GLenum				DrawBuffers[16];
+#endif
 
 	int	width, height;
+	std::vector<std::string>	ExtensionsTok;
+	std::string					Extensions;
 
 };
 

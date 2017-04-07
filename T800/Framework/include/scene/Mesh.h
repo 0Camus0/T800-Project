@@ -15,11 +15,15 @@
 
 #include <Config.h>
 
-#ifdef USING_OPENGL_ES
+#ifdef USING_OPENGL_ES20
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <video/TextureGL.h>
+#elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl31.h>
+#include <video/TextureGL.h>
 #elif defined(USING_OPENGL)
+#include <GL/glew.h>
 #include <video/TextureGL.h>
 #elif defined(USING_D3D11)
 #include <video\TextureD3D.h>
@@ -58,7 +62,7 @@ public:
 	struct SubSetInfo {
 		
 		unsigned int		Sig;
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 		unsigned long		VertexAttrib;
 		unsigned int		Id;
 		unsigned int		IdDiffuseTex;
@@ -88,7 +92,7 @@ public:
 		unsigned int			 VertexSize;
 		unsigned int			 NumVertex;
 
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 		unsigned int			 Id;
 		unsigned int			 IdIBO;			
 #elif defined(USING_D3D11)

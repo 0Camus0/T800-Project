@@ -12,11 +12,16 @@
 
 #include <video\TextureGL.h>
 
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#else defined(USING_OPENGL)
+#elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl31.h>
+#elif defined(USING_OPENGL)
 #include <GL/glew.h>
+#else
+#include <GL/glew.h>
+#include <SDL/SDL.h>
 #endif
 
 void	TextureGL::SetTextureParams(unsigned int &target) {
@@ -43,9 +48,12 @@ void	TextureGL::SetTextureParams(unsigned int &target) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrap);
 
+	
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL)
 	int Max = 1;
 	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+#endif
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

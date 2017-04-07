@@ -13,6 +13,8 @@
 #ifndef T800_D3DXRT_H
 #define T800_D3DXRT_H
 
+#include <Config.h>
+
 #include <video/BaseDriver.h>
 #include <video/TextureD3D.h>
 

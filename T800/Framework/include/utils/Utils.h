@@ -17,14 +17,16 @@
 
 #include <stdio.h>
 
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#else defined(USING_OPENGL)
+#elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl31.h>
+#elif defined(USING_OPENGL)
 #include <GL/glew.h>
 #endif
 
-#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
+#ifdef USING_GL_COMMON
 void checkcompilederrors(GLuint shader, GLenum type);
 GLuint createShader(GLenum type, char* pSource);
 #else

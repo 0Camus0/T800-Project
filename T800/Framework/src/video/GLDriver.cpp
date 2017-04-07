@@ -15,16 +15,23 @@
 #include <video\GLShader.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
 
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20)
 #pragma comment(lib,"libEGL.lib")
 #pragma comment(lib,"libGLESv2.lib")
-#else defined(USING_OPENGL)
+#elif defined (USING_OPENGL_ES30)
+#pragma comment(lib,"libEGL.lib")
+#pragma comment(lib,"libGLESv2.lib")
+#elif defined(USING_OPENGL)
 #pragma comment(lib,"glew.lib")
 #pragma comment(lib,"OpenGL32.Lib")
 #endif
 
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 void EGLError(const char* c_ptr) {
 
 	EGLint iErr = eglGetError();
@@ -40,7 +47,7 @@ bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
 }
 #endif
 void	GLDriver::InitDriver() {
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	EGLint numConfigs;
 
 	EGLNativeDisplayType nativeDisplay;
@@ -57,6 +64,8 @@ void	GLDriver::InitDriver() {
 
 	if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
 		std::cout << "Failed to initialize egl" << std::endl;
+	}else{
+		std::cout << "EGL version " << iMajorVersion << "." << iMinorVersion << std::endl;
 	}
 
 	eglBindAPI(EGL_OPENGL_ES_API);
@@ -73,9 +82,11 @@ void	GLDriver::InitDriver() {
 		EGL_NONE
 	};
 
-	eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs);
+	if(!eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs)){
+		std::cout << "Failed to choose config" << std::endl;
+	}
 
-	EGLError("eglBindAPI");
+	EGLError("eglChooseConfig");
 
 	eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
 
@@ -93,7 +104,7 @@ void	GLDriver::InitDriver() {
 
 	eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
 	eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
-#else defined(USING_OPENGL)
+#elif defined(USING_OPENGL)
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
 		printf("Error: %s\n", glewGetErrorString(err));
@@ -109,7 +120,20 @@ void	GLDriver::InitDriver() {
 	
 	std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
 	std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
-	std::cout << "GL Version: " << GL_Version << "\n\nExtensions\n\n" << GL_Extensions << std::endl;
+
+	std::istringstream iss(GL_Extensions);
+	std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},
+		std::istream_iterator<std::string>{} };
+
+	ExtensionsTok = tokens;
+	Extensions = GL_Extensions;
+
+	std::cout << "GL Version: " << GL_Version << "\n\nExtensions\n\n";
+
+	for (unsigned int i = 0; i < ExtensionsTok.size(); i++) {
+		printf("[%s]\n", ExtensionsTok[i].c_str());
+	}
+	
 
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);
@@ -117,6 +141,11 @@ void	GLDriver::InitDriver() {
 	glCullFace(GL_FRONT);
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+	for (int i = 0; i < 16; i++) {
+		DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+	}
+#endif
 }
 
 void	GLDriver::CreateSurfaces() {
@@ -132,7 +161,7 @@ void	GLDriver::Update() {
 }
 
 void	GLDriver::DestroyDriver() {
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	eglDestroySurface(eglDisplay, eglSurface);
 	eglDestroyContext(eglDisplay, eglContext);
 	eglTerminate(eglDisplay);
@@ -140,7 +169,7 @@ void	GLDriver::DestroyDriver() {
 }
 
 void	GLDriver::SetWindow(void *window) {
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	eglWindow = GetActiveWindow();
 #endif
 }
@@ -156,15 +185,19 @@ void	GLDriver::Clear() {
 }
 
 void	GLDriver::SwapBuffers() {
-#if defined(USING_OPENGL_ES)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	eglSwapBuffers(eglDisplay, eglSurface);
 #elif defined(USING_OPENGL)
 	SDL_GL_SwapBuffers();
 #endif
 }
 
+bool GLDriver::CheckExtension(std::string s){
+	return (Extensions.find(s) != std::string::npos);
+}
+
 int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
-	GLES20RT	*pRT = new GLES20RT;
+	GLRT	*pRT = new GLRT;
 	if (w == 0)
 		w = width;
 	if (h == 0)
@@ -183,9 +216,13 @@ void GLDriver::PushRT(int id) {
 	if (id < 0 || id >= (int)RTs.size())
 		return;
 
-	GLES20RT *pRT = dynamic_cast<GLES20RT*>(RTs[id]);
+	GLRT *pRT = dynamic_cast<GLRT*>(RTs[id]);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pRT->vFrameBuffers[0]);
+
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+	glDrawBuffers(pRT->number_RT, DrawBuffers);
+#endif
 
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 
@@ -198,7 +235,7 @@ void GLDriver::PopRT() {
 
 void GLDriver::DestroyRTs() {
 	for (unsigned int i = 0; i < RTs.size(); i++) {
-		GLES20RT *pRT = dynamic_cast<GLES20RT*>(RTs[i]);
+		GLRT *pRT = dynamic_cast<GLRT*>(RTs[i]);
 		delete pRT;
 	}
 }
