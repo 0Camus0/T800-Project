@@ -10,12 +10,12 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\TextureD3D.h>
+#include <video\D3DXTexture.h>
 
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
-void	TextureD3D::SetTextureParams(){
+void	D3DXTexture::SetTextureParams(){
 	D3D11_SAMPLER_DESC sdesc;
 
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -54,11 +54,11 @@ void	TextureD3D::SetTextureParams(){
 
 }
 
-void	TextureD3D::GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp){
+void	D3DXTexture::GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp){
 
 }
 
-void	TextureD3D::LoadAPITexture(unsigned char* buffer){
+void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	D3D11_TEXTURE2D_DESC desc = { 0 };
 	desc.Width = this->x;
 	desc.Height = this->y;
@@ -92,12 +92,12 @@ void	TextureD3D::LoadAPITexture(unsigned char* buffer){
 	D3D11DeviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData.SysMemPitch, 0);
 	D3D11DeviceContext->GenerateMips(pSRVTex.Get());
 
-	SetTextureParams(this->params);
+	SetTextureParams();
 	static int texid = 0;
 	this->id = texid;
 	texid++;
 }
 
-void	TextureD3D::LoadAPITextureCompressed(unsigned char* buffer){
+void	D3DXTexture::LoadAPITextureCompressed(unsigned char* buffer){
 
 }

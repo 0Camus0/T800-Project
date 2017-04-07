@@ -54,7 +54,7 @@ bool D3DXRT::LoadAPIRT() {
 		}
 		vD3D11RenderTargetView.push_back(RTV);
 
-		TextureD3D *pTextureColor = new TextureD3D;
+		D3DXTexture *pTextureColor = new D3DXTexture;
 		pTextureColor->Tex = Tex;
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -99,7 +99,7 @@ bool D3DXRT::LoadAPIRT() {
 		exit(444);
 	}
 
-	TextureD3D *pTextureDepth = new TextureD3D;
+	D3DXTexture *pTextureDepth = new D3DXTexture;
 	pTextureDepth->Tex = D3D11DepthTex;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;

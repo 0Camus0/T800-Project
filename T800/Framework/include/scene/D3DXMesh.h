@@ -15,7 +15,7 @@
 
 #include <Config.h>
 
-#include <video\TextureD3D.h>
+#include <video\D3DXTexture.h>
 #include <D3Dcompiler.h>
 
 #include <video\BaseDriver.h>
@@ -50,11 +50,11 @@ public:
 		unsigned int		Sig;
 
 		ComPtr<ID3D11Buffer>		IB;
-		TextureD3D*					DiffuseTex;
-		TextureD3D*					SpecularTex;
-		TextureD3D*					GlossfTex;
-		TextureD3D*					NormalTex;
-		TextureD3D*					ReflectTex;
+		D3DXTexture*					DiffuseTex;
+		D3DXTexture*					SpecularTex;
+		D3DXTexture*					GlossfTex;
+		D3DXTexture*					NormalTex;
+		D3DXTexture*					ReflectTex;
 
 		int					DiffuseId;
 		int					SpecularId;
@@ -90,7 +90,7 @@ public:
 	void Destroy();
 
 	void GatherInfo();
-	int  LoadTex(std::string p, xF::xMaterial *mat);
+	int  LoadTex(std::string p, xF::xMaterial *mat,D3DXTexture** tex);
 
 	XMATRIX44	transform;
 	XDataBase	xFile;

@@ -54,7 +54,7 @@ public:
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
 
-	virtual void	SetTextureParams();
+	virtual void	SetTextureParams() = 0;
 	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
 
 	char			optname[128];

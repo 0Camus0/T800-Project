@@ -24,9 +24,9 @@
 using namespace Microsoft::WRL;
 
 
-class TextureD3D : public Texture {
+class D3DXTexture : public Texture {
 public:
-	TextureD3D() {}
+	D3DXTexture() {}
 
 	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);

@@ -156,6 +156,34 @@ void D3DXDriver::SwapBuffers(){
 	DXGISwapchain->Present(0, 0);
 }
 
+int  D3DXDriver::CreateTexture(std::string path){
+	D3DXTexture *pTex = new D3DXTexture;
+	if (pTex->LoadTexture((char*)path.c_str())) {
+		Textures.push_back(pTex);
+		return (Textures.size() - 1);
+	}
+	else {
+		delete pTex;
+	}
+	return -1;
+}
+
+Texture*  D3DXDriver::GetTexture(int id){
+	if (id < 0 || id >= (int)Textures.size()) {
+		printf("Warning null ptr Textures Idx\n");
+		return 0;
+	}
+
+	return Textures[id];
+}
+
+void  D3DXDriver::DestroyTexture(){
+	for (unsigned int i = 0; i < Textures.size(); i++) {
+		D3DXTexture *pTex = dynamic_cast<D3DXTexture*>(Textures[i]);
+		delete pTex;
+	}
+}
+
 int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
 	D3DXRT	*pRT = new D3DXRT;
 	if (w == 0)

@@ -16,17 +16,17 @@
 #include <Config.h>
 
 #ifdef USING_OPENGL_ES20
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <video/TextureGL.h>
+#include <GLES2\gl2.h>
+#include <GLES2\gl2ext.h>
+#include <video\GLTexture.h>
 #elif defined(USING_OPENGL_ES30)
-#include <GLES3/gl31.h>
-#include <video/TextureGL.h>
+#include <GLES3\gl31.h>
+#include <video\GLTexture.h>
 #elif defined(USING_OPENGL)
-#include <GL/glew.h>
-#include <video/TextureGL.h>
+#include <GL\glew.h>
+#include <video\GLTexture.h>
 #elif defined(USING_D3D11)
-#include <video\TextureD3D.h>
+#include <video\D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
 

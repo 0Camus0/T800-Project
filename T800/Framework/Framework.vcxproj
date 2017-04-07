@@ -44,8 +44,8 @@
     <ClInclude Include="include\video\GLDriver.h" />
     <ClInclude Include="include\video\GLRT.h" />
     <ClInclude Include="include\video\GLShader.h" />
-    <ClInclude Include="include\video\TextureD3D.h" />
-    <ClInclude Include="include\video\TextureGL.h" />
+    <ClInclude Include="include\video\D3DXTexture.h" />
+    <ClInclude Include="include\video\GLTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp" />
@@ -70,8 +70,8 @@
     <ClCompile Include="src\video\GLDriver.cpp" />
     <ClCompile Include="src\video\GLRT.cpp" />
     <ClCompile Include="src\video\GLShader.cpp" />
-    <ClCompile Include="src\video\TextureD3D.cpp" />
-    <ClCompile Include="src\video\TextureGL.cpp" />
+    <ClCompile Include="src\video\D3DXTexture.cpp" />
+    <ClCompile Include="src\video\GLTexture.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{844841CA-54AA-45DF-AA7A-65C27F50FB75}</ProjectGuid>

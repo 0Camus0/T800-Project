@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include <video\GLRT.h>
-#include <video\TextureGL.h>
+#include <video\GLTexture.h>
 #include <video\GLDriver.h>
 
 bool GLRT::LoadAPIRT(){
@@ -37,7 +37,7 @@ bool GLRT::LoadAPIRT(){
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dtex, 0);
 
-	TextureGL *pTextureDepth = new TextureGL;
+	GLTexture *pTextureDepth = new GLTexture;
 	pTextureDepth->id = dtex;
 	this->pDepthTexture = pTextureDepth;
 	DepthTexture = dtex;
@@ -62,7 +62,7 @@ bool GLRT::LoadAPIRT(){
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);			
 
-		TextureGL *pTextureColor = new TextureGL;
+		GLTexture *pTextureColor = new GLTexture;
 #if defined(USING_OPENGL_ES20)
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ctex, 0);
 		for (int i = 0; i < number_RT; i++) {

@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\TextureGL.h>
+#include <video\GLTexture.h>
 
 #if defined(USING_OPENGL_ES20)
 #include <GLES2/gl2.h>
@@ -24,7 +24,7 @@
 #include <SDL/SDL.h>
 #endif
 
-void	TextureGL::SetTextureParams() {
+void	GLTexture::SetTextureParams() {
 
 	glBindTexture(GL_TEXTURE_2D, id);
 
@@ -58,11 +58,11 @@ void	TextureGL::SetTextureParams() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextureGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
+void GLTexture::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
 
 }
 
-void TextureGL::LoadAPITexture(unsigned char* buffer) {
+void GLTexture::LoadAPITexture(unsigned char* buffer) {
 	unsigned int glFormat = 0;
 	unsigned int glChannel = GL_UNSIGNED_BYTE;
 	unsigned int glTarget = GL_TEXTURE_2D;
@@ -86,9 +86,9 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 
 	glGenerateMipmap(glTarget);
 
-	SetTextureParams(glTarget);
+	SetTextureParams();
 }
 
-void TextureGL::LoadAPITextureCompressed(unsigned char* buffer) {
+void GLTexture::LoadAPITextureCompressed(unsigned char* buffer) {
 	
 }

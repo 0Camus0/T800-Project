@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include <video\GLDriver.h>
-#include <video\TextureGL.h>
+#include <video\GLTexture.h>
 #include <video\GLRT.h>
 #include <video\GLShader.h>
 #include <iostream>
@@ -198,7 +198,7 @@ bool GLDriver::CheckExtension(std::string s){
 }
 
 int GLDriver::CreateTexture(std::string path) {
-	TextureGL *pTex = new TextureGL;
+	GLTexture *pTex = new GLTexture;
 	if (pTex->LoadTexture((char*)path.c_str())) {
 		Textures.push_back(pTex);
 		return (Textures.size() - 1);
@@ -220,7 +220,7 @@ Texture* GLDriver::GetTexture(int id) {
 
 void GLDriver::DestroyTexture() {
 	for (unsigned int i = 0; i < Textures.size(); i++) {
-		TextureGL *pTex = dynamic_cast<TextureGL*>(Textures[i]);
+		GLTexture *pTex = dynamic_cast<GLTexture*>(Textures[i]);
 		delete pTex;
 	}
 }

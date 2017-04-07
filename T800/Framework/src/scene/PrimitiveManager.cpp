@@ -13,7 +13,8 @@
 #include <scene\PrimitiveManager.h>
 #include <scene\Triangle.h>
 #include <scene\Cube.h>
-#include <scene\Mesh.h>
+#include <scene\GLMesh.h>
+#include <scene\D3DXMesh.h>
 
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())
@@ -37,7 +38,11 @@ int	 PrimitiveManager::CreateCube(){
 }
 
 int	 PrimitiveManager::CreateMesh(char *fname) {
-	PrimitiveBase *primitive = new Mesh();
+#if defined(USING_GL_COMMON)
+	PrimitiveBase *primitive = new GLMesh();
+#elif defined(USING_D3D11)
+	PrimitiveBase *primitive = new D3DXMesh();
+#endif
 	primitive->Create(fname);
 	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);

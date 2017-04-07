@@ -11,13 +11,13 @@
 *********************************************************/
 
 #include <video\BaseDriver.h>
+#include <video\GLShader.h>
+#include <video\GLRT.h>
 #include <scene\GLMesh.h>
 #include <utils\Utils.h>
 
-#ifdef USING_GL_COMMON
-#include <video/GLShader.h>
-#include <video/GLRT.h>
-#endif
+
+
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
@@ -60,8 +60,8 @@ void GLMesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-
 						it_subsetinfo->DiffuseId = LoadTex(path, material);
+						it_subsetinfo->IdDiffuseTex = g_pBaseDriver->GetTexture(it_subsetinfo->DiffuseId)->id;
 					}
 
 					if (mDef->NameParam == "specularMap") {
@@ -70,6 +70,7 @@ void GLMesh::Create(char *filename) {
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
 						it_subsetinfo->SpecularId = LoadTex(path, material);
+						it_subsetinfo->IdSpecularTex = g_pBaseDriver->GetTexture(it_subsetinfo->SpecularId)->id;
 					}
 
 					if (mDef->NameParam == "glossMap") {
@@ -78,6 +79,7 @@ void GLMesh::Create(char *filename) {
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
 						it_subsetinfo->GlossfId = LoadTex(path, material);
+						it_subsetinfo->IdGlossTex = g_pBaseDriver->GetTexture(it_subsetinfo->GlossfId)->id;
 					}
 
 					if (mDef->NameParam == "normalMap") {
@@ -86,6 +88,7 @@ void GLMesh::Create(char *filename) {
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
 						it_subsetinfo->NormalId = LoadTex(path, material);
+						it_subsetinfo->IdNormalTex = g_pBaseDriver->GetTexture(it_subsetinfo->NormalId)->id;
 					}
 				}
 			}
@@ -154,10 +157,9 @@ void GLMesh::Create(char *filename) {
 }
 
 void GLMesh::GatherInfo() {
-#ifdef USING_GL_COMMON
+
 	char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
 	char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
-#endif
 
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);

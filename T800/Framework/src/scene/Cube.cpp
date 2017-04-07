@@ -19,9 +19,9 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 void Cube::Create() {
 #ifdef USING_GL_COMMON
-	tex = new TextureGL;
+	tex = new GLTexture;
 #elif defined(USING_D3D11)
-	tex = new TextureD3D;
+	tex = new D3DXTexture;
 #endif
 	TexId = tex->LoadTexture("cerdo_D.tga");
 	if (TexId == -1) {
@@ -257,7 +257,7 @@ void Cube::Create() {
 	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 
 
-	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
+	D3DXTexture *texd3d = dynamic_cast<D3DXTexture*>(tex);
 	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 
@@ -363,7 +363,7 @@ void Cube::Draw(float *t,float *vp) {
 	
 	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 
-	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
+	D3DXTexture *texd3d = dynamic_cast<D3DXTexture*>(tex);
 //	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(tex);
 	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());

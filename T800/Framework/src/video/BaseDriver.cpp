@@ -50,7 +50,7 @@ int		Texture::LoadTexture(char *fn) {
 
 	LoadAPITexture(buffer);
 	stbi_image_free(buffer);
-	return id;
+	return true;
 }
 
 

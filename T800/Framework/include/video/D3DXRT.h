@@ -16,7 +16,7 @@
 #include <Config.h>
 
 #include <video/BaseDriver.h>
-#include <video/TextureD3D.h>
+#include <video/D3DXTexture.h>
 
 #include <d3d11.h>
 #include <dxgi.h>

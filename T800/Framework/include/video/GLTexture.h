@@ -17,9 +17,9 @@
 
 #include <video\BaseDriver.h>
 
-class TextureGL : public Texture {
+class GLTexture : public Texture {
 public:
-	TextureGL() {}
+	GLTexture() {}
 
 	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);

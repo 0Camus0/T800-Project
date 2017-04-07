@@ -75,11 +75,12 @@ void D3DXMesh::Create(char *filename) {
 				#endif
 					if(mDef->NameParam=="diffuseMap"){
 						std::string path = RemovePath(mDef->CaseString);
-					#if DEBUG_MODEL
+#if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
-					#endif
+#endif
 
-						it_subsetinfo->DiffuseId = LoadTex(path, material);
+						it_subsetinfo->DiffuseId = LoadTex(path, material,&it_subsetinfo->DiffuseTex);
+
 					}
 
 					if (mDef->NameParam == "specularMap") {
@@ -87,7 +88,7 @@ void D3DXMesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-						it_subsetinfo->SpecularId = LoadTex(path, material);
+						it_subsetinfo->SpecularId = LoadTex(path, material,&it_subsetinfo->SpecularTex);
 					}
 
 					if (mDef->NameParam == "glossMap") {
@@ -95,7 +96,7 @@ void D3DXMesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-						it_subsetinfo->GlossfId = LoadTex(path, material);
+						it_subsetinfo->GlossfId = LoadTex(path, material,&it_subsetinfo->GlossfTex);
 					}
 
 					if (mDef->NameParam == "normalMap") {
@@ -103,7 +104,7 @@ void D3DXMesh::Create(char *filename) {
 #if DEBUG_MODEL
 						std::cout << "path[" << path << "]" << std::endl;
 #endif
-						it_subsetinfo->NormalId = LoadTex(path, material);
+						it_subsetinfo->NormalId = LoadTex(path, material,&it_subsetinfo->NormalTex);;
 					}
 				}
 			}
@@ -261,9 +262,9 @@ void D3DXMesh::GatherInfo() {
 	}
 }
 
-int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat) {
+int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, D3DXTexture** tex) {
 	int id = g_pBaseDriver->CreateTexture(p);
-	Texture* tex = g_pBaseDriver->GetTexture(id);
+	*tex = dynamic_cast<D3DXTexture*>(g_pBaseDriver->GetTexture(id));
 	bool tiled = false;
 	for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
 		xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
@@ -284,8 +285,8 @@ int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat) {
 	else
 		params |= TEXT_BASIC_PARAMS::CLAMP_TO_EDGE;
 
-	tex->params = params;
-	tex->SetTextureParams();
+	(*tex)->params = params;
+	(*tex)->SetTextureParams();
 
 	if (id != -1) {
 #if DEBUG_MODEL
@@ -347,26 +348,21 @@ void D3DXMesh::Draw(float *t, float *vp) {
 				D3D11DeviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
 				}
 
-
-				TextureD3D *texd3d = dynamic_cast<TextureD3D*>(sub_info->DiffuseTex);
-				D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+				D3D11DeviceContext->PSSetShaderResources(0, 1, sub_info->DiffuseTex->pSRVTex.GetAddressOf());
 
 				if (s->Sig&Signature::SPECULAR_MAP){
-					texd3d = dynamic_cast<TextureD3D*>(sub_info->SpecularTex);
-					D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d->pSRVTex.GetAddressOf());
+					D3D11DeviceContext->PSSetShaderResources(1, 1, sub_info->SpecularTex->pSRVTex.GetAddressOf());
 				}
 
-				if (s->Sig&Signature::GLOSS_MAP) {
-					texd3d = dynamic_cast<TextureD3D*>(sub_info->GlossfTex);
-					D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d->pSRVTex.GetAddressOf());
+				if (s->Sig&Signature::GLOSS_MAP) {;
+					D3D11DeviceContext->PSSetShaderResources(2, 1, sub_info->GlossfTex->pSRVTex.GetAddressOf());
 				}
 
 				if (s->Sig&Signature::NORMAL_MAP) {
-					texd3d = dynamic_cast<TextureD3D*>(sub_info->NormalTex);
-					D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d->pSRVTex.GetAddressOf());
+					D3D11DeviceContext->PSSetShaderResources(3, 1, sub_info->NormalTex->pSRVTex.GetAddressOf());
 				}
 
-				D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+				D3D11DeviceContext->PSSetSamplers(0, 1, sub_info->DiffuseTex->pSampler.GetAddressOf());
 
 				D3D11DeviceContext->IASetIndexBuffer(sub_info->IB.Get(), DXGI_FORMAT_R16_UINT, 0);
 

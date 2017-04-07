@@ -33,6 +33,18 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{63e053be-8260-4813-ae01-bc3f06590eb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\video\D3DX">
+      <UniqueIdentifier>{4b25e9ac-1ed0-4f5f-a772-8acfcfc07838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\video\GL">
+      <UniqueIdentifier>{bee7611b-4f3d-4db3-a278-3ccc3ff56d11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\video\D3DX">
+      <UniqueIdentifier>{c043e95d-4a64-4581-aae7-2adc039c7cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\video\GL">
+      <UniqueIdentifier>{f2cf3e98-b0bc-4354-bd5f-5df91dccb9ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Core.h">
@@ -77,18 +89,6 @@
     <ClInclude Include="include\video\BaseDriver.h">
       <Filter>Header Files\video</Filter>
     </ClInclude>
-    <ClInclude Include="include\video\D3DXDriver.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\GLDriver.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\TextureD3D.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\TextureGL.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,23 +98,35 @@
     <ClInclude Include="include\utils\Camera.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\video\GLRT.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXRT.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\GLShader.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXShader.h">
-      <Filter>Header Files\video</Filter>
-    </ClInclude>
     <ClInclude Include="include\scene\GLMesh.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\D3DXMesh.h">
       <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\D3DXDriver.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\D3DXShader.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\D3DXRT.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\D3DXTexture.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\GLDriver.h">
+      <Filter>Header Files\video\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\GLRT.h">
+      <Filter>Header Files\video\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\GLShader.h">
+      <Filter>Header Files\video\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\GLTexture.h">
+      <Filter>Header Files\video\GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,18 +135,6 @@
     </ClCompile>
     <ClCompile Include="src\core\Win32Framework.cpp">
       <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXDriver.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\GLDriver.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\TextureD3D.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\TextureGL.cpp">
-      <Filter>Source Files\video</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\Cube.cpp">
       <Filter>Source Files\scene</Filter>
@@ -169,19 +169,7 @@
     <ClCompile Include="src\utils\Camera.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\video\GLRT.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXRT.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
     <ClCompile Include="src\video\BaseDriver.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\GLShader.cpp">
-      <Filter>Source Files\video</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXShader.cpp">
       <Filter>Source Files\video</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\GLMesh.cpp">
@@ -189,6 +177,30 @@
     </ClCompile>
     <ClCompile Include="src\scene\D3DXMesh.cpp">
       <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\D3DXDriver.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\D3DXRT.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\D3DXShader.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\D3DXTexture.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\GLDriver.cpp">
+      <Filter>Source Files\video\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\GLRT.cpp">
+      <Filter>Source Files\video\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\GLShader.cpp">
+      <Filter>Source Files\video\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\GLTexture.cpp">
+      <Filter>Source Files\video\GL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
