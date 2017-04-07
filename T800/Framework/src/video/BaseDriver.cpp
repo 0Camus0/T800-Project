@@ -47,8 +47,14 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 	if (sig&Signature::NO_LIGHT_AT_ALL)
 		Defines += "#define NO_LIGHT\n\n";
 
+	#ifdef USING_OPENGL
+	Defines += "#define lowp \n\n";
+	Defines += "#define mediump \n\n";
+	Defines += "#define highp \n\n";
+	#endif
+
 	src_vs = Defines + src_vs;
 	src_fs = Defines + src_fs;
-
+	this->Sig = sig;
 	return CreateShaderAPI(src_vs, src_fs, sig);
 }

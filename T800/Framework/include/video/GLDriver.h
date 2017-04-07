@@ -42,7 +42,8 @@ public:
 	void	DestroyRTs();
 
 	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
-	ShaderBase*	GetShader(unsigned int sig);
+	ShaderBase*	GetShaderSig(unsigned int sig);
+	ShaderBase*	GetShaderIdx(int Id);
 	void		DestroyShaders();
 
 	void	Clear();

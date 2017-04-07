@@ -34,4 +34,6 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	GlossTex_loc = glGetUniformLocation(ShaderProg, "GlossTex");
 	NormalTex_loc = glGetUniformLocation(ShaderProg, "NormalTex");
 	ReflectTex_loc = glGetUniformLocation(ShaderProg, "ReflectTex");
+
+	return true;
 }

@@ -56,6 +56,7 @@ public:
 #endif
 
 	struct SubSetInfo {
+		
 		unsigned int		Sig;
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		unsigned long		VertexAttrib;
@@ -81,6 +82,7 @@ public:
 		unsigned int		VertexSize;
 		bool				bAlignedVertex;
 	};
+
 
 	struct MeshInfo {
 		unsigned int			 VertexSize;
@@ -112,18 +114,11 @@ public:
 #elif defined(USING_D3D11)
 		ComPtr<ID3D11Buffer>		IB;
 		ComPtr<ID3D11Buffer>		VB;
-		ComPtr<ID3D11VertexShader>  pVS;
-		ComPtr<ID3D11PixelShader>   pFS;
-		ComPtr<ID3DBlob>            VS_blob;
-		ComPtr<ID3DBlob>            FS_blob;
-		ComPtr<ID3D11InputLayout>   Layout;
+		
 		ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
-
-		std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
 
 		Mesh::CBuffer				CnstBuffer;
 #endif
-		std::vector<int>		Shaders;
 		std::vector<SubSetInfo>	SubSets;
 	};
 

@@ -59,7 +59,7 @@ void Mesh::Create(char *filename) {
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 
 #elif defined(USING_D3D11)		
-		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderIdx(it_MeshInfo->Shaders[0])); //&it_MeshInfo->Shaders[0];
+		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig));
 
 		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
 
@@ -145,6 +145,7 @@ void Mesh::Create(char *filename) {
 					}
 				}
 			}
+
 			it_subsetinfo->NumTris   = subinfo->NumTris;
 			it_subsetinfo->NumVertex = subinfo->NumVertex;			
 			unsigned short *tmpIndexex = new unsigned short[it_subsetinfo->NumVertex];
@@ -189,6 +190,8 @@ void Mesh::Create(char *filename) {
 #endif
 			delete[] tmpIndexex;
 		}		
+
+
 
 		it_MeshInfo->VertexSize = it->VertexSize;
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
@@ -306,13 +309,14 @@ void Mesh::GatherInfo() {
 				}				
 			}
 
-			int t_sh = g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
-			tmp.Shaders.push_back(t_sh);
+			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
 			stmp.Sig = CurrSig;
 			tmp.SubSets.push_back(stmp);
-		}	
+		}		
+		
 		Info.push_back(tmp);
 	}
+
 
 	free(vsSourceP);
 	free(fsSourceP);
@@ -394,18 +398,14 @@ void Mesh::Draw(float *t, float *vp) {
 		MeshInfo  *it_MeshInfo = &Info[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 
-		int Sig = -1;
-		Shader *s = 0;
+		GLShader *s = 0;
+		GLShader *last = (GLShader*)32;
 		for(std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++){
 			SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
 			bool update = false;
-			for (std::size_t a = 0; a < it_MeshInfo->Shaders.size(); a++) {
-				if (sub_info->Sig == it_MeshInfo->Shaders[a].Sig) {
-					s = &it_MeshInfo->Shaders[a];
-					break;
-				}
-			}
-			if (Sig != s->Sig)
+			s = dynamic_cast<GLShader*>(g_pBaseDriver->GetShaderSig(sub_info->Sig));
+
+			if (s != last)
 				update = true;
 
 			if (update) {
@@ -467,8 +467,8 @@ void Mesh::Draw(float *t, float *vp) {
 					glEnableVertexAttribArray(s->uvSecAttribLoc);
 					glVertexAttribPointer(s->uvSecAttribLoc, 2, GL_FLOAT, GL_FALSE, it_MeshInfo->VertexSize, BUFFER_OFFSET(offset));
 				}
+				
 			}
-	
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sub_info->Id);
 			
@@ -477,8 +477,6 @@ void Mesh::Draw(float *t, float *vp) {
 			if(sub_info->IdDiffuseTex!=-1){
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdDiffuseTex);
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->DiffuseTex_loc, index);
 				slot_active++;
 				index++;
@@ -487,8 +485,6 @@ void Mesh::Draw(float *t, float *vp) {
 			if (sub_info->IdSpecularTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdSpecularTex);
-			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->SpecularTex_loc, index);
 				slot_active++;
 				index++;
@@ -497,8 +493,6 @@ void Mesh::Draw(float *t, float *vp) {
 			if (sub_info->IdGlossTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdGlossTex);
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->GlossTex_loc, index);
 				slot_active++;
 				index++;
@@ -507,8 +501,6 @@ void Mesh::Draw(float *t, float *vp) {
 			if (sub_info->IdNormalTex != -1) {
 				glActiveTexture(slot_active);
 				glBindTexture(GL_TEXTURE_2D, sub_info->IdNormalTex);
-			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glUniform1i(s->NormalTex_loc, index);
 				slot_active++;
 				index++;
@@ -516,28 +508,7 @@ void Mesh::Draw(float *t, float *vp) {
 			
 			glDrawElements(GL_TRIANGLES, sub_info->NumVertex, GL_UNSIGNED_SHORT, 0);
 
-			
-
-			if (update) {
-				glDisableVertexAttribArray(s->vertexAttribLoc);
-				if (s->normalAttribLoc != -1) {
-					glDisableVertexAttribArray(s->normalAttribLoc);
-				}
-				if (s->tangentAttribLoc != -1) {
-					glDisableVertexAttribArray(s->tangentAttribLoc);
-				}
-				if (s->binormalAttribLoc != -1) {
-					glDisableVertexAttribArray(s->binormalAttribLoc);
-				}
-				if (s->uvAttribLoc != -1) {
-					glDisableVertexAttribArray(s->uvAttribLoc);
-				}
-				if (s->uvSecAttribLoc != -1) {
-					glDisableVertexAttribArray(s->uvSecAttribLoc);
-				}
-
-				glUseProgram(0);
-			}
+			last = s;
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -563,14 +534,19 @@ void Mesh::Draw(float *t, float *vp) {
 
 			int Sig = -1;
 			D3DXShader *s = 0;
-
+			D3DXShader *last = (D3DXShader*)32;
 			D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
 
 			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
+				bool update = false;
 				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
 				
 				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sub_info->Sig));
+
+				if(s!=last)
+					update=true;
 				
+				if(update){
 				D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
 				D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
 				D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
@@ -578,6 +554,8 @@ void Mesh::Draw(float *t, float *vp) {
 				D3D11DeviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
 				D3D11DeviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
 				D3D11DeviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+				}
+
 
 				TextureD3D *texd3d = dynamic_cast<TextureD3D*>(sub_info->DiffuseTex);
 				D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
@@ -603,6 +581,7 @@ void Mesh::Draw(float *t, float *vp) {
 
 				D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 				D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+				last = s;
 				}
 			}
 #endif

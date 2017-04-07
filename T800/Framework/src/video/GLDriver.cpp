@@ -221,13 +221,22 @@ int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int 
 	return -1;
 }
 
-ShaderBase*	GLDriver::GetShader(unsigned int sig) {
+ShaderBase*	GLDriver::GetShaderSig(unsigned int sig) {
 	for (unsigned int i = 0; i < Shaders.size(); i++) {
 		if (Shaders[i]->Sig == sig) {
 			return Shaders[i];
 		}
 	}
 	return 0;
+}
+
+ShaderBase*	GLDriver::GetShaderIdx(int id) {
+	if (id < 0 || id >= (int)Shaders.size()) {
+		printf("Warning null ptr ShaderBase Idx\n");
+		return 0;
+	}
+
+	return Shaders[id];
 }
 
 void GLDriver::DestroyShaders() {

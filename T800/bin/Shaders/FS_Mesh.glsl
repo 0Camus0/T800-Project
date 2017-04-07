@@ -215,8 +215,6 @@ void main(){
 	
 	#ifdef SPECULAR
 	gl_FragData[3] = vec4(Specular.xyz ,1.0 );
-	#else
-	
 	#endif
 #endif
 	

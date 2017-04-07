@@ -34,11 +34,24 @@ void Cube::Create() {
 	char *vsSourceP = file2string("Shaders/VS.glsl");
 	char *fsSourceP = file2string("Shaders/FS.glsl");
 
-	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
-	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
+	std::string vsrc = std::string(vsSourceP);
+	std::string fsrc = std::string(fsSourceP);
 
 	free(vsSourceP);
 	free(fsSourceP);
+
+	std::string Defines;
+#ifdef USING_OPENGL
+	Defines += "#define lowp \n\n";
+	Defines += "#define mediump \n\n";
+	Defines += "#define highp \n\n";
+#endif
+
+	vsrc = Defines + vsrc;
+	fsrc = Defines + fsrc;
+
+	GLuint vshader_id = createShader(GL_VERTEX_SHADER,(char*)vsrc.c_str());
+	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER,(char*)fsrc.c_str());
 
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
