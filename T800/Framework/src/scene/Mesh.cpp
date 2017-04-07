@@ -251,6 +251,11 @@ void Mesh::GatherInfo() {
 	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
 #endif
 	
+	std::string vstr = std::string(vsSourceP);
+	std::string fstr = std::string(fsSourceP);
+
+	free(vsSourceP);
+	free(fsSourceP);
 
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 		xFinalGeometry *it = &xFile.MeshInfo[i];
@@ -276,8 +281,6 @@ void Mesh::GatherInfo() {
 			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo stmp;
 			
-			std::string vstr = std::string(vsSourceP);
-			std::string fstr = std::string(fsSourceP);
 			std::string Defines = "";
 
 			for (unsigned int k = 0; k < material->EffectInstance.pDefaults.size(); k++) {
@@ -316,10 +319,6 @@ void Mesh::GatherInfo() {
 		
 		Info.push_back(tmp);
 	}
-
-
-	free(vsSourceP);
-	free(fsSourceP);
 }
 
 Texture* Mesh::LoadTex(std::string p, xF::xMaterial *mat) {

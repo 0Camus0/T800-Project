@@ -28,12 +28,12 @@
 #endif
 
 #define D3DX 1
-#define OGLES 2
+#define OGLES20 2
 #define OGL 3
 
-#define DRIVER_SELECTED OGL
+#define DRIVER_SELECTED D3DX
 
-#if   DRIVER_SELECTED == OGLES
+#if   DRIVER_SELECTED == OGLES20
 	#define USING_OPENGL_ES
 #elif DRIVER_SELECTED == D3DX
 	#define USING_D3D11
