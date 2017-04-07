@@ -13,6 +13,20 @@
 #ifndef T800_CONFIG_H
 #define T800_CONFIG_H
 
+
+#ifndef VDEBUG_NO_LIGHT
+#define VDEBUG_NO_LIGHT 0
+#endif
+
+#ifndef VDEBUG_SIMPLE_COLOR
+#define VDEBUG_SIMPLE_COLOR 0
+#endif
+
+#if VDEBUG_SIMPLE_COLOR && VDEBUG_NO_LIGHT
+#undef VDEBUG_NO_LIGHT
+#define VDEBUG_NO_LIGHT 0
+#endif
+
 #define D3DX 1
 #define OGLES 2
 #define OGL 3

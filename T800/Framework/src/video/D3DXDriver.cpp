@@ -17,7 +17,7 @@
 #include <iostream>
 #include <string>
 
-#define DEBUG_DRIVER 1
+#define DEBUG_DRIVER 0
 
 // D3D11 Main Objects
 ComPtr<IDXGISwapChain>			DXGISwapchain;	// Responsible of the swap buffers
@@ -87,7 +87,7 @@ void D3DXDriver::InitDriver(){
 	ZeroMemory(&dsvd, sizeof(dsvd));
 
 	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
 	// Using the View we can operate with the depth buffer, note this view is created from the depth texture
 	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);

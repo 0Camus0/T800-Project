@@ -90,33 +90,11 @@ public:
 
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 		unsigned int			 Id;
-		unsigned int			 IdIBO;
-
-		unsigned int ShaderProg;
-		
-		int			 matWorldViewProjUniformLoc;
-		int			 matWorldUniformLoc;
-
-		int			 vertexAttribLoc;
-		int			 normalAttribLoc;
-		int			 tangentAttribLoc;
-		int			 binormalAttribLoc;
-		int			 uvAttribLoc;
-		int			 uvSecAttribLoc;
-
-		int			Light0Pos_Loc;
-		int			Light0Color_Loc;
-
-		int			CameraPos_Loc;
-
-		int			Ambient_loc;
-			
+		unsigned int			 IdIBO;			
 #elif defined(USING_D3D11)
 		ComPtr<ID3D11Buffer>		IB;
 		ComPtr<ID3D11Buffer>		VB;
-		
 		ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
-
 		Mesh::CBuffer				CnstBuffer;
 #endif
 		std::vector<SubSetInfo>	SubSets;

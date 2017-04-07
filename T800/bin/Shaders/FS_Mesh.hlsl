@@ -1,4 +1,4 @@
- 
+
 cbuffer ConstantBuffer{
     float4x4 WVP;
 	float4x4 World;  
@@ -90,6 +90,11 @@ struct FS_OUT{
 	float4 color3 : SV_TARGET3;
 };
 
+#ifdef SIMPLE_COLOR
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	return float4(0.5,0.5,0.5,1.0);
+}
+#else
 FS_OUT FS( VS_OUTPUT input )   {
     float4  color = float4(0.5,0.5,0.5,1.0);
 	float4  Final = float4(0.0,0.0,0.0,1.0);
@@ -230,3 +235,5 @@ FS_OUT FS( VS_OUTPUT input )   {
 
 	return sout;
 }
+
+#endif

@@ -24,6 +24,15 @@ bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
 
 bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
 	std::string Defines = "";
+
+	#if VDEBUG_NO_LIGHT
+	Defines += "#define NO_LIGHT\n\n";
+	#endif
+
+	#if VDEBUG_SIMPLE_COLOR
+	Defines += "#define SIMPLE_COLOR\n\n";
+	#endif
+
 	if (sig&Signature::HAS_NORMALS)
 		Defines += "#define USE_NORMALS\n\n";
 	if (sig&Signature::HAS_TEXCOORDS0)

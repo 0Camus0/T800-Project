@@ -1,3 +1,4 @@
+
 uniform mediump sampler2D DiffuseTex;
 
 #ifdef SPECULAR_MAP
@@ -74,6 +75,12 @@ varying highp vec4 hbinormal;
 
 
 varying highp vec4 wPos;
+
+#ifdef SIMPLE_COLOR
+void main(){
+	gl_FragColor = vec4(0.5,0.5,0.5,1.0);
+}
+#else
 
 void main(){
 
@@ -217,6 +224,6 @@ void main(){
 	gl_FragData[3] = vec4(Specular.xyz ,1.0 );
 	#endif
 #endif
-	
-
 }
+
+#endif

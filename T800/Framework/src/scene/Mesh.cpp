@@ -589,9 +589,6 @@ void Mesh::Draw(float *t, float *vp) {
 
 void Mesh::Destroy() {
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
-	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-		MeshInfo  *it_MeshInfo = &Info[i];
-		glDeleteProgram(it_MeshInfo->ShaderProg);
-	}
+	
 #endif
 }
