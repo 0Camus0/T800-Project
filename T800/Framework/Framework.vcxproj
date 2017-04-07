@@ -52,7 +52,7 @@
     <ClCompile Include="src\core\Win32Framework.cpp" />
     <ClCompile Include="src\scene\Cube.cpp" />
     <ClCompile Include="src\scene\GLMesh.cpp" />
-    <ClCompile Include="src\scene\Mesh.cpp" />
+    <ClCompile Include="src\scene\D3DXMesh.cpp" />
     <ClCompile Include="src\scene\PrimitiveInstance.cpp" />
     <ClCompile Include="src\scene\PrimitiveManager.cpp" />
     <ClCompile Include="src\scene\SceneProp.cpp" />

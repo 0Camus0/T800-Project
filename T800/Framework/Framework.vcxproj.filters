@@ -139,9 +139,6 @@
     <ClCompile Include="src\scene\Cube.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\Mesh.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene\PrimitiveInstance.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -188,6 +185,9 @@
       <Filter>Source Files\video</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\GLMesh.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\D3DXMesh.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
