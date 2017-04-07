@@ -25,9 +25,11 @@
 #endif
 
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
-
 void checkcompilederrors(GLuint shader, GLenum type);
 GLuint createShader(GLenum type, char* pSource);
+#else
+void checkcompilederrors(unsigned int shader, unsigned int type);
+unsigned int createShader(unsigned int type, char* pSource);
 #endif
 
 char *file2string(const char *path);

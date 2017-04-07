@@ -50,6 +50,36 @@ struct BaseRT {
 	Texture*										pDepthTexture;
 };
 
+enum Signature {
+	// MAPS
+	DIFFUSE_MAP = 1,
+	SPECULAR_MAP = 2,
+	GLOSS_MAP = 4,
+	NORMAL_MAP = 8,
+	REFLECT_MAP = 16,
+	// ATTRIBUTES
+	HAS_NORMALS = 32,
+	HAS_TANGENTS = 64,
+	HAS_BINORMALS = 128,
+	HAS_TEXCOORDS0 = 256,
+	HAS_TEXCOORDS1 = 512,
+	// CASES
+	NO_LIGHT_AT_ALL = 1024,
+	// PASSES
+	GBUFF_PASS = 2018,
+	SHADOW_MAP_PASS = 4096,
+	FORWARD_PASS = 8192,
+};
+
+class ShaderBase {
+public:
+	ShaderBase() : Sig(0) {	}
+	bool			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+	virtual bool    CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
+
+	unsigned int	Sig;
+};
+
 class BaseDriver {
 public:
 	BaseDriver() {  }
@@ -68,8 +98,20 @@ public:
 	virtual void	PopRT() = 0;
 	virtual void	DestroyRTs() = 0;
 
+	virtual int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
+	virtual ShaderBase*	GetShaderSig(unsigned int sig) = 0;
+	virtual ShaderBase*	GetShaderIdx(int id) = 0;
+	virtual void		DestroyShaders() = 0;
 
-	std::vector<BaseRT*> RTs;
+	std::vector<ShaderBase*>	Shaders;
+	std::vector<BaseRT*>		RTs;	
 };
+
+
+
+#ifndef GETDRIVERBASE
+extern BaseDriver *g_pBaseDriver;
+#define GETDRIVERBASE() g_pBaseDriver
+#endif
 
 #endif

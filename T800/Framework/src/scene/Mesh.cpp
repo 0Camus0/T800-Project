@@ -13,6 +13,12 @@
 #include <scene\Mesh.h>
 #include <iostream>
 
+#if defined(USING_OPENGL_ES) || defined(USING_OPENGL)
+#include <video/GLShader.h>
+#elif defined(USING_D3D11)
+#include <video/D3DXShader.h>
+#endif
+
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
 
@@ -52,74 +58,10 @@ void Mesh::Create(char *filename) {
 
 #if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
 
-#elif defined(USING_D3D11)
-		int offset = 0;
-		D3D11_INPUT_ELEMENT_DESC elementDesc;
-		elementDesc.SemanticName		 = "POSITION";
-		elementDesc.SemanticIndex		 = 0;
-		elementDesc.Format				 = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		elementDesc.InputSlot			 = 0;
-		elementDesc.AlignedByteOffset	 = offset;
-		elementDesc.InputSlotClass		 = D3D11_INPUT_PER_VERTEX_DATA;
-		elementDesc.InstanceDataStepRate = 0;
-		offset += 16;
-		it_MeshInfo->VertexDecl.push_back(elementDesc);
+#elif defined(USING_D3D11)		
+		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderIdx(it_MeshInfo->Shaders[0])); //&it_MeshInfo->Shaders[0];
 
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL) {
-			elementDesc.SemanticName = "NORMAL";
-			elementDesc.SemanticIndex = 0;
-			elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			elementDesc.InputSlot = 0;
-			elementDesc.AlignedByteOffset = offset;
-			elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			elementDesc.InstanceDataStepRate = 0;
-			offset += 16;
-			it_MeshInfo->VertexDecl.push_back(elementDesc);
-		}
-
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
-			elementDesc.SemanticName = "TANGENT";
-			elementDesc.SemanticIndex = 0;
-			elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			elementDesc.InputSlot = 0;
-			elementDesc.AlignedByteOffset = offset;
-			elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			elementDesc.InstanceDataStepRate = 0;
-			offset += 16;
-			it_MeshInfo->VertexDecl.push_back(elementDesc);
-		}
-
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_BINORMAL) {
-			elementDesc.SemanticName = "BINORMAL";
-			elementDesc.SemanticIndex = 0;
-			elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			elementDesc.InputSlot = 0;
-			elementDesc.AlignedByteOffset = offset;
-			elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			elementDesc.InstanceDataStepRate = 0;
-			offset += 16;
-			it_MeshInfo->VertexDecl.push_back(elementDesc);
-		}
-
-		if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD0) {
-			elementDesc.SemanticName = "TEXCOORD";
-			elementDesc.SemanticIndex = 0;
-			elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-			elementDesc.InputSlot = 0;
-			elementDesc.AlignedByteOffset = offset;
-			elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			elementDesc.InstanceDataStepRate = 0;
-			offset += 8;
-			it_MeshInfo->VertexDecl.push_back(elementDesc);
-		}
-		Shader *s = &it_MeshInfo->Shaders[0];
-
-		hr = D3D11Device->CreateInputLayout(&it_MeshInfo->VertexDecl[0], it_MeshInfo->VertexDecl.size(), s->VS_blob->GetBufferPointer(), s->VS_blob->GetBufferSize(), &it_MeshInfo->Layout);
-		if (hr != S_OK) {
-			printf("Error Creating Input Layout\n");
-			return;
-		}
-		D3D11DeviceContext->IASetInputLayout(it_MeshInfo->Layout.Get());
+		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
 
 		D3D11_BUFFER_DESC bdesc = { 0 };
 		bdesc.Usage = D3D11_USAGE_DEFAULT;
@@ -361,130 +303,11 @@ void Mesh::GatherInfo() {
 							CurrSig |= Signature::NO_LIGHT_AT_ALL;
 						}
 					}
-				}
+				}				
 			}
 
-			bool found=false;
-			for(unsigned int k = 0; k < tmp.Shaders.size(); k++){
-				if(CurrSig==tmp.Shaders[k].Sig){
-					found=true;
-					break;
-				}
-			}
-
-			if(!found){
-				Shader t_sh;
-				t_sh.Sig= CurrSig;
-				t_sh.MeshIndex=i;
-				if (CurrSig&Signature::HAS_NORMALS)
-					Defines += "#define USE_NORMALS\n\n";
-				if (CurrSig&Signature::HAS_TEXCOORDS0)
-					Defines += "#define USE_TEXCOORD0\n\n";
-				if (CurrSig&Signature::HAS_TEXCOORDS1)
-					Defines += "#define USE_TEXCOORD1\n\n";
-				if (CurrSig&Signature::HAS_TANGENTS)
-					Defines += "#define USE_TANGENTS\n\n";
-				if (CurrSig&Signature::HAS_BINORMALS)
-					Defines += "#define USE_BINORMALS\n\n";
-				if (CurrSig&Signature::DIFFUSE_MAP)
-					Defines += "#define DIFFUSE_MAP\n\n";
-				if (CurrSig&Signature::SPECULAR_MAP)
-					Defines += "#define SPECULAR_MAP\n\n";
-				if (CurrSig&Signature::GLOSS_MAP)
-					Defines += "#define GLOSS_MAP\n\n";
-				if (CurrSig&Signature::NORMAL_MAP)
-					Defines += "#define NORMAL_MAP\n\n";
-				if (CurrSig&Signature::REFLECT_MAP)
-					Defines += "#define REFLECT_MAP\n\n";
-				if (CurrSig&Signature::NO_LIGHT_AT_ALL)
-					Defines += "#define NO_LIGHT\n\n";
-
-				vstr = Defines + vstr;
-				fstr = Defines + fstr;
-				#if defined(USING_OPENGL_ES)||defined(USING_OPENGL)
-				unsigned int ShaderProg = glCreateProgram();
-				t_sh.ShaderProg = ShaderProg;
-
-				GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
-				GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
-
-				glAttachShader(ShaderProg, vshader_id);
-				glAttachShader(ShaderProg, fshader_id);
-
-				glLinkProgram(ShaderProg);
-				glUseProgram(ShaderProg);
-
-				t_sh.vertexAttribLoc = glGetAttribLocation(ShaderProg, "Vertex");
-				t_sh.normalAttribLoc = glGetAttribLocation(ShaderProg, "Normal");
-				t_sh.uvAttribLoc = glGetAttribLocation(ShaderProg, "UV");
-				t_sh.uvSecAttribLoc = glGetAttribLocation(ShaderProg, "UV_Sec");
-				t_sh.tangentAttribLoc = glGetAttribLocation(ShaderProg, "Tangent");
-				t_sh.binormalAttribLoc = glGetAttribLocation(ShaderProg, "Binormal");
-
-				t_sh.matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
-				t_sh.matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
-
-				t_sh.Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
-				t_sh.Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
-				t_sh.CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
-				t_sh.Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
-
-				t_sh.DiffuseTex_loc = glGetUniformLocation(ShaderProg, "DiffuseTex");
-				t_sh.SpecularTex_loc = glGetUniformLocation(ShaderProg, "SpecularTex");
-				t_sh.GlossTex_loc = glGetUniformLocation(ShaderProg, "GlossTex");
-				t_sh.NormalTex_loc = glGetUniformLocation(ShaderProg, "NormalTex");
-				t_sh.ReflectTex_loc = glGetUniformLocation(ShaderProg, "ReflectTex");
-				#elif defined(USING_D3D11)
-				HRESULT hr = S_OK;
-				{
-					t_sh.VS_blob = nullptr;
-					ComPtr<ID3DBlob> errorBlob = nullptr;
-					hr = D3DCompile(vstr.c_str(), vstr.size(), 0, 0, 0, "VS", "vs_5_0", 0, 0, &t_sh.VS_blob, &errorBlob);
-					if (hr != S_OK) {
-
-						if (errorBlob) {
-							printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-							exit(666);
-						}
-
-						if (t_sh.VS_blob) {
-							exit(666);
-						}
-					}
-
-					hr = D3D11Device->CreateVertexShader(t_sh.VS_blob->GetBufferPointer(), t_sh.VS_blob->GetBufferSize(), 0, &t_sh.pVS);
-					if (hr != S_OK) {
-						printf("Error Creating Vertex Shader\n");
-						exit(666);
-					}
-				}
-
-				{
-					t_sh.FS_blob = nullptr;
-					ComPtr<ID3DBlob> errorBlob = nullptr;
-					hr = D3DCompile(fstr.c_str(), fstr.size(), 0, 0, 0, "FS", "ps_5_0", 0, 0, &t_sh.FS_blob, &errorBlob);
-					if (hr != S_OK) {
-						if (errorBlob) {
-							printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-							exit(666);
-						}
-
-						if (t_sh.FS_blob) {
-							exit(666);
-						}
-					}
-
-					hr = D3D11Device->CreatePixelShader(t_sh.FS_blob->GetBufferPointer(), t_sh.FS_blob->GetBufferSize(), 0, &t_sh.pFS);
-					if (hr != S_OK) {
-						printf("Error Creating Pixel Shader\n");
-						exit(666);
-					}
-				}
-			#endif
-				tmp.Shaders.push_back(t_sh);
-			}
-		
-			
+			int t_sh = g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
+			tmp.Shaders.push_back(t_sh);
 			stmp.Sig = CurrSig;
 			tmp.SubSets.push_back(stmp);
 		}	
@@ -739,27 +562,18 @@ void Mesh::Draw(float *t, float *vp) {
 			UINT offset = 0;
 
 			int Sig = -1;
-			Shader *s = 0;
+			D3DXShader *s = 0;
 
 			D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
 
 			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
 				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
-				bool update = false;
-				for (std::size_t a = 0; a < it_MeshInfo->Shaders.size(); a++) {
-					if (sub_info->Sig == it_MeshInfo->Shaders[a].Sig) {
-						s = &it_MeshInfo->Shaders[a];
-						break;
-					}
-				}
-				if (Sig != s->Sig)
-					update = true;							
-
-				if (update) {
-					D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
-					D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
-					D3D11DeviceContext->IASetInputLayout(it_MeshInfo->Layout.Get());					
-				}
+				
+				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sub_info->Sig));
+				
+				D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+				D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+				D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
 
 				D3D11DeviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
 				D3D11DeviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());

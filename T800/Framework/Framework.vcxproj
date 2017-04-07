@@ -39,8 +39,10 @@
     <ClInclude Include="include\video\BaseDriver.h" />
     <ClInclude Include="include\video\D3DXDriver.h" />
     <ClInclude Include="include\video\D3DXRT.h" />
+    <ClInclude Include="include\video\D3DXShader.h" />
     <ClInclude Include="include\video\GLDriver.h" />
     <ClInclude Include="include\video\GLRT.h" />
+    <ClInclude Include="include\video\GLShader.h" />
     <ClInclude Include="include\video\Texture.h" />
     <ClInclude Include="include\video\TextureD3D.h" />
     <ClInclude Include="include\video\TextureGL.h" />
@@ -63,8 +65,10 @@
     <ClCompile Include="src\video\BaseDriver.cpp" />
     <ClCompile Include="src\video\D3DXDriver.cpp" />
     <ClCompile Include="src\video\D3DXRT.cpp" />
+    <ClCompile Include="src\video\D3DXShader.cpp" />
     <ClCompile Include="src\video\GLDriver.cpp" />
     <ClCompile Include="src\video\GLRT.cpp" />
+    <ClCompile Include="src\video\GLShader.cpp" />
     <ClCompile Include="src\video\Texture.cpp" />
     <ClCompile Include="src\video\TextureD3D.cpp" />
     <ClCompile Include="src\video\TextureGL.cpp" />

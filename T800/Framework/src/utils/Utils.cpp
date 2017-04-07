@@ -47,6 +47,13 @@ GLuint createShader(GLenum type, char* pSource) {
 	checkcompilederrors(shader, type);
 	return shader;
 }
+#else
+void checkcompilederrors(unsigned int shader, unsigned int type) {
+
+}
+unsigned int createShader(unsigned int type, char* pSource) {
+	return 0;
+}
 #endif
 
 char *file2string(const char *path) {

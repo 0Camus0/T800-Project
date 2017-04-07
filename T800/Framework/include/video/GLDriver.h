@@ -41,6 +41,10 @@ public:
 	void	PopRT();
 	void	DestroyRTs();
 
+	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+	ShaderBase*	GetShader(unsigned int sig);
+	void		DestroyShaders();
+
 	void	Clear();
 	void	SwapBuffers();
 #if defined(USING_OPENGL_ES)

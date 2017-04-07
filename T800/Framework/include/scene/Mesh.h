@@ -26,6 +26,8 @@
 #include <D3Dcompiler.h>
 #endif
 
+#include <video\BaseDriver.h>
+
 #include <utils\Utils.h>
 
 #include <utils\xMaths.h>
@@ -42,81 +44,6 @@ class Mesh : public PrimitiveBase {
 public:
 	Mesh()  {}
 
-	enum Signature {
-		DIFFUSE_MAP = 1,
-		SPECULAR_MAP = 2,
-		GLOSS_MAP = 4,
-		NORMAL_MAP = 8,
-		REFLECT_MAP = 16,
-
-		HAS_NORMALS		= 32,
-		HAS_TANGENTS	= 64,
-		HAS_BINORMALS	= 128,
-		HAS_TEXCOORDS0	= 256,
-		HAS_TEXCOORDS1  = 512,
-
-		NO_LIGHT_AT_ALL = 1024
-	};
-
-	struct Shader {
-		Shader() : Sig(0), MeshIndex(0){
-#ifdef USING_D3D11
-#elif defined(USING_OPENGL_ES)||defined(USING_OPENGL)
-			matWorldViewProjUniformLoc = -1;
-			matWorldUniformLoc = -1;
-
-			vertexAttribLoc = -1;
-			normalAttribLoc = -1;
-			tangentAttribLoc = -1;
-			binormalAttribLoc = -1;
-			uvAttribLoc = -1;
-			uvSecAttribLoc = -1;
-
-			Light0Pos_Loc = -1;
-			Light0Color_Loc = -1;
-			CameraPos_Loc = -1;
-			Ambient_loc = -1;
-			DiffuseTex_loc = -1;
-			SpecularTex_loc = -1;
-			GlossTex_loc = -1;
-			NormalTex_loc = -1;
-			ReflectTex_loc = -1;
-#endif
-		}
-		int							Sig;
-		int							MeshIndex;
-#ifdef USING_D3D11
-		ComPtr<ID3D11VertexShader>  pVS;
-		ComPtr<ID3D11PixelShader>   pFS;
-		ComPtr<ID3DBlob>            VS_blob;
-		ComPtr<ID3DBlob>            FS_blob;
-#elif defined(USING_OPENGL_ES) || defined(USING_OPENGL)
-		unsigned int ShaderProg;
-
-		int			 matWorldViewProjUniformLoc;
-		int			 matWorldUniformLoc;
-
-		int			 vertexAttribLoc;
-		int			 normalAttribLoc;
-		int			 tangentAttribLoc;
-		int			 binormalAttribLoc;
-		int			 uvAttribLoc;
-		int			 uvSecAttribLoc;
-
-		int			Light0Pos_Loc;
-		int			Light0Color_Loc;
-
-		int			CameraPos_Loc;
-
-		int			Ambient_loc;
-
-		int			DiffuseTex_loc;
-		int			SpecularTex_loc;
-		int			GlossTex_loc;
-		int			NormalTex_loc;
-		int			ReflectTex_loc;
-#endif
-	};
 #ifdef USING_D3D11
 	struct CBuffer {
 		XMATRIX44 WVP;
@@ -196,7 +123,7 @@ public:
 
 		Mesh::CBuffer				CnstBuffer;
 #endif
-		std::vector<Shader>		Shaders;
+		std::vector<int>		Shaders;
 		std::vector<SubSetInfo>	SubSets;
 	};
 

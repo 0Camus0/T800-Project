@@ -12,6 +12,7 @@
 
 #include <video\GLDriver.h>
 #include <video\GLRT.h>
+#include <video\GLShader.h>
 #include <iostream>
 #include <string>
 
@@ -196,5 +197,42 @@ void GLDriver::PopRT() {
 }
 
 void GLDriver::DestroyRTs() {
+	for (unsigned int i = 0; i < RTs.size(); i++) {
+		GLES20RT *pRT = dynamic_cast<GLES20RT*>(RTs[i]);
+		delete pRT;
+	}
+}
 
+int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return i;
+		}
+	}
+
+	GLShader* shader = new GLShader();
+	if (shader->CreateShader(src_vs, src_fs, sig)) {
+		Shaders.push_back(shader);
+		return (Shaders.size() - 1);
+	}
+	else {
+		delete shader;
+	}
+	return -1;
+}
+
+ShaderBase*	GLDriver::GetShader(unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return Shaders[i];
+		}
+	}
+	return 0;
+}
+
+void GLDriver::DestroyShaders() {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		GLShader *pShader = dynamic_cast<GLShader*>(Shaders[i]);
+		delete pShader;
+	}
 }

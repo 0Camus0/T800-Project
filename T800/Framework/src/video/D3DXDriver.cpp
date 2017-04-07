@@ -12,6 +12,7 @@
 
 #include <video\D3DXDriver.h>
 #include <video\D3DXRT.h>
+#include <video\D3DXShader.h>
 
 #include <iostream>
 #include <string>
@@ -161,6 +162,7 @@ int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
 		w = Width;
 	if (h == 0)
 		h = Height;
+	pRT->number_RT = nrt;
 	if (pRT->LoadRT(nrt, cf, df, w, h)) {
 		RTs.push_back(pRT);
 		return (RTs.size() - 1);
@@ -177,9 +179,9 @@ void D3DXDriver::PushRT(int id) {
 
 	D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
 	
-	ID3D11RenderTargetView **RTVA[4];
+	std::vector<ID3D11RenderTargetView**> RTVA;
 	for (int i = 0; i < pRT->number_RT; i++) {
-		RTVA[i] = pRT->vD3D11RenderTargetView[i].GetAddressOf();
+		RTVA.push_back(pRT->vD3D11RenderTargetView[i].GetAddressOf());
 	}
 
 	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
@@ -206,5 +208,50 @@ void D3DXDriver::DestroyRTs() {
 	for (unsigned int i = 0; i < RTs.size(); i++) {
 		D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[i]);
 		delete pRT;
+	}
+}
+
+int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return i;
+		}
+	}
+
+	D3DXShader* shader = new D3DXShader();
+	if (shader->CreateShader(src_vs, src_fs, sig)) {
+		Shaders.push_back(shader);
+		return (Shaders.size() - 1);
+	}
+	else {
+		delete shader;
+	}
+	return -1;
+	
+}
+
+ShaderBase*	D3DXDriver::GetShaderSig(unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return Shaders[i];
+		}
+	}
+	printf("Warning null ptr ShaderBase Sig\n");
+	return 0;
+}
+
+ShaderBase*	D3DXDriver::GetShaderIdx(int id) {
+	if (id < 0 || id >= (int)Shaders.size()) {
+		printf("Warning null ptr ShaderBase Idx\n");
+		return 0;
+	}
+
+	return Shaders[id];
+}
+
+void D3DXDriver::DestroyShaders() {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		D3DXShader *pShader = dynamic_cast<D3DXShader*>(Shaders[i]);
+		delete pShader;
 	}
 }
