@@ -80,8 +80,57 @@ varying highp vec4 wPos;
 void main(){
 	gl_FragColor = vec4(0.5,0.5,0.5,1.0);
 }
-#else
+#elif defined(G_BUFFER_PASS)
+void main(){
+	lowp vec4 color    = vec4(0.5,0.5,0.5,1.0);
+	lowp vec4 normal   = vec4(0.5,0.5,0.5,1.0);
+	lowp vec4 specular = vec4(0.5,0.5,0.5,1.0);
+	lowp vec4 reflect  = vec4(0.5,0.5,0.5,1.0);
 
+	mediump float specIntesivity = 0.8;
+	mediump float shinness = 2.0;
+	
+	#ifdef DIFFUSE_MAP
+		color = texture2D(DiffuseTex,vecUVCoords);
+	#endif
+	
+	normal.xyz   = normalize(hnormal).xyz;  
+	#ifdef NORMAL_MAP	
+		lowp vec3 normalTex  = texture2D(NormalTex,vecUVCoords).xyz;
+		normalTex 		 	 = normalTex*vec3(2.0,2.0,2.0) - vec3(1.0,1.0,1.0);
+		normalTex		 	 = normalize(normalTex);
+		normalTex.g 	 	 = -normalTex.g;
+		lowp vec3 tangent	 = normalize(htangent).xyz;
+		lowp vec3 binormal	 = normalize(hbinormal).xyz;
+		lowp mat3	TBN 	 = mat3(tangent,binormal,normal);
+		normal.xyz		 	 = TBN*normalTex;
+		normal.xyz		 	 = normalize(normal)*0.5 + 0.5;
+	#else
+		normal.xyz 			 = normal.xyz*0.5 + 0.5;
+	#endif
+	
+	#ifdef SPECULAR_MAP
+		specular = texture2D(SpecularTex,vecUVCoords);
+	#endif
+	
+	#ifdef GLOSS_MAP
+		shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
+	#endif
+	
+	gl_FragData[0].rgb  = color.rgb;
+	gl_FragData[0].a 	= specIntesivity;
+	
+	
+	gl_FragData[1].rgb  = normal.rgb;
+	gl_FragData[1].a 	= shinness;
+	
+	gl_FragData[2].rgb  = specular.rgb;
+	gl_FragData[2].a 	= shinness;
+	
+	gl_FragData[3] 		= reflect;
+	
+}
+#else
 void main(){
 
 	lowp vec4 color = vec4(0.5,0.5,0.5,1.0);
@@ -201,29 +250,7 @@ void main(){
 	#endif
 #endif
 
-
-#ifdef NO_LIGHT
-	gl_FragData[0] = color;
-	gl_FragData[1] = vec4(0.5,0.5,0.5,1.0 );
-	gl_FragData[2] = vec4(normalize(hnormal).xyz*0.5 + 0.5,1.0 );
-	gl_FragData[1] = vec4(0.5,0.5,0.5,1.0 );
-#else
-	gl_FragData[0] = color;
-	
-	#ifdef DIFFUSE
-	gl_FragData[1] = vec4(Fresnel.xyz, 1.0 );
-	#endif
-	
-	#ifdef NORMAL_MAP	
-	gl_FragData[2] = vec4(normal.xyz*0.5+0.5,1.0 );
-	#else
-	gl_FragData[2] = vec4(normalize(hnormal).xyz*0.5+0.5,1.0 );
-	#endif
-	
-	#ifdef SPECULAR
-	gl_FragData[3] = vec4(Specular.xyz ,1.0 );
-	#endif
-#endif
+	gl_FragColor = color;
 }
 
 #endif

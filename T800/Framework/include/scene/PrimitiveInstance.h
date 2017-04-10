@@ -45,6 +45,8 @@ class PrimitiveInst {
 		void	RotateZRelative(float ang);
 		void	ScaleRelative(float sc);
 
+		void	SetSignature(unsigned int f);
+
 		void	Update();
 		void	Draw();
 

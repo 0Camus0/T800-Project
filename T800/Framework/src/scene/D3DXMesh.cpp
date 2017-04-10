@@ -256,6 +256,9 @@ void D3DXMesh::GatherInfo() {
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
 			stmp.Sig = CurrSig;
 			tmp.SubSets.push_back(stmp);
+
+			CurrSig |= Signature::GBUFF_PASS;
+			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
 		}		
 		
 		Info.push_back(tmp);
@@ -333,7 +336,9 @@ void D3DXMesh::Draw(float *t, float *vp) {
 				bool update = false;
 				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
 				
-				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sub_info->Sig));
+				unsigned int sig = sub_info->Sig;
+				sig |= gSig;
+				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
 
 				if(s!=last)
 					update=true;

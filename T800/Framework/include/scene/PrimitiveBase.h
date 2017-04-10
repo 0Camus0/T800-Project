@@ -23,15 +23,19 @@
 
 class PrimitiveBase {
 public:
+	PrimitiveBase() : pScProp(0) , gSig(0) {}
 	virtual void Create() = 0;
 	virtual void Create(char *) = 0;
 	virtual void Transform(float *t) = 0;
 	virtual void Draw(float *t,float *vp) = 0;
 	virtual void Destroy() = 0;
 
+	void SetGlobalSignature(unsigned int f){ gSig = f; }
+
 
 	void SetSceneProps(SceneProps *p) { pScProp = p; }
 	SceneProps	*pScProp;
+	unsigned int gSig;
 };
 
 

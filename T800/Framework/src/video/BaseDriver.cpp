@@ -117,6 +117,8 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define REFLECT_MAP\n\n";
 	if (sig&Signature::NO_LIGHT_AT_ALL)
 		Defines += "#define NO_LIGHT\n\n";
+	if (sig&Signature::GBUFF_PASS)
+		Defines += "#define G_BUFFER_PASS\n\n";
 
 	#ifdef USING_OPENGL
 	Defines += "#define lowp \n\n";

@@ -101,6 +101,7 @@ struct BaseRT {
 };
 
 enum Signature {
+	FORWARD_PASS = 0,
 	// MAPS
 	DIFFUSE_MAP = 1,
 	SPECULAR_MAP = 2,
@@ -116,9 +117,8 @@ enum Signature {
 	// CASES
 	NO_LIGHT_AT_ALL = 1024,
 	// PASSES
-	GBUFF_PASS = 2018,
+	GBUFF_PASS		= 2048,
 	SHADOW_MAP_PASS = 4096,
-	FORWARD_PASS = 8192,
 };
 
 class ShaderBase {

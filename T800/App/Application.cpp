@@ -206,7 +206,9 @@ void App::OnDraw() {
 
 	pFramework->pVideoDriver->PushRT(0);
 	for (int i = 0; i < 5; i++) {
+		Pigs[i].SetSignature(Signature::GBUFF_PASS);
 		Pigs[i].Draw();
+		Pigs[i].SetSignature(Signature::FORWARD_PASS);
 	}
 	pFramework->pVideoDriver->PopRT();
 

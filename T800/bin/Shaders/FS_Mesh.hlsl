@@ -83,6 +83,12 @@ struct VS_OUTPUT{
 	float4 wPos		: TEXCOORD1;
 };
 
+#ifdef SIMPLE_COLOR
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	return float4(0.5,0.5,0.5,1.0);
+}
+#elif defined(G_BUFFER_PASS)
+
 struct FS_OUT{
 	float4 color0 : SV_TARGET0;
 	float4 color1 : SV_TARGET1;
@@ -90,12 +96,58 @@ struct FS_OUT{
 	float4 color3 : SV_TARGET3;
 };
 
-#ifdef SIMPLE_COLOR
-float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	return float4(0.5,0.5,0.5,1.0);
+FS_OUT FS( VS_OUTPUT input )   {
+	float4  color 		= float4(0.5,0.5,0.5,1.0);
+	float4  normal 		= float4(0.5,0.5,0.5,1.0);
+	float4  specular 	= float4(0.5,0.5,0.5,1.0);
+	float4  reflect		= float4(0.5,0.5,0.5,1.0);
+	
+	float specIntesivity = 0.8;
+	float shinness = 2.0;
+	
+	#ifdef DIFFUSE_MAP
+		color = TextureRGB.Sample( SS, input.texture0 );	
+	#endif
+	
+	normal.xyz   = normalize(input.hnormal).xyz;
+	#ifdef NORMAL_MAP	
+		float3 normalTex = TextureNormal.Sample( SS, input.texture0 ).xyz;
+		normalTex 		 = 	normalTex*float3(2.0,2.0,2.0) - float3(1.0,1.0,1.0);
+		normalTex		 = normalize(normalTex);
+		normalTex.g 	 = -normalTex.g;
+		float3 tangent	 = normalize(input.htangent).xyz;
+		float3 binormal	 = normalize(input.hbinormal).xyz;
+		float3x3	TBN  =  float3x3(tangent,binormal,normal.xyz);
+		normal.xyz		 = mul(normalTex,TBN);
+		normal.xyz		 = normalize(normal)*0.5 + 0.5;	
+	#else
+		normal.xyz = normal.xyz*0.5 + 0.5;
+	#endif
+	
+	#ifdef SPECULAR_MAP
+		specular.rgb = TextureSpecular.Sample( SS, input.texture0 ).rgb;	
+	#endif
+	
+	#ifdef GLOSS_MAP
+		shinness = TextureGloss.Sample( SS, input.texture0 ).r + shinness;
+	#endif
+	
+	FS_OUT fout;
+	fout.color0.rgb = color.rgb;
+	fout.color0.a 	= specIntesivity;
+	
+	fout.color1.rgb = normal.rgb;
+	fout.color1.a 	= shinness;
+	
+	fout.color2.rgb = specular.rgb;
+	fout.color2.a 	= shinness;
+	
+	fout.color3 	= reflect;
+
+	return fout;	
 }
 #else
-FS_OUT FS( VS_OUTPUT input )   {
+float4 FS( VS_OUTPUT input )  : SV_TARGET {
     float4  color = float4(0.5,0.5,0.5,1.0);
 	float4  Final = float4(0.0,0.0,0.0,1.0);
 #ifdef USE_TEXCOORD0
@@ -179,10 +231,10 @@ FS_OUT FS( VS_OUTPUT input )   {
 		#else
 			float4 FresnelCol = float4(1.0,1.0,1.0,1.0);	
 		#endif
-		FresnelAtt			= abs(FresnelAtt);
+		FresnelAtt		= abs(FresnelAtt);
 		FresnelAtt 		= 1.0 - FresnelAtt;
 		FresnelAtt 		= clamp( FresnelAtt , 0.0 , 1.0 );
-		FresnelAtt			= pow( FresnelAtt , 4.0 );	
+		FresnelAtt		= pow( FresnelAtt , 4.0 );	
 		FresnelAtt 		= clamp(FresnelAtt , 0.0 , 1.0 );
 		Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt; 
 	#endif
@@ -211,29 +263,8 @@ FS_OUT FS( VS_OUTPUT input )   {
 		#endif
 	#endif
 #endif		
-	FS_OUT sout;
-#ifdef NO_LIGHT
-	sout.color0 = color;
-	sout.color2 = float4(normalize(input.hnormal).xyz*0.5+0.5,1.0 );
-#else
-	sout.color0 = color;
-	
-	#ifdef DIFFUSE
-	sout.color1 = float4(Fresnel.xyz, 1.0 );
-	#endif
-	
-	#ifdef NORMAL_MAP	
-	sout.color2 = float4(normal.xyz*0.5+0.5,1.0 );
-	#else
-	sout.color2 = float4(normalize(input.hnormal).xyz*0.5+0.5,1.0 );
-	#endif
-	
-	#ifdef SPECULAR
-	sout.color3 = float4(Specular.xyz ,1.0 );
-	#endif
-#endif
 
-	return sout;
+	return color;
 }
 
 #endif

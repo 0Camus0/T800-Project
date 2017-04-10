@@ -223,8 +223,11 @@ void GLMesh::GatherInfo() {
 			}
 
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
-			stmp.Sig = CurrSig;
+			stmp.Sig = CurrSig;		
 			tmp.SubSets.push_back(stmp);
+
+			CurrSig |= Signature::GBUFF_PASS;
+			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
 		}
 
 		Info.push_back(tmp);
@@ -290,7 +293,10 @@ void GLMesh::Draw(float *t, float *vp) {
 		for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
 			SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
 			bool update = false;
-			s = dynamic_cast<GLShader*>(g_pBaseDriver->GetShaderSig(sub_info->Sig));
+
+			unsigned int sig = sub_info->Sig;
+			sig |= gSig;
+			s = dynamic_cast<GLShader*>(g_pBaseDriver->GetShaderSig(sig));
 
 			if (s != last)
 				update = true;

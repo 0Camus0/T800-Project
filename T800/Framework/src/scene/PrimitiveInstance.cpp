@@ -71,3 +71,7 @@ void PrimitiveInst::Draw(){
 		return;
 	pBase->Draw(&Final.m[0][0],&(*pViewProj).m[0][0]);
 }
+
+void PrimitiveInst::SetSignature(unsigned int f){
+	pBase->SetGlobalSignature(f);
+}
