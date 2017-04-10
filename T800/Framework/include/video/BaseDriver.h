@@ -49,7 +49,7 @@ public:
 
 	}
 
-	int				LoadTexture(char *fn);
+	bool			LoadTexture(char *fn);
 
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;

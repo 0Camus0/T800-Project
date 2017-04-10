@@ -12,19 +12,37 @@
 #include <video/BaseDriver.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <iostream>
 #include <string>
+#include <fstream>
 
 BaseDriver*	g_pBaseDriver = 0;
 
-int		Texture::LoadTexture(char *fn) {
+#include <utils\Checker.h>
+
+bool		Texture::LoadTexture(char *fn) {
+	bool found = false;
 	std::string path = "Textures/";
-	path += std::string(fn);
-	//path += "Checker.tga";
+	std::string filepath = path + std::string(fn);
+	std::ifstream inf(filepath.c_str());
+	found = inf.good();
+	inf.close();
+
 	int x = 0, y = 0, channels = 0;
-	unsigned char *buffer = stbi_load(path.c_str(), &x, &y, &channels, 0);
+	unsigned char *buffer = 0;
+
+	if(!found){
+		buffer = (unsigned char*)g_chkr.pixel_data;
+		x = g_chkr.width;
+		y = g_chkr.height;
+		channels = g_chkr.bytes_per_pixel;
+		std::cout << "Texture [" << filepath << "] not found, loading checker" << std::endl;
+	}else{
+		buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
+	}
 
 	if (!buffer)
-		return -1;
+		return false;
 
 	size = x*y*channels;
 	bounded = 1;
@@ -49,7 +67,10 @@ int		Texture::LoadTexture(char *fn) {
 	optname[strlen(fn)] = '\0';
 
 	LoadAPITexture(buffer);
-	stbi_image_free(buffer);
+	if(found){
+		stbi_image_free(buffer);
+	}
+
 	return true;
 }
 
