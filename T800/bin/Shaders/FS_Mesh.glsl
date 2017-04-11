@@ -104,7 +104,7 @@ void main(){
 		lowp vec3 binormal	 = normalize(hbinormal).xyz;
 		lowp mat3	TBN 	 = mat3(tangent,binormal,normal);
 		normal.xyz		 	 = TBN*normalTex;
-		normal.xyz		 	 = normalize(normal)*0.5 + 0.5;
+		normal.xyz		 	 = normalize(normal.xyz)*0.5 + 0.5;
 	#else
 		normal.xyz 			 = normal.xyz*0.5 + 0.5;
 	#endif

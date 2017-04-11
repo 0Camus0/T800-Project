@@ -119,7 +119,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 		float3 binormal	 = normalize(input.hbinormal).xyz;
 		float3x3	TBN  =  float3x3(tangent,binormal,normal.xyz);
 		normal.xyz		 = mul(normalTex,TBN);
-		normal.xyz		 = normalize(normal)*0.5 + 0.5;	
+		normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
 	#else
 		normal.xyz = normal.xyz*0.5 + 0.5;
 	#endif
