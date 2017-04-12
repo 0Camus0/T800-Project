@@ -16,6 +16,7 @@
 #include <Config.h>
 
 #include <scene\PrimitiveBase.h>
+#include <video\BaseDriver.h>
 #include <utils\xMaths.h>
 
 class PrimitiveInst {
@@ -46,6 +47,7 @@ class PrimitiveInst {
 		void	ScaleRelative(float sc);
 
 		void	SetSignature(unsigned int f);
+		void	SetTexture(Texture* tex,int index);
 
 		void	Update();
 		void	Draw();

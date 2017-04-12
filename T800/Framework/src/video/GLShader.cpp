@@ -35,5 +35,14 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	NormalTex_loc = glGetUniformLocation(ShaderProg, "NormalTex");
 	ReflectTex_loc = glGetUniformLocation(ShaderProg, "ReflectTex");
 
+	tex0_loc = glGetUniformLocation(ShaderProg, "tex0");
+	tex1_loc = glGetUniformLocation(ShaderProg, "tex1");
+	tex2_loc = glGetUniformLocation(ShaderProg, "tex2");
+	tex3_loc = glGetUniformLocation(ShaderProg, "tex3");
+	tex4_loc = glGetUniformLocation(ShaderProg, "tex4");
+	tex5_loc = glGetUniformLocation(ShaderProg, "tex5");
+	tex6_loc = glGetUniformLocation(ShaderProg, "tex6");
+	tex7_loc = glGetUniformLocation(ShaderProg, "tex7");
+
 	return true;
 }

@@ -16,6 +16,9 @@
 #include <Config.h>
 
 #include <scene\SceneProp.h>
+#include <video\BaseDriver.h>
+
+#include <vector>
 
 #ifndef BUFFER_OFFSET
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -23,7 +26,11 @@
 
 class PrimitiveBase {
 public:
-	PrimitiveBase() : pScProp(0) , gSig(0) {}
+	PrimitiveBase() : pScProp(0) , gSig(0) {
+		for(int i=0;i<8;i++){
+			Textures[i]=0;
+		}
+	}
 	virtual void Create() = 0;
 	virtual void Create(char *) = 0;
 	virtual void Transform(float *t) = 0;
@@ -31,10 +38,13 @@ public:
 	virtual void Destroy() = 0;
 
 	void SetGlobalSignature(unsigned int f){ gSig = f; }
-
+	void SetTexture(Texture* tex,int index){
+		Textures[index] = tex;
+	}
 
 	void SetSceneProps(SceneProps *p) { pScProp = p; }
-	SceneProps	*pScProp;
+	SceneProps				*pScProp;
+	Texture*				 Textures[8];
 	unsigned int gSig;
 };
 

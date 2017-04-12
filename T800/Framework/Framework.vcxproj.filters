@@ -128,6 +128,12 @@
     <ClInclude Include="include\video\GLTexture.h">
       <Filter>Header Files\video\GL</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\GLQuad.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\D3DXQuad.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
@@ -201,6 +207,12 @@
     </ClCompile>
     <ClCompile Include="src\video\GLTexture.cpp">
       <Filter>Source Files\video\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\GLQuad.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\D3DXQuad.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

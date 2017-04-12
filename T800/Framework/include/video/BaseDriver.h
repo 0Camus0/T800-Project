@@ -119,6 +119,10 @@ enum Signature {
 	// PASSES
 	GBUFF_PASS		= 2048,
 	SHADOW_MAP_PASS = 4096,
+	FSQUAD_1_TEX	= 8192,
+	FSQUAD_2_TEX	= 16384,
+	FSQUAD_3_TEX	= 32768,
+
 };
 
 class ShaderBase {

@@ -90,7 +90,6 @@ public:
 
 	XMATRIX44	transform;
 	XDataBase	xFile;
-	std::vector<Texture*> Textures;
 	std::vector<MeshInfo> Info;
 };
 

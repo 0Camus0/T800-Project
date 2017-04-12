@@ -54,6 +54,15 @@ public:
 		GlossTex_loc = -1;
 		NormalTex_loc = -1;
 		ReflectTex_loc = -1;
+
+		tex0_loc = -1;
+		tex1_loc = -1;
+		tex2_loc = -1;
+		tex3_loc = -1;
+		tex4_loc = -1;
+		tex5_loc = -1;
+		tex6_loc = -1;
+		tex7_loc = -1;
 	}
 
 	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
@@ -82,6 +91,15 @@ public:
 	int			GlossTex_loc;
 	int			NormalTex_loc;
 	int			ReflectTex_loc;
+
+	int			tex0_loc;
+	int			tex1_loc;
+	int			tex2_loc;
+	int			tex3_loc;
+	int			tex4_loc;
+	int			tex5_loc;
+	int			tex6_loc;
+	int			tex7_loc;
 };
 
 

@@ -119,6 +119,13 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define NO_LIGHT\n\n";
 	if (sig&Signature::GBUFF_PASS)
 		Defines += "#define G_BUFFER_PASS\n\n";
+	if (sig&Signature::FSQUAD_1_TEX)
+		Defines += "#define FSQUAD_1_TEX\n\n";
+	if (sig&Signature::FSQUAD_2_TEX)
+		Defines += "#define FSQUAD_2_TEX\n\n";
+	if (sig&Signature::FSQUAD_3_TEX)
+		Defines += "#define FSQUAD_3_TEX\n\n";
+
 
 	#ifdef USING_OPENGL
 	Defines += "#define lowp \n\n";

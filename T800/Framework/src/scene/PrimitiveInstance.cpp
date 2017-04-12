@@ -75,3 +75,7 @@ void PrimitiveInst::Draw(){
 void PrimitiveInst::SetSignature(unsigned int f){
 	pBase->SetGlobalSignature(f);
 }
+
+void PrimitiveInst::SetTexture(Texture* tex, int index){
+	pBase->SetTexture(tex,index);
+}
