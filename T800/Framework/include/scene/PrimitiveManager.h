@@ -28,6 +28,7 @@ public:
 	int  CreateTriangle();
 	int	 CreateCube();
 	int	 CreateMesh(char *fname);
+	int  CreateQuad();
 
 	void SetSceneProps(SceneProps *p);
 

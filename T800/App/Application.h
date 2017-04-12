@@ -49,6 +49,7 @@ public:
 	PrimitiveInst	Cubes[10];
 	PrimitiveInst	Triangles[10];
 	PrimitiveInst   Pigs[10];
+	PrimitiveInst	QuadInst;
 
 	Camera			Cam;
 

@@ -122,7 +122,7 @@ enum Signature {
 	FSQUAD_1_TEX	= 8192,
 	FSQUAD_2_TEX	= 16384,
 	FSQUAD_3_TEX	= 32768,
-
+	DEFERRED_PASS	= 65536
 };
 
 class ShaderBase {

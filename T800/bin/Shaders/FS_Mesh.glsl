@@ -106,7 +106,7 @@ void main(){
 		normal.xyz		 	 = TBN*normalTex;
 		normal.xyz		 	 = normalize(normal.xyz)*0.5 + 0.5;
 	#else
-		normal.xyz 			 = normal.xyz*0.5 + 0.5;
+		normal.xyz 			 = vec3(0.0,0.0,0.0); //normal.xyz*0.5 + 0.5;
 	#endif
 	
 	#ifdef SPECULAR_MAP
@@ -127,7 +127,8 @@ void main(){
 	gl_FragData[2].rgb  = specular.rgb;
 	gl_FragData[2].a 	= shinness;
 	
-	gl_FragData[3] 		= reflect;
+	gl_FragData[3] 		= vec4(1.0,1.0,1.0,1.0) - color;
+	gl_FragData[3].a	= 1.0;
 	
 }
 #else

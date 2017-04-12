@@ -1,3 +1,15 @@
+/*********************************************************
+* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
+* All Rights Reserved
+*
+* You may use, distribute and modify this code under the
+* following terms:
+* ** Do not claim that you wrote this software
+* ** A mention would be appreciated but not needed
+* ** I do not and will not provide support, this software is "as is"
+* ** Enjoy, learn and share.
+*********************************************************/
+
 #include <video\GLShader.h>
 #include <scene\GLQuad.h>
 #include <utils\Utils.h>
@@ -16,7 +28,7 @@ void GLQuad::Create(){
 
 	g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
 
-	Dest = SigBase | Signature::GBUFF_PASS;
+	Dest = SigBase | Signature::DEFERRED_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
 	Dest = SigBase | Signature::FSQUAD_1_TEX;
@@ -28,11 +40,11 @@ void GLQuad::Create(){
 	Dest = SigBase | Signature::FSQUAD_3_TEX;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
-	vertices[1] = {  1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[2] = { -1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[3] = {  1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-
+	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f };	
+	
 	indices[0] = 2;
 	indices[1] = 1;
 	indices[2] = 0;
@@ -81,7 +93,7 @@ void GLQuad::Draw(float *t, float *vp){
 	glEnableVertexAttribArray(s->uvAttribLoc);
 	glVertexAttribPointer(s->uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), BUFFER_OFFSET(16));
 
-	if(sig&Signature::GBUFF_PASS){
+	if(sig&Signature::DEFERRED_PASS){
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);
@@ -97,8 +109,41 @@ void GLQuad::Draw(float *t, float *vp){
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, Textures[3]->id);
 		glUniform1i(s->tex3_loc, 3);
-
 	}
+	else if (sig&Signature::FSQUAD_1_TEX) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+	}
+	else if (sig&Signature::FSQUAD_2_TEX) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Textures[1]->id);
+		glUniform1i(s->tex1_loc, 1);
+	}
+	else if (sig&Signature::FSQUAD_3_TEX) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Textures[1]->id);
+		glUniform1i(s->tex1_loc, 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, Textures[2]->id);
+		glUniform1i(s->tex2_loc, 2);
+	}
+	else {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+	}
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }
 
 void GLQuad::Destroy(){
