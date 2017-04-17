@@ -20,8 +20,8 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 void D3DXQuad::Create() {
 	SigBase = Signature::HAS_TEXCOORDS0;
 	unsigned int Dest;
-	char *vsSourceP = file2string("Shaders/VS_Quad.glsl");
-	char *fsSourceP = file2string("Shaders/FS_Quad.glsl");
+	char *vsSourceP = file2string("Shaders/VS_Quad.hlsl");
+	char *fsSourceP = file2string("Shaders/FS_Quad.hlsl");
 
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);
@@ -43,10 +43,10 @@ void D3DXQuad::Create() {
 	Dest = SigBase | Signature::FSQUAD_3_TEX;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[2] = { 1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
-	vertices[3] = { 1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[2] = { 1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[3] = { 1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
 
 	indices[0] = 2;
 	indices[1] = 1;
@@ -100,6 +100,7 @@ void D3DXQuad::Transform(float *t) {
 }
 
 void D3DXQuad::Draw(float *t, float *vp) {
+
 	if (t)
 		transform = t;
 
@@ -108,10 +109,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	D3DXShader * s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
 	UINT offset = 0;
 	UINT stride = sizeof(Vert);
-	XMATRIX44 VP = XMATRIX44(vp);
-	XMATRIX44 WVP = transform*VP;
 
-	CnstBuffer.WVP = WVP;
+	CnstBuffer.WVP = transform;
 	CnstBuffer.World = transform;
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
@@ -134,6 +133,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_1_TEX) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

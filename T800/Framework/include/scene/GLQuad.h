@@ -48,8 +48,8 @@ public:
 
 	Vert			vertices[4];
 	unsigned short	indices[6];
-	GLuint			VB;
-	GLuint			IB;
+	unsigned int	VB;
+	unsigned int	IB;
 	XMATRIX44		transform;
 
 };

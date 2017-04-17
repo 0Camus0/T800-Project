@@ -31,7 +31,7 @@ void	GLTexture::SetTextureParams() {
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
 
-	glFiltering = GL_LINEAR;
+	glFiltering = GL_LINEAR_MIPMAP_LINEAR;
 	glWrap = GL_CLAMP_TO_EDGE;
 	
 	if(params & TEXT_BASIC_PARAMS::MIPMAPS)

@@ -40,10 +40,10 @@ void GLQuad::Create(){
 	Dest = SigBase | Signature::FSQUAD_3_TEX;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
-	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f };	
+	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };	
 	
 	indices[0] = 2;
 	indices[1] = 1;
@@ -109,6 +109,10 @@ void GLQuad::Draw(float *t, float *vp){
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, Textures[3]->id);
 		glUniform1i(s->tex3_loc, 3);
+
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, Textures[4]->id);
+		glUniform1i(s->tex4_loc, 4);
 	}
 	else if (sig&Signature::FSQUAD_1_TEX) {
 		glActiveTexture(GL_TEXTURE0);

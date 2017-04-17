@@ -15,6 +15,7 @@
 #include <scene\Cube.h>
 #include <scene\GLMesh.h>
 #include <scene\D3DXMesh.h>
+#include <scene\D3DXQuad.h>
 #include <scene\GLQuad.h>
 
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
@@ -53,7 +54,7 @@ int PrimitiveManager::CreateQuad() {
 #if defined(USING_GL_COMMON)
 	PrimitiveBase *primitive = new GLQuad();
 #elif defined(USING_D3D11)
-	PrimitiveBase *primitive = new Cube();
+	PrimitiveBase *primitive = new D3DXQuad();
 #endif
 	primitive->Create();
 	primitives.push_back(primitive);

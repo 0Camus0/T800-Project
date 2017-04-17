@@ -12,7 +12,7 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 		if (hr != S_OK) {
 
 			if (errorBlob) {
-				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				printf("ErrorBlob shader VS[%s] [%s]\n\n", src_vs.c_str(),(char*)errorBlob->GetBufferPointer());
 				return false;
 			}
 
@@ -34,7 +34,7 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 		hr = D3DCompile(src_fs.c_str(), src_fs.size(), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
 		if (hr != S_OK) {
 			if (errorBlob) {
-				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				printf("ErrorBlob shader FS [%s] [%s]\n\n", src_fs.c_str(), (char*)errorBlob->GetBufferPointer());
 				return false;
 			}
 

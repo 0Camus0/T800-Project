@@ -121,7 +121,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 		normal.xyz		 = mul(normalTex,TBN);
 		normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
 	#else
-		normal.xyz = normal.xyz*0.5 + 0.5;
+		normal.xyz =  float3(0.0,0.0,0.0); // normal.xyz*0.5 + 0.5;
 	#endif
 	
 	#ifdef SPECULAR_MAP

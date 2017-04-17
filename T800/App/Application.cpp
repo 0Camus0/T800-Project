@@ -101,6 +101,7 @@ void App::CreateAssets() {
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
 
 	
 
