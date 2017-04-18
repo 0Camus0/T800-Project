@@ -1,13 +1,11 @@
 # T800-Project v0.1.1
 
-New on v0.1.0:
+New on V0.1.2:
 
-	- Added Render Targets
+	- Deferred Rendering Pipeline (Only D3D11 and GL)
 	
-	- Added Multiple Render Targets
-	
-	- Added Native GL Desktop API 4.0
-	
+	- Up to 128 point lights
+
 New on v0.1.1:
 
 	- Added GLES 3.0
@@ -26,6 +24,14 @@ New on v0.1.1:
 	
 	- Added Debug Shaders
 	
+New on v0.1.0:
+
+	- Added Render Targets
+	
+	- Added Multiple Render Targets
+	
+	- Added Native GL Desktop API 4.0
+		
 
 T800 Project is a small framework I started developing for multiple purposes,
 one of them, was to teach the basics of graphics programming. Now is at the
