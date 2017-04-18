@@ -35,7 +35,7 @@ void App::InitVars() {
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
 	Cam.Speed = 10.0f;
-	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
+	Cam.Eye = XVECTOR3(0.0f, 9.75f, -301.0f);
 	Cam.Pitch = 0.14f;
 	Cam.Roll = 0.0f;
 	Cam.Yaw = 0.020f;
