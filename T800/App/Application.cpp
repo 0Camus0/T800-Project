@@ -18,7 +18,7 @@
 #include <stdlib.h>     
 #include <time.h>     
 
-#define NUM_LIGHTS 127
+#define NUM_LIGHTS 128
 #define RADI 170.0f
 
 enum {
@@ -59,7 +59,7 @@ void App::InitVars() {
 		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(r, g, b), true);
 	}
-
+	SceneProp.ActiveLights = 127;
 	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
 
 	RTIndex = -1;
@@ -146,7 +146,7 @@ void App::OnUpdate() {
 	Pigs[count].Update();
 	count++;
 
-	float speed = 1.5f;
+	float speed = 0.05f;
 	static float freq = 0.0f;
 	freq += DtSecs*speed;
 	static float freq2 = 3.1415f / 2.0f;

@@ -32,7 +32,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	if(matId.r == 1.0 && matId.g == 0.0){
 		Final = color;
 	}else{
-		float Rad = 25.0;
+		float Rad = 15.0;
 		float cutoff = 0.8;
 		float4 Lambert = float4(1.0,1.0,1.0,1.0);
 		float4 Specular = float4(1.0,1.0,1.0,1.0);
@@ -57,42 +57,44 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		
 		int NumLights = (int)CameraInfo.w;
 			for(int i=0;i<NumLights;i++){
-				Lambert  = LightColors[i];
-				Specular = LightColors[i];
-				Fresnel	 =  LightColors[i];			
-				
-				float3	LightDir = normalize(LightPositions[i]-position).xyz;
-				float   att		 = 1.0;
-				att		 	     = dot(normal.xyz,LightDir)*0.5 + 0.5;;
-				att				 = pow( att , 2.0 );	
-				att				 = clamp( att , 0.0 , 1.0 );
-				Lambert			*= color*att;
-				
-				float  specular  = 0.0;
-				float specIntesivity = 1.5;
-				float shinness = 4.0;	
-				shinness = normal.a + shinness;
-				
-				float3 ReflectedLight = normalize(EyeDir+LightDir); 
-				specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
-				specular = pow( specular ,shinness);	
-
-				specular *= att;
-				specular *= specIntesivity;
-				Specular *= specular;
-				Specular.xyz *= specularmap.xyz;
-				
 				float dist = distance(LightPositions[i],position);
-				float d = max(dist - Rad, 0.0);
-				float denom = d/Rad + 1.0;
-				
-				float attenuation = 1.0 / (denom*denom);
-				 
-				attenuation = (attenuation - cutoff) / (1.0 - cutoff);
-				attenuation = max(attenuation, 0.0);
-     				
-				Final += Lambert*attenuation;
-				Final += Specular*attenuation;
+				if(dist < Rad*2.0){
+					Lambert  = LightColors[i];
+					Specular = LightColors[i];
+					Fresnel	 =  LightColors[i];			
+					
+					float3	LightDir = normalize(LightPositions[i]-position).xyz;
+					float   att		 = 1.0;
+					att		 	     = dot(normal.xyz,LightDir)*0.5 + 0.5;;
+					att				 = pow( att , 2.0 );	
+					att				 = clamp( att , 0.0 , 1.0 );
+					Lambert			*= color*att;
+					
+					float  specular  = 0.0;
+					float specIntesivity = 1.5;
+					float shinness = 4.0;	
+					shinness = normal.a + shinness;
+					
+					float3 ReflectedLight = normalize(EyeDir+LightDir); 
+					specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
+					specular = pow( specular ,shinness);	
+
+					specular *= att;
+					specular *= specIntesivity;
+					Specular *= specular;
+					Specular.xyz *= specularmap.xyz;
+									
+					float d = max(dist - Rad, 0.0);
+					float denom = d/Rad + 1.0;
+					
+					float attenuation = 1.0 / (denom*denom);
+					 
+					attenuation = (attenuation - cutoff) / (1.0 - cutoff);
+					attenuation = max(attenuation, 0.0);
+						
+					Final += Lambert*attenuation;
+					Final += Specular*attenuation;
+				}
 			}
 		if(matId.b == 0.0){
 			float  FresnelAtt	= dot(normal.xyz,EyeDir);

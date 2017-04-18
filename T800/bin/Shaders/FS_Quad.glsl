@@ -33,7 +33,7 @@ void main(){
 	if(matId.r == 1.0 && matId.g == 0.0){
 		Final = color;
 	}else{
-		highp float Rad = 25.0;
+		highp float Rad = 15.0;
 		highp float cutoff = 0.8;
 		lowp vec4 Lambert = vec4(1.0,1.0,1.0,1.0);
 		lowp vec4 Specular = vec4(1.0,1.0,1.0,1.0);
@@ -60,42 +60,45 @@ void main(){
 		
 		highp int NumLights =  int(CameraInfo.w);
 			for(highp int i=0;i<NumLights;i++){
-				Lambert  = LightColors[i];
-				Specular = LightColors[i];
-				Fresnel	 = LightColors[i];			
-				
-				lowp  vec3  LightDir = normalize(LightPositions[i]-position).xyz;
-				highp float   att		 = 1.0;
-				att		 	     = dot(normal.xyz,LightDir)*0.5 + 0.5;
-				att				 = pow( att , 2.0 );	
-				att				 = clamp( att , 0.0 , 1.0 );
-				Lambert			*= color*att;
-			
-				highp float  specular  = 0.0;
-				highp float specIntesivity = 1.5;
-				highp float shinness = 4.0;	
-				shinness = normal.a + shinness;
-				
-				lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
-				specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
-				specular = pow( specular ,shinness);	
-
-				specular *= att;
-				specular *= specIntesivity;
-				Specular *= specular;
-				Specular.xyz *= specularmap.xyz;
-				
 				highp float dist = distance(LightPositions[i],position);
-				highp float d = max(dist - Rad, 0.0);
-				highp float denom = d/Rad + 1.0;
+				if(dist < (Rad*2.0)){
+					Lambert  = LightColors[i];
+					Specular = LightColors[i];
+					Fresnel	 = LightColors[i];			
+					
+					lowp  vec3  LightDir = normalize(LightPositions[i]-position).xyz;
+					highp float   att		 = 1.0;
+					att		 	     = dot(normal.xyz,LightDir)*0.5 + 0.5;
+					att				 = pow( att , 2.0 );	
+					att				 = clamp( att , 0.0 , 1.0 );
+					Lambert			*= color*att;
 				
-				highp float attenuation = 1.0 / (denom*denom);
-				 
-				attenuation = (attenuation - cutoff) / (1.0 - cutoff);
-				attenuation = max(attenuation, 0.0);
-     				
-				Final += Lambert*attenuation;
-				Final += Specular*attenuation;
+					highp float  specular  = 0.0;
+					highp float specIntesivity = 1.5;
+					highp float shinness = 4.0;	
+					shinness = normal.a + shinness;
+					
+					lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
+					specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
+					specular = pow( specular ,shinness);	
+
+					specular *= att;
+					specular *= specIntesivity;
+					Specular *= specular;
+					Specular.xyz *= specularmap.xyz;
+					
+					
+					highp float d = max(dist - Rad, 0.0);
+					highp float denom = d/Rad + 1.0;
+					
+					highp float attenuation = 1.0 / (denom*denom);
+					 
+					attenuation = (attenuation - cutoff) / (1.0 - cutoff);
+					attenuation = max(attenuation, 0.0);
+						
+					Final += Lambert*attenuation;
+					Final += Specular*attenuation;
+				}
 			}
 		if(matId.b == 0.0){
 			highp float  FresnelAtt	= dot(normal.xyz,EyeDir);
