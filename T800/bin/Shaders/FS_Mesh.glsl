@@ -16,6 +16,7 @@ uniform mediump sampler2D NormalTex;
 uniform highp vec4 LightPos;
 uniform highp vec4 LightColor;
 uniform highp vec4 CameraPosition;
+uniform highp vec4 CameraInfo;
 uniform highp vec4 Ambient;
 
 
@@ -72,9 +73,8 @@ varying highp vec4 htangent;
 varying highp vec4 hbinormal;
 #endif
 
-
-
-varying highp vec4 wPos;
+varying highp vec4 Pos;
+varying highp vec4 WorldPos;
 
 #ifdef SIMPLE_COLOR
 void main(){
@@ -120,16 +120,23 @@ void main(){
 	gl_FragData[0].rgb  = color.rgb;
 	gl_FragData[0].a 	= specIntesivity;
 	
-	
 	gl_FragData[1].rgb  = normal.rgb;
 	gl_FragData[1].a 	= shinness;
 	
 	gl_FragData[2].rgb  = specular.rgb;
 	gl_FragData[2].a 	= shinness;
 	
-	gl_FragData[3] 		= vec4(1.0,1.0,1.0,1.0) - color;
-	gl_FragData[3].a	= 1.0;
+	#ifdef NO_LIGHT
+		gl_FragData[3]	= vec4(1.0,0.0,1.0,1.0);
+	#else
+		#ifdef NORMAL_MAP	
+			gl_FragData[3] 	= vec4(0.0,0.0,0.0,1.0);
+		#else
+			gl_FragData[3] 	= vec4(0.0,0.0,1.0,1.0);
+		#endif
+	#endif
 	
+	gl_FragDepth		= Pos.z / CameraInfo.y;
 }
 #else
 void main(){
@@ -155,8 +162,8 @@ void main(){
 			lowp vec4   Lambert  = LightColor;
 			lowp vec4 	Specular = LightColor;
 			lowp vec4	Fresnel  = LightColor;
-			lowp vec3	LightDir = normalize(LightPos-wPos).xyz;
-			lowp vec3   EyeDir   = normalize(CameraPosition-wPos).xyz;
+			lowp vec3	LightDir = normalize(LightPos-WorldPos).xyz;
+			lowp vec3   EyeDir   = normalize(CameraPosition-WorldPos).xyz;
 			lowp vec3	normal   = normalize(hnormal).xyz;  
 			mediump float att			 = 1.0;
 			

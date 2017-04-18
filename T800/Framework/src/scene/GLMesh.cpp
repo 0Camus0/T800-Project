@@ -281,9 +281,14 @@ void GLMesh::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 
+	Camera *pActualCamera = pScProp->pCameras[0];
+
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-		XMATRIX44 VP = XMATRIX44(vp);
+		XMATRIX44 VP = pActualCamera->VP;
 		XMATRIX44 WVP = transform*VP;
+		XMATRIX44 WorldView = transform*pActualCamera->View;
+		XVECTOR3 infoCam = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
+		XVECTOR3 camPos = pActualCamera->Eye;
 
 		MeshInfo  *it_MeshInfo = &Info[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
@@ -306,6 +311,8 @@ void GLMesh::Draw(float *t, float *vp) {
 
 				glUniformMatrix4fv(s->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 				glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
+				glUniformMatrix4fv(s->matWorldViewUniformLoc, 1, GL_FALSE, &WorldView.m[0][0]);
+				
 
 				if (s->Light0Pos_Loc != -1) {
 					glUniform4fv(s->Light0Pos_Loc, 1, &pScProp->Lights[0].Position.v[0]);
@@ -316,7 +323,11 @@ void GLMesh::Draw(float *t, float *vp) {
 				}
 
 				if (s->CameraPos_Loc != -1) {
-					glUniform4fv(s->CameraPos_Loc, 1, &pScProp->pCameras[0]->Eye.v[0]);
+					glUniform4fv(s->CameraPos_Loc, 1, &camPos.v[0]);
+				}
+
+				if (s->CameraInfo_Loc != -1) {
+					glUniform4fv(s->CameraInfo_Loc, 1, &infoCam.v[0]);
 				}
 
 				if (s->Ambient_loc != -1) {

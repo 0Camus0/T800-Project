@@ -184,8 +184,8 @@ float4 FS( VS_OUTPUT input )  : SV_TARGET {
 		float4  Lambert  = LightColor;
 		float4  Specular = LightColor;
 		float4  Fresnel	 = LightColor;
-		float3	LightDir = normalize(LightPos-input.Pos).xyz;
-		float3  EyeDir   = normalize(CameraPosition-input.Pos).xyz;
+		float3	LightDir = normalize(LightPos-input.WorldPos).xyz;
+		float3  EyeDir   = normalize(CameraPosition-input.WorldPos).xyz;
 		float3	normal   = normalize(input.hnormal).xyz;  
 		float   att		 = 1.0;
 		

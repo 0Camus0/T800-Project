@@ -3,8 +3,8 @@ cbuffer ConstantBuffer{
 	float4x4 World;  
 	float4x4 WorldView;
 	float4x4 WVPInverse;
-	float4	 LightPositions[16];
-	float4	 LightColors[16];
+	float4	 LightPositions[128];
+	float4	 LightColors[128];
 	float4   CameraPosition;
 	float4 	 CameraInfo;
 }

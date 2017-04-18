@@ -24,9 +24,15 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
 
+	matWorldViewUniformLoc = glGetUniformLocation(ShaderProg, "WorldView");;
+	matWVPInverseUniformLoc = glGetUniformLocation(ShaderProg, "WVPInverse");;
+
+	LightPositions_Loc = glGetUniformLocation(ShaderProg, "LightPositions");
+	LightColors_Loc = glGetUniformLocation(ShaderProg, "LightColors");
 	Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
 	Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
 	CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
+	CameraInfo_Loc = glGetUniformLocation(ShaderProg, "CameraInfo");
 	Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
 
 	DiffuseTex_loc = glGetUniformLocation(ShaderProg, "DiffuseTex");

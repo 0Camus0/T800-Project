@@ -71,6 +71,8 @@ public:
 
 	int			 matWorldViewProjUniformLoc;
 	int			 matWorldUniformLoc;
+	int			 matWorldViewUniformLoc;
+	int			 matWVPInverseUniformLoc;
 
 	int			 vertexAttribLoc;
 	int			 normalAttribLoc;
@@ -82,7 +84,11 @@ public:
 	int			Light0Pos_Loc;
 	int			Light0Color_Loc;
 
+	int			LightPositions_Loc;
+	int			LightColors_Loc;
+
 	int			CameraPos_Loc;
+	int			CameraInfo_Loc;
 
 	int			Ambient_loc;
 

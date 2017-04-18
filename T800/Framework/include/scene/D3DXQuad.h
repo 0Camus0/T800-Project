@@ -57,6 +57,7 @@ public:
 	unsigned short	indices[6];
 
 	XMATRIX44		transform;
+	
 
 	D3DXTexture*	d3dxTextures[8];
 

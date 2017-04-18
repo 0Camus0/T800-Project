@@ -79,11 +79,36 @@ void GLQuad::Draw(float *t, float *vp){
 	GLShader * s = dynamic_cast<GLShader*>(g_pBaseDriver->GetShaderSig(sig));
 
 	XMATRIX44 WVP = transform;
+	Camera *pActualCamera = pScProp->pCameras[0];
+	XMATRIX44 VP = pActualCamera->VP;
+	XMATRIX44 WV = pActualCamera->View;
+	XMATRIX44 WVPInverse;
+	VP.Inverse(&WVPInverse);
+	XVECTOR3 CameraPos = pActualCamera->Eye;
 
+	unsigned int numLights = pScProp->ActiveLights;
+	if (numLights >= pScProp->Lights.size())
+		numLights = pScProp->Lights.size();
+
+	XVECTOR3 CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
+
+	for (unsigned int i = 0; i < numLights; i++) {
+		LightPositions[i] = pScProp->Lights[i].Position;
+		LightColors[i] = pScProp->Lights[i].Color;
+	}
+	
 	glUseProgram(s->ShaderProg);
 
 	glUniformMatrix4fv(s->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
-	glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
+	glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
+	glUniformMatrix4fv(s->matWorldViewUniformLoc, 1, GL_FALSE, &WV.m[0][0]);
+	glUniformMatrix4fv(s->matWVPInverseUniformLoc, 1, GL_FALSE, &WVPInverse.m[0][0]);
+	
+	glUniform4fv(s->CameraPos_Loc, 1, &CameraPos.v[0]);
+	glUniform4fv(s->CameraInfo_Loc, 1, &CameraInfo.v[0]);
+
+	glUniform4fv(s->LightPositions_Loc, numLights, &LightPositions[0].v[0]);
+	glUniform4fv(s->LightColors_Loc, numLights, &LightColors[0].v[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);

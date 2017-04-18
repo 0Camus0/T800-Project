@@ -25,14 +25,16 @@ attribute highp vec2 UV;
 varying highp vec2 vecUVCoords;
 #endif
 
-varying highp vec4 wPos;
+varying highp vec4 Pos;
+varying highp vec4 WorldPos;
 
 uniform highp mat4 WVP;
 uniform highp mat4 World;
-
+uniform highp mat4 WorldView;
 uniform highp vec4 LightPos;
 uniform highp vec4 LightColor;
 uniform highp vec4 CameraPosition;
+uniform highp vec4 CameraInfo;
 uniform highp vec4 Ambient;
 
 void main(){
@@ -49,8 +51,9 @@ void main(){
 	hbinormal	= vec4(normalize(RotWorld*vec3(Binormal)),1.0);
 #endif
 
-	wPos = World*Vertex;
-
+	Pos 	 = WorldView*Vertex;
+	WorldPos = World*Vertex;
+	
 #ifdef USE_TEXCOORD0
 	vecUVCoords = UV;
 	vecUVCoords.y = vecUVCoords.y;

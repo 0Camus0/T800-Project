@@ -32,8 +32,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	if(matId.r == 1.0 && matId.g == 0.0){
 		Final = color;
 	}else{
-		float Rad = 8.0;
-		float cutoff = 0.01;
+		float Rad = 25.0;
+		float cutoff = 0.8;
 		float4 Lambert = float4(1.0,1.0,1.0,1.0);
 		float4 Specular = float4(1.0,1.0,1.0,1.0);
 		float4 Fresnel	 =  float4(1.0,1.0,1.0,1.0);
@@ -82,7 +82,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 				Specular *= specular;
 				Specular.xyz *= specularmap.xyz;
 				
-				float dist = abs(distance(LightPositions[i],position));
+				float dist = distance(LightPositions[i],position);
 				float d = max(dist - Rad, 0.0);
 				float denom = d/Rad + 1.0;
 				

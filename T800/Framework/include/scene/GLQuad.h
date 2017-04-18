@@ -51,6 +51,8 @@ public:
 	unsigned int	VB;
 	unsigned int	IB;
 	XMATRIX44		transform;
+	XVECTOR3		LightPositions[128];
+	XVECTOR3		LightColors[128];
 
 };
 
