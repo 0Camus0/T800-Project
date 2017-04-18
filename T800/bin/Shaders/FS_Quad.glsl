@@ -45,7 +45,9 @@ void main(){
 		if(matId.b == 1.0){
 			distor = vec2(1.0,1.0);
 		}	
-		lowp vec4 ReflectCol = texture2D(tex0,coords);
+		lowp vec2 coord2 = vecUVCoords*distor;
+		coord2.y = 1.0 - coord2.y;
+		lowp vec4 ReflectCol = texture2D(tex0,coord2);
 		
 		lowp vec4 specularmap = texture2D(tex2,coords);
 		normal	= normalize(normal);
