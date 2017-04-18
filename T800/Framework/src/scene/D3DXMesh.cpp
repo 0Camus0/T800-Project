@@ -311,18 +311,25 @@ void D3DXMesh::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 
+	Camera *pActualCamera = pScProp->pCameras[0];
+
 		for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 			MeshInfo  *it_MeshInfo = &Info[i];
 			xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
-			XMATRIX44 VP = XMATRIX44(vp);
+			
+			XMATRIX44 VP = pActualCamera->VP; 
 			XMATRIX44 WVP = transform*VP;
-
+			XMATRIX44 WorldView = transform*pActualCamera->View;
+			XVECTOR3 infoCam = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
+	
 			it_MeshInfo->CnstBuffer.WVP = WVP;
 			it_MeshInfo->CnstBuffer.World = transform;
+			it_MeshInfo->CnstBuffer.WorldView = WorldView;
 			it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
 			it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
-			it_MeshInfo->CnstBuffer.CameraPos = pScProp->pCameras[0]->Eye;
+			it_MeshInfo->CnstBuffer.CameraPos = pActualCamera->Eye;
 			it_MeshInfo->CnstBuffer.Ambient = pScProp->AmbientColor;
+			it_MeshInfo->CnstBuffer.CameraInfo = infoCam;
 
 			UINT stride = it_MeshInfo->VertexSize;
 			UINT offset = 0;

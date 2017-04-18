@@ -39,9 +39,11 @@ public:
 	struct CBuffer {
 		XMATRIX44 WVP;
 		XMATRIX44 World;
+		XMATRIX44 WorldView;
 		XVECTOR3  Light0Pos;
 		XVECTOR3  Light0Col;
 		XVECTOR3  CameraPos;
+		XVECTOR3  CameraInfo;
 		XVECTOR3  Ambient;
 	};
 

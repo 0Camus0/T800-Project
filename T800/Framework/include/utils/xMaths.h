@@ -9,6 +9,11 @@
 
 #include <string.h>
 
+#ifndef DOUBLE_FOR_INVERSE
+#define DOUBLE_FOR_INVERSE 1
+#endif
+
+
 #ifndef ATOF_ANGEL
 #define ATOF_ANGEL 1
 #endif
@@ -274,6 +279,23 @@ float CadenaAnumeroFlotantePersonalizada(char *c);
 			};
 		};
 
+		struct XMATRIX44_64 {
+			XMATRIX44_64();
+			XMATRIX44_64(XMATRIX44* i);
+			union
+			{
+				double m[4][4];
+
+				struct {
+					double        m11, m12, m13, m14;
+					double        m21, m22, m23, m24;
+					double        m31, m32, m33, m34;
+					double        m41, m42, m43, m44;
+				};
+
+				double mat[16];
+			};
+		};
 		struct XMATRIX44
 		{
 			XMATRIX44() :m11(1.0f), m12(0.0f), m13(0.0f), m14(0.0f),
@@ -348,6 +370,8 @@ float CadenaAnumeroFlotantePersonalizada(char *c);
 
 				float mat[16];
 			};
+
+			void Inverse(XMATRIX44 *o);
 
 			void Identity() {
 				m[0][0] = 1.0f;

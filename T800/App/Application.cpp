@@ -33,7 +33,7 @@ void App::InitVars() {
 	Scaling = XVECTOR3(1.0f,1.0f,1.0f);
 	SelectedMesh = 0;
 
-	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 0.1f, 10000.0f);
+	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
 	Cam.Speed = 10.0f;
 	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
 	Cam.Pitch = 0.14f;
@@ -70,44 +70,15 @@ void App::CreateAssets() {
 	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateCube();
-	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	Cube* cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[0];
-
-	index = PrimitiveMgr.CreateCube();
-	Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[1];
-
-	index = PrimitiveMgr.CreateCube();
-	Pigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[2];
-
-	index = PrimitiveMgr.CreateCube();
-	Pigs[8].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->vColorTextures[3];
-
-	index = PrimitiveMgr.CreateCube();
-	Pigs[9].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	cube = dynamic_cast<Cube*>(PrimitiveMgr.GetPrimitive(index));
-	cube->tex = pFramework->pVideoDriver->RTs[0]->pDepthTexture;
-
 	index = PrimitiveMgr.CreateQuad();
 	QuadInst.CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
+	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);	
 
-	
-
-	PrimitiveMgr.SetSceneProps(&SceneProp);
-
-	
+	PrimitiveMgr.SetSceneProps(&SceneProp);	
 }
 
 void App::DestroyAssets() {

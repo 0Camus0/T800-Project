@@ -1,9 +1,11 @@
 cbuffer ConstantBuffer{
     float4x4 WVP;
 	float4x4 World;  
+	float4x4 WorldView;
 	float4	 LightPos;
 	float4 	 LightColor;
 	float4   CameraPosition;
+	float4 	 CameraInfo;
 	float4	 Ambient;
 }
 
@@ -46,7 +48,9 @@ struct VS_OUTPUT{
     float2 texture0  : TEXCOORD;
 #endif
 
-	float4 wPos		: TEXCOORD1;
+	float4 Pos		: TEXCOORD1;
+	
+	float4 WorldPos		: TEXCOORD2;
 };
 
 VS_OUTPUT VS( VS_INPUT input ){
@@ -71,7 +75,10 @@ VS_OUTPUT VS( VS_INPUT input ){
     OUT.texture0 = input.texture0;
 #endif
 
-	OUT.wPos	= mul( World , input.position );
+
+	OUT.Pos = mul( WorldView , input.position );
+
+	OUT.WorldPos = mul( World , input.position );
 
     return OUT;
 }

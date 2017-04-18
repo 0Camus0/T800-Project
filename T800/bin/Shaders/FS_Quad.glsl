@@ -22,12 +22,11 @@ void main(){
 	if(normal.x == 0 && normal.y == 0){
 		gl_FragColor = texture2D(tex0,coords);
 	}else{		
-		lowp vec2 distor = vec2(normal.xy);
+		lowp vec2 distor = vec2(normal.xy);		
 		lowp vec2 coord2 = vecUVCoords*distor;
 		coord2.y = 1.0 - coord2.y;	
 		gl_FragColor = texture2D(tex0,coord2);
 	}
-
 }
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;

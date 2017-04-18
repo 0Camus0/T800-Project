@@ -1,12 +1,17 @@
 cbuffer ConstantBuffer{
     float4x4 WVP;
 	float4x4 World;  
+	float4x4 WorldView;
+	float4x4 WVPInverse;
+	float4   CameraPosition;
+	float4 	 CameraInfo;
 }
 
 struct VS_OUTPUT{
     float4 hposition : SV_POSITION;
     float2 texture0  : TEXCOORD;
-	float4 wPos		: TEXCOORD1;
+	float4 Pos		: TEXCOORD1;
+	float4 PosCorner : TEXCOORD2;
 };
 
 SamplerState SS;
@@ -18,18 +23,15 @@ Texture2D tex2 : register(t2);
 Texture2D tex3 : register(t3);
 Texture2D tex4 : register(t4);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	float4 color = float4(0.5,0.5,0.5,1.0);
+	float4 color = tex0.Sample( SS, input.texture0);
 	float4 normal =  tex1.Sample( SS, input.texture0);
 	normal	= normalize(normal);
 
-	if(normal.x == 0 && normal.y == 0){
-		color = tex0.Sample( SS, input.texture0);
-	}else{
-		float2 distor = float2(normal.xy);
-		color = tex0.Sample( SS, input.texture0*distor);
-	}
+	float depth = tex4.Sample( SS, input.texture0);
+	float4 position = CameraPosition + input.PosCorner*depth;
 
-	return color;
+	return position;
+
 }
 
 #elif defined(FSQUAD_1_TEX)

@@ -2,9 +2,11 @@
 cbuffer ConstantBuffer{
     float4x4 WVP;
 	float4x4 World;  
+	float4x4 WorldView;
 	float4	 LightPos;
 	float4 	 LightColor;
 	float4   CameraPosition;
+	float4 	 CameraInfo;
 	float4	 Ambient;
 }
 
@@ -80,7 +82,9 @@ struct VS_OUTPUT{
     float2 texture0  : TEXCOORD;
 #endif
 	
-	float4 wPos		: TEXCOORD1;
+	float4 Pos		: TEXCOORD1;
+	
+	float4 WorldPos		: TEXCOORD2;
 };
 
 #ifdef SIMPLE_COLOR
@@ -94,6 +98,7 @@ struct FS_OUT{
 	float4 color1 : SV_TARGET1;
 	float4 color2 : SV_TARGET2;
 	float4 color3 : SV_TARGET3;
+	float  depth  : SV_Depth;
 };
 
 FS_OUT FS( VS_OUTPUT input )   {
@@ -121,7 +126,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 		normal.xyz		 = mul(normalTex,TBN);
 		normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
 	#else
-		normal.xyz =  float3(0.0,0.0,0.0); // normal.xyz*0.5 + 0.5;
+		normal.xyz =  normal.xyz*0.5 + 0.5;
 	#endif
 	
 	#ifdef SPECULAR_MAP
@@ -142,7 +147,10 @@ FS_OUT FS( VS_OUTPUT input )   {
 	fout.color2.rgb = specular.rgb;
 	fout.color2.a 	= shinness;
 	
-	fout.color3 	= reflect;
+	fout.color3 	= input.WorldPos;
+	fout.color3.a   = 1.0;
+	
+	fout.depth		= input.Pos.z / CameraInfo.y;
 
 	return fout;	
 }
@@ -169,8 +177,8 @@ float4 FS( VS_OUTPUT input )  : SV_TARGET {
 		float4  Lambert  = LightColor;
 		float4  Specular = LightColor;
 		float4  Fresnel	 = LightColor;
-		float3	LightDir = normalize(LightPos-input.wPos).xyz;
-		float3  EyeDir   = normalize(CameraPosition-input.wPos).xyz;
+		float3	LightDir = normalize(LightPos-input.Pos).xyz;
+		float3  EyeDir   = normalize(CameraPosition-input.Pos).xyz;
 		float3	normal   = normalize(input.hnormal).xyz;  
 		float   att		 = 1.0;
 		

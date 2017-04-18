@@ -30,6 +30,10 @@ public:
 	struct CBuffer {
 		XMATRIX44 WVP;
 		XMATRIX44 World;
+		XMATRIX44 WorldView;
+		XMATRIX44 WVPInverse;
+		XVECTOR3  CameraPos;
+		XVECTOR3  CameraInfo;
 	};
 
 	D3DXQuad() {}
@@ -44,6 +48,7 @@ public:
 	ComPtr<ID3D11Buffer>		IB;
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
+	ComPtr<ID3D11SamplerState>  pSampler;
 
 	CBuffer			CnstBuffer;
 	Vert			vertices[4];

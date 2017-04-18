@@ -45,8 +45,8 @@ void D3DXQuad::Create() {
 
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[2] = { 1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[3] = { 1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
 
 	indices[0] = 2;
 	indices[1] = 1;
@@ -92,6 +92,15 @@ void D3DXQuad::Create() {
 		return;
 	}
 
+	D3D11_SAMPLER_DESC sdesc;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.MinLOD = 0;
+	sdesc.MaxLOD = 0;
+	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
+
 	XMatIdentity(transform);
 }
 
@@ -110,8 +119,15 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	UINT offset = 0;
 	UINT stride = sizeof(Vert);
 
+	Camera *pActualCamera = pScProp->pCameras[0];
+	XMATRIX44 VP = pActualCamera->VP;
+	XMATRIX44 WV = pActualCamera->View;
+	VP.Inverse(&CnstBuffer.WVPInverse);
 	CnstBuffer.WVP = transform;
-	CnstBuffer.World = transform;
+	CnstBuffer.World = transform;		
+	CnstBuffer.WorldView = WV;
+	CnstBuffer.CameraPos = pActualCamera->Eye;
+	CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
 	D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
@@ -151,7 +167,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 
-	D3D11DeviceContext->PSSetSamplers(0, 1, d3dxTextures[0]->pSampler.GetAddressOf());
+	D3D11DeviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	D3D11DeviceContext->DrawIndexed(6, 0, 0);
 }

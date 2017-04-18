@@ -106,7 +106,7 @@ void main(){
 		normal.xyz		 	 = TBN*normalTex;
 		normal.xyz		 	 = normalize(normal.xyz)*0.5 + 0.5;
 	#else
-		normal.xyz 			 = vec3(0.0,0.0,0.0); //normal.xyz*0.5 + 0.5;
+		normal.xyz 			 = normal.xyz*0.5 + 0.5;
 	#endif
 	
 	#ifdef SPECULAR_MAP
