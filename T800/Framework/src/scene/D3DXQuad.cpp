@@ -127,7 +127,17 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	CnstBuffer.World = transform;		
 	CnstBuffer.WorldView = WV;
 	CnstBuffer.CameraPos = pActualCamera->Eye;
-	CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
+
+	unsigned int numLights = pScProp->ActiveLights;
+	if (numLights >= pScProp->Lights.size())
+		numLights = pScProp->Lights.size();
+
+	CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
+
+	for(unsigned int i=0;i<numLights;i++){
+		CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
+		CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
+	}
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
 	D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);

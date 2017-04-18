@@ -147,8 +147,15 @@ FS_OUT FS( VS_OUTPUT input )   {
 	fout.color2.rgb = specular.rgb;
 	fout.color2.a 	= shinness;
 	
-	fout.color3 	= input.WorldPos;
-	fout.color3.a   = 1.0;
+	#ifdef NO_LIGHT
+		fout.color3 	= float4(1.0,0.0,1.0,1.0);
+	#else
+		#ifdef NORMAL_MAP	
+		fout.color3 	= float4(0.0,0.0,0.0,1.0);
+		#else
+		fout.color3 	= float4(0.0,0.0,1.0,1.0);
+		#endif
+	#endif
 	
 	fout.depth		= input.Pos.z / CameraInfo.y;
 

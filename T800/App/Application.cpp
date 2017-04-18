@@ -14,9 +14,16 @@
 #include <video/BaseDriver.h>
 #include <scene/Cube.h>
 
+#include <stdio.h>      
+#include <stdlib.h>     
+#include <time.h>     
+
+#define NUM_LIGHTS 127
+#define RADI 170.0f
+
 enum {
 	SCENE = 0,
-	CROC,
+	CROC,	
 	LINK,
 	HOUSE_L,
 	HOUSE_R,
@@ -28,6 +35,10 @@ enum {
 
 void App::InitVars() {
 	DtTimer.Init();
+	DtTimer.Update();
+	srand((unsigned int)DtTimer.GetDTSecs());
+
+	
 	Position = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Scaling = XVECTOR3(1.0f,1.0f,1.0f);
@@ -35,14 +46,20 @@ void App::InitVars() {
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
 	Cam.Speed = 10.0f;
-	Cam.Eye = XVECTOR3(0.0f, 9.75f, -301.0f);
+	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
 	Cam.Pitch = 0.14f;
 	Cam.Roll = 0.0f;
 	Cam.Yaw = 0.020f;
 	Cam.Update(0.0f);
 
 	SceneProp.AddCamera(&Cam);
-	SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(1.0f, 1.0f, 1.0f), true);
+	for(int i=0;i<NUM_LIGHTS;i++){
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(r, g, b), true);
+	}
+
 	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
 
 	RTIndex = -1;
@@ -69,6 +86,9 @@ void App::CreateAssets() {
 
 	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+
+	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
 
 	index = PrimitiveMgr.CreateQuad();
 	QuadInst.CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -126,9 +146,25 @@ void App::OnUpdate() {
 	Pigs[count].Update();
 	count++;
 
-	SceneProp.Lights[0].Position = Position;
+	float speed = 1.5f;
+	static float freq = 0.0f;
+	freq += DtSecs*speed;
+	static float freq2 = 3.1415f / 2.0f;
+	freq2 += DtSecs*speed;
+
+	float dist = RADI;
+	float Offset = 2.0f*3.1415f/ NUM_LIGHTS;
+	float Offset2 = 4.0f*3.1415f / NUM_LIGHTS;
+	for (int i = 0; i<NUM_LIGHTS; i++) {
+		SceneProp.Lights[i].Position = Position; 
+		float RadA = dist*0.35f + dist*0.4f * sin(freq + float(i*Offset))*cos(freq + float(i*Offset));
+		float RadB = dist*0.35f + dist*0.4f * sin(freq2 + float(i*Offset2))*cos(freq2 + float(i*Offset2));
+		SceneProp.Lights[i].Position.x += RadA*sin(freq + float(i*Offset));
+		SceneProp.Lights[i].Position.z += RadB*cos(freq + float(i*Offset2));
+	}
+
 	
-	PrimitiveInst *Sel = &QuadInst;
+	PrimitiveInst *Sel = &Pigs[5];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
 	Sel->RotateYAbsolute(Orientation.y);
@@ -142,7 +178,7 @@ void App::OnUpdate() {
 void App::OnDraw() {
 
 	pFramework->pVideoDriver->PushRT(0);
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		Pigs[i].SetSignature(Signature::GBUFF_PASS);
 		Pigs[i].Draw();
 		Pigs[i].SetSignature(Signature::FORWARD_PASS);
@@ -196,18 +232,22 @@ void App::OnInput() {
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP_PLUS)) {
-		Scaling.x += 0.1f*speedFactor*DtSecs;
+	if (IManager.PressedOnceKey(SDLK_KP_PLUS)) {
+		SceneProp.ActiveLights *= 2;
+		/*Scaling.x += 0.1f*speedFactor*DtSecs;
 		Scaling.y += 0.1f*speedFactor*DtSecs;
 		Scaling.z += 0.1f*speedFactor*DtSecs;
-		changed = true;
+		changed = true;*/
 	}
 
-	if (IManager.PressedKey(SDLK_KP_MINUS)) {
-		Scaling.x -= 0.1f*speedFactor*DtSecs;
+	if (IManager.PressedOnceKey(SDLK_KP_MINUS)) {
+		SceneProp.ActiveLights /= 2;
+		if(SceneProp.ActiveLights<=0)
+			SceneProp.ActiveLights = 1;
+		/*Scaling.x -= 0.1f*speedFactor*DtSecs;
 		Scaling.y -= 0.1f*speedFactor*DtSecs;
 		Scaling.z -= 0.1f*speedFactor*DtSecs;
-		changed = true;
+		changed = true;*/
 	}
 
 	if (IManager.PressedKey(SDLK_KP5)) {

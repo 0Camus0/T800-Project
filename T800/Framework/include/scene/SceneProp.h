@@ -27,7 +27,7 @@ struct Light{
 };
 
 struct SceneProps{
-	SceneProps() : ActiveCamera(0) , ActiveLights(0) {}
+	SceneProps() : ActiveCamera(0) , ActiveLights(1) {}
 
 	void	AddLight(XVECTOR3 Pos, XVECTOR3 Color,bool enabled);
 	void	RemoveLight(unsigned int index);
