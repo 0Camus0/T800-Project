@@ -17,6 +17,26 @@
 bool GLRT::LoadAPIRT(){
 	GLint cfmt, dfmt;
 
+	switch (cfmt) {
+		case FD16: {
+		}break;
+		case F32: {
+		}break;
+		case RGB8: {
+		}break;
+		case RGBA8: {
+		}break;
+		case RGBA16F: {
+		}break;
+		case RGBA32F: {
+		}break;
+		case BGR8: {
+		}break;
+		case BGRA8: {
+		}break;
+		case BGRA32: {
+		}break;
+	}
 	cfmt = GL_RGB;
 	dfmt = GL_DEPTH_COMPONENT;
 	

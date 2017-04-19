@@ -81,6 +81,7 @@ struct BaseRT {
 		F32,
 		RGB8,
 		RGBA8,
+		RGBA16F,
 		RGBA32F,
 		BGR8,
 		BGRA8,
