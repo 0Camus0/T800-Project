@@ -25,7 +25,7 @@ uniform mediump sampler2D tex8;
 void main(){
 	lowp vec2 coords = vecUVCoords;
 	coords.y = 1.0 - coords.y;
-	
+
 	lowp vec4 Final  =  vec4(0.0,0.0,0.0,1.0);
 	lowp vec4 color  =  texture2D(tex0,coords);
 	lowp vec4 matId  =	texture2D(tex3,coords);
@@ -40,8 +40,9 @@ void main(){
 		lowp vec4 Fresnel	 =  vec4(1.0,1.0,1.0,1.0);
 		lowp vec4 normalmap = texture2D(tex1,coords);
 		lowp vec4 normal = normalmap*2.0 - 1.0;
-		
-		vec2 distor = vec2(normalmap.xy);	
+		normal	= normalize(normal);
+
+		lowp vec2 distor = vec2(normalmap.xy);	
 		if(matId.b == 1.0){
 			distor = vec2(1.0,1.0);
 		}	
@@ -50,13 +51,19 @@ void main(){
 		lowp vec4 ReflectCol = texture2D(tex0,coord2);
 		
 		lowp vec4 specularmap = texture2D(tex2,coords);
-		normal	= normalize(normal);
-		
+				
 		highp float depth = texture2D(tex4,coords).r;
+#ifdef NON_LINEAR_DEPTH
+		highp vec2 vcoord = coords *2.0 - 1.0;
+		highp vec4 position = WVPInverse*vec4(vcoord ,depth,1.0);
+		position.xyz /= position.w;
+		position = CameraPosition + position; 
+#else	
 		highp vec4 position = CameraPosition + PosCorner*depth;
+#endif
 		
 		
-		lowp vec3  EyeDir   = normalize(CameraPosition-position).xyz;
+		highp vec3  EyeDir   = normalize(CameraPosition-position).xyz;
 		
 		highp int NumLights =  int(CameraInfo.w);
 			for(highp int i=0;i<NumLights;i++){
@@ -66,7 +73,7 @@ void main(){
 					Specular = LightColors[i];
 					Fresnel	 = LightColors[i];			
 					
-					lowp  vec3  LightDir = normalize(LightPositions[i]-position).xyz;
+					highp  vec3  LightDir = normalize(LightPositions[i]-position).xyz;
 					highp float   att		 = 1.0;
 					att		 	     = dot(normal.xyz,LightDir)*0.5 + 0.5;
 					att				 = pow( att , 2.0 );	
@@ -102,7 +109,7 @@ void main(){
 			}
 		if(matId.b == 0.0){
 			highp float  FresnelAtt	= dot(normal.xyz,EyeDir);
-			highp float  FresnelIntensity = 1.0f;
+			highp float  FresnelIntensity = 1.0;
 			lowp vec4 FresnelCol = vec4(ReflectCol.xyz,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
@@ -117,6 +124,7 @@ void main(){
 	}
 
 	gl_FragColor = Final;
+	
 }
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;

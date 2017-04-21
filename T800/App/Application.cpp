@@ -44,7 +44,7 @@ void App::InitVars() {
 	Scaling = XVECTOR3(1.0f,1.0f,1.0f);
 	SelectedMesh = 0;
 
-	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 10000.0f);
+	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 8000.0f);
 	Cam.Speed = 10.0f;
 	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
 	Cam.Pitch = 0.14f;
@@ -146,7 +146,7 @@ void App::OnUpdate() {
 	Pigs[count].Update();
 	count++;
 
-	float speed = 0.05f;
+	float speed = 0.0f;
 	static float freq = 0.0f;
 	freq += DtSecs*speed;
 	static float freq2 = 3.1415f / 2.0f;

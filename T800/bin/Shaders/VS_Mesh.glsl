@@ -51,7 +51,11 @@ void main(){
 	hbinormal	= vec4(normalize(RotWorld*vec3(Binormal)),1.0);
 #endif
 
+#ifdef NON_LINEAR_DEPTH
+	Pos 	 = WVP*Vertex;
+#else
 	Pos 	 = WorldView*Vertex;
+#endif
 	WorldPos = World*Vertex;
 	
 #ifdef USE_TEXCOORD0
@@ -59,5 +63,9 @@ void main(){
 	vecUVCoords.y = vecUVCoords.y;
 #endif
 
+#ifdef NON_LINEAR_DEPTH
+	gl_Position = Pos;
+#else
 	gl_Position = WVP*Vertex;
+#endif
 }

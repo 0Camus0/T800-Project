@@ -16,9 +16,9 @@ uniform highp vec4 CameraInfo;
 
 void main(){
 	vecUVCoords = UV;	
-	Pos = Vertex;
+	Pos = WVP*Vertex;
 	PosCorner = WVPInverse*vec4(Vertex.xy,1.0,1.0);
 	PosCorner.xyz /= PosCorner.w;
 	PosCorner = PosCorner - CameraPosition;
-	gl_Position = WVP*Vertex;
+	gl_Position = Pos;
 }

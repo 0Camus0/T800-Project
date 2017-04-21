@@ -13,7 +13,6 @@
 #ifndef T800_CONFIG_H
 #define T800_CONFIG_H
 
-
 #ifndef VDEBUG_NO_LIGHT
 #define VDEBUG_NO_LIGHT 0
 #endif
@@ -32,7 +31,7 @@
 #define OGLES30 3
 #define OGL 4
 
-#define DRIVER_SELECTED D3DX
+#define DRIVER_SELECTED OGLES30
 
 #if   DRIVER_SELECTED == OGLES20
 	#define USING_OPENGL_ES20

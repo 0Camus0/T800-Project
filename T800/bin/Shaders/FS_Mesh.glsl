@@ -136,7 +136,12 @@ void main(){
 		#endif
 	#endif
 	
-	gl_FragDepth		= Pos.z / CameraInfo.y;
+	#ifdef NON_LINEAR_DEPTH
+		// gl_FragDepth	= Pos.z / Pos.w;
+	#else
+		gl_FragDepth = Pos.z / CameraInfo.y;
+	#endif
+	
 }
 #else
 void main(){
