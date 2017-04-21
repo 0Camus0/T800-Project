@@ -68,7 +68,8 @@ void App::InitVars() {
 
 void App::CreateAssets() {
 
-	pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 	PrimitiveMgr.SetVP(&VP);
 	
@@ -90,13 +91,22 @@ void App::CreateAssets() {
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
 
-	index = PrimitiveMgr.CreateQuad();
-	QuadInst.CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);	
+	QuadIndex = PrimitiveMgr.CreateQuad();
+	Quads[0].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
+
+	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[3].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[4].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);	
 }
@@ -146,7 +156,39 @@ void App::OnUpdate() {
 	Pigs[count].Update();
 	count++;
 
-	float speed = 0.0f;
+	Quads[0].TranslateAbsolute(0.0f,0.0f, 0.0f);
+	Quads[0].Update();
+
+	Quads[1].ScaleAbsolute(0.25f);
+	Quads[1].TranslateAbsolute(-0.75f, +0.75f, 0.0f);
+	Quads[1].Update();
+
+	Quads[2].ScaleAbsolute(0.25f);
+	Quads[2].TranslateAbsolute(0.75f, +0.75f, 0.0f);
+	Quads[2].Update();
+
+	Quads[3].ScaleAbsolute(0.25f);
+	Quads[3].TranslateAbsolute(-0.75f, -0.75f, 0.0f);
+	Quads[3].Update();
+
+	Quads[4].ScaleAbsolute(0.25f);
+	Quads[4].TranslateAbsolute(0.75f, -0.75f, 0.0f);
+	Quads[4].Update();
+
+	Quads[5].ScaleAbsolute(0.25f);
+	Quads[5].TranslateAbsolute(0.75f, 0.0f, 0.0f);
+	Quads[5].Update();
+
+	Quads[6].ScaleAbsolute(0.25f);
+	Quads[6].TranslateAbsolute(-0.75f, 0.0f, 0.0f);
+	Quads[6].Update();
+
+	Quads[7].ScaleAbsolute(1.0f);
+	Quads[7].TranslateAbsolute(0.0f, 0.0f, 0.1f);
+	Quads[7].Update();
+
+
+	float speed = 0.5f;
 	static float freq = 0.0f;
 	freq += DtSecs*speed;
 	static float freq2 = 3.1415f / 2.0f;
@@ -177,7 +219,7 @@ void App::OnUpdate() {
 
 void App::OnDraw() {
 
-	pFramework->pVideoDriver->PushRT(0);
+	pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
 		Pigs[i].SetSignature(Signature::GBUFF_PASS);
 		Pigs[i].Draw();
@@ -185,13 +227,50 @@ void App::OnDraw() {
 	}
 	pFramework->pVideoDriver->PopRT();
 
+	
+	pFramework->pVideoDriver->PushRT(DeferredPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
+	Quads[0].SetSignature(Signature::DEFERRED_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
 
 	pFramework->pVideoDriver->Clear();
-	
-	QuadInst.SetSignature(Signature::DEFERRED_PASS);
-	QuadInst.Draw();
-	
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,0);
+	Quads[1].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[1].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	Quads[2].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[2].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 0);
+	Quads[3].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[3].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 0);
+	Quads[4].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[4].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 0);
+	Quads[5].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[5].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
+	Quads[6].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[6].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
+	Quads[7].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[7].Draw();
+
+
 	pFramework->pVideoDriver->SwapBuffers();
+
 	FirstFrame = false;
 }
 

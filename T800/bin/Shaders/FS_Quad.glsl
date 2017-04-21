@@ -129,7 +129,9 @@ void main(){
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;
 void main(){
-	gl_FragColor = texture2D(tex0,vecUVCoords);
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	gl_FragColor = texture2D(tex0,coords);
 }
 #elif defined(FSQUAD_2_TEX)
 uniform mediump sampler2D tex0;

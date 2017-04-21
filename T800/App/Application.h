@@ -51,6 +51,8 @@ public:
 	PrimitiveInst   Pigs[10];
 	PrimitiveInst	QuadInst;
 
+	PrimitiveInst	Quads[10];
+
 	Camera			Cam;
 
 	XVECTOR3		Position;
@@ -68,4 +70,7 @@ public:
 	float			DtSecs;
 	int				SelectedMesh;
 	int				RTIndex;
+	int				QuadIndex;
+	int				GBufferPass;
+	int				DeferredPass;
 };
