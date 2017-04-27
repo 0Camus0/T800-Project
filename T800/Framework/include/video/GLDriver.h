@@ -24,7 +24,7 @@
 #include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES30)
 #include <EGL/egl.h>
-#include <GLES3/gl30.h>
+#include <GLES3/gl3.h>
 #elif defined(USING_OPENGL_ES31)
 #include <EGL/egl.h>
 #include <GLES3/gl31.h>

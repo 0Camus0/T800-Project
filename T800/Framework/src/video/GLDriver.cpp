@@ -25,7 +25,7 @@
 #if defined(USING_OPENGL_ES20)
 #pragma comment(lib,"libEGL.lib")
 #pragma comment(lib,"libGLESv2.lib")
-#elif defined (USING_OPENGL_ES30)
+#elif defined (USING_OPENGL_ES30) || defined (USING_OPENGL_ES31)
 #pragma comment(lib,"libEGL.lib")
 #pragma comment(lib,"libGLESv2.lib")
 #elif defined(USING_OPENGL)

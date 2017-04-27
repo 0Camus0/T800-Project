@@ -281,7 +281,8 @@ void App::OnInput() {
 
 	if (FirstFrame)
 		return;
-/*
+
+#ifdef OS_WINDOWS
 	bool changed = false;
 	const float speedFactor = 10.0f;
 	if (IManager.PressedKey(SDLK_UP)) {
@@ -388,7 +389,7 @@ void App::OnInput() {
 
 	float pitch = 0.005f*static_cast<float>(IManager.yDelta);
 	Cam.MovePitch(pitch);
-*/
+#endif
 
 }
 

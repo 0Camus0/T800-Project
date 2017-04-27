@@ -26,6 +26,14 @@
 #include <SDL/SDL.h>
 #endif
 
+#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif /* GL_EXT_texture_filter_anisotropic */
+#endif
+
 void	GLTexture::SetTextureParams() {
 
 	glBindTexture(GL_TEXTURE_2D, id);
@@ -50,12 +58,9 @@ void	GLTexture::SetTextureParams() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrap);
 
-
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL)
-//	int Max = 1;
-//	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
-#endif
+	int Max = 1;
+	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

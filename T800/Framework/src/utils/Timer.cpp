@@ -38,6 +38,9 @@ void Timer::Update() {
 }
 
 float	Timer::GetDTSecs() {
-	//return static_cast<float>(DtSecs);
+#ifdef OS_WINDOWS
+	return static_cast<float>(DtSecs);
+#else
 	return 1.0f/60.0f;
+#endif
 }
