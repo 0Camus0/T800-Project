@@ -41,11 +41,11 @@ switch(status)
   case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
     printf("[ERROR] Framebuffer incomplete: No image is attached to FBO.");
    break;
-
+#ifndef USING_OPENGL
   case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
     printf("[ERROR] Framebuffer incomplete: Attached images have different dimensions.");
     break;
-
+#endif
   case GL_FRAMEBUFFER_UNSUPPORTED:
     printf("[ERROR] Unsupported by FBO implementation.");
     break;

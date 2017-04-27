@@ -81,6 +81,10 @@
 #define USING_SDL
 #endif
 
+#ifdef OS_WINDOWS
+#undef USING_FREEGLUT
+#define USING_SDL
+#endif
 
 
 
