@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <utils\Camera.h>
+#include <utils/Camera.h>
 
 const	XVECTOR3	Camera::LookConstCameraSpace = XVECTOR3(0.0f, 0.0f, 1.0f);
 const	XVECTOR3	Camera::RightConstCameraSpace = XVECTOR3(1.0f, 0.0f, 0.0f);
@@ -123,7 +123,8 @@ void	Camera::Update(float dt) {
 	Velocity -= Velocity*Friction;
 	Eye += currentvelocity;
 
-	XMatTranslation(T_, (-Eye));
+    XVECTOR3 TEYE = -Eye;
+	XMatTranslation(T_,TEYE);
 	View = T_*View;
 	VP = View*Projection;
 }

@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <scene\Triangle.h>
+#include <scene/Triangle.h>
 
 // Global D3D11 Main Objects
 #ifdef USING_D3D11
@@ -46,7 +46,7 @@ void Trangle::Create() {
 	// Get Vertex Attributes from the Shader
 	vertexAttribLoc = glGetAttribLocation(shaderID, "MyVertex");
 	colorAttribLoc  = glGetAttribLocation(shaderID, "MyColor");
-	
+
 	// Get the Uniform location, that would be the global variables in the shader
 	matUniformLoc = glGetUniformLocation(shaderID, "MyMatrix");
 #ifdef USE_VBO
@@ -60,7 +60,7 @@ void Trangle::Create() {
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	// We populate the buffer with the vertex data, it needs the size in bytes and the pointer to the first element
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(triVertex), &vertices[0], GL_STATIC_DRAW);
-	// We bind to the default 
+	// We bind to the default
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	indices[0] = 2;
@@ -90,7 +90,7 @@ void Trangle::Create() {
 		positions[0] = { -0.5f,  0.5f, 0.0f };
 		positions[1] = { -0.5f, -0.5f, 0.0f };
 		positions[2] = {  0.5f, -0.5f, 0.0f };
-	
+
 		positions[3] = { -0.5f,  0.5f, 0.0f };
 		positions[4] = {  0.5f, -0.5f, 0.0f };
 		positions[5] = {  0.5f,  0.5f, 0.0f };
@@ -312,7 +312,7 @@ void Trangle::Draw(float *t, float *vp) {
 	CnstBuffer.WVP = WVP;
 	CnstBuffer.World = transform;
 
-	UINT stride = sizeof(triVertex); 
+	UINT stride = sizeof(triVertex);
 	UINT offset = 0;
 	// We bound to use the vertex and pixel shader of this primitive
 	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);

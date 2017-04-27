@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\D3DXRT.h>
+#include <video/D3DXRT.h>
 #include <iostream>
 
 extern ComPtr<ID3D11Device>            D3D11Device;
@@ -23,7 +23,7 @@ bool D3DXRT::LoadAPIRT() {
 	dfmt = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 //	if (this->color_format) // TODO: check for more formats
-//	if (this->depth_format) // TODO: check for more formats		
+//	if (this->depth_format) // TODO: check for more formats
 	HRESULT hr;
 	for (int i = 0; i < number_RT; i++) {
 		D3D11_TEXTURE2D_DESC desc = { 0 };
@@ -84,7 +84,7 @@ bool D3DXRT::LoadAPIRT() {
 	descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	hr = D3D11Device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);	
+	hr = D3D11Device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);
 	if (hr != S_OK) {
 		std::cout << "Error loading RT depth texture " << std::endl;
 		exit(444);

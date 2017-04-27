@@ -3,11 +3,11 @@
 
 #include <Config.h>
 
-#include <utils\xMaths.h>
+#include <utils/xMaths.h>
 
 
 class Camera {
-public:	
+public:
 	Camera();
 
 	void	Init(XVECTOR3 position,float fov,float ratio,float np,float fp,bool lf=true);

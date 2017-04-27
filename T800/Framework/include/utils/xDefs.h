@@ -3,7 +3,7 @@
 
 #include <Config.h>
 
-#include <utils\XMaths.h>
+#include <utils/xMaths.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -263,7 +263,7 @@ namespace xF {
 			xFLOAT v[4];
 			struct { xFLOAT r, g, b, a; };
 		};
-	
+
 	};
 
 	struct xEffectDefault {
@@ -272,7 +272,7 @@ namespace xF {
 		xDWORD					CaseDWORD;
 		std::string				NameParam;
 		std::string				CaseString;
-		xEFFECTENUM				Type;		
+		xEFFECTENUM				Type;
 	};
 
 	struct xEffectInstance{
@@ -525,7 +525,7 @@ namespace xF {
 	struct xMeshContainer {
 
 		xMeshContainer() {}
-		
+
 		std::string					FileName;
 
 		std::vector<xMeshGeometry>	Geometry;

@@ -14,16 +14,16 @@
 #include <video/BaseDriver.h>
 #include <scene/Cube.h>
 
-#include <stdio.h>      
-#include <stdlib.h>     
-#include <time.h>     
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define NUM_LIGHTS 128
 #define RADI 170.0f
 
 enum {
 	SCENE = 0,
-	CROC,	
+	CROC,
 	LINK,
 	HOUSE_L,
 	HOUSE_R,
@@ -38,7 +38,7 @@ void App::InitVars() {
 	DtTimer.Update();
 	srand((unsigned int)DtTimer.GetDTSecs());
 
-	
+
 	Position = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
 	Scaling = XVECTOR3(1.0f,1.0f,1.0f);
@@ -72,20 +72,20 @@ void App::CreateAssets() {
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 	PrimitiveMgr.SetVP(&VP);
-	
+
 	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
+	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
+//	index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
 	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
+	//index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
 	Pigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
+	//index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -108,7 +108,7 @@ void App::CreateAssets() {
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 
 
-	PrimitiveMgr.SetSceneProps(&SceneProp);	
+	PrimitiveMgr.SetSceneProps(&SceneProp);
 }
 
 void App::DestroyAssets() {
@@ -131,7 +131,7 @@ void App::OnUpdate() {
 	Pigs[count].ScaleAbsolute(0.15f);
 	Pigs[count].Update();
 	count++;
-	
+
 	Pigs[count].TranslateAbsolute(-5.0f, 0.0f, 0.0f);
 	Pigs[count].RotateXAbsolute(0.0f);
 	Pigs[count].RotateYAbsolute(0.0f);
@@ -198,14 +198,14 @@ void App::OnUpdate() {
 	float Offset = 2.0f*3.1415f/ NUM_LIGHTS;
 	float Offset2 = 4.0f*3.1415f / NUM_LIGHTS;
 	for (int i = 0; i<NUM_LIGHTS; i++) {
-		SceneProp.Lights[i].Position = Position; 
+		SceneProp.Lights[i].Position = Position;
 		float RadA = dist*0.35f + dist*0.4f * sin(freq + float(i*Offset))*cos(freq + float(i*Offset));
 		float RadB = dist*0.35f + dist*0.4f * sin(freq2 + float(i*Offset2))*cos(freq2 + float(i*Offset2));
 		SceneProp.Lights[i].Position.x += RadA*sin(freq + float(i*Offset));
 		SceneProp.Lights[i].Position.z += RadB*cos(freq + float(i*Offset2));
 	}
 
-	
+
 	PrimitiveInst *Sel = &Pigs[5];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
 	Sel->RotateXAbsolute(Orientation.x);
@@ -213,11 +213,14 @@ void App::OnUpdate() {
 	Sel->RotateZAbsolute(Orientation.z);
 	Sel->ScaleAbsolute(Scaling.x);
 	Sel->Update();
-	
+
 	OnDraw();
 }
 
 void App::OnDraw() {
+
+	pFramework->pVideoDriver->Clear();
+
 
 	pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
@@ -227,7 +230,7 @@ void App::OnDraw() {
 	}
 	pFramework->pVideoDriver->PopRT();
 
-	
+
 	pFramework->pVideoDriver->PushRT(DeferredPass);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
@@ -278,7 +281,7 @@ void App::OnInput() {
 
 	if (FirstFrame)
 		return;
-
+/*
 	bool changed = false;
 	const float speedFactor = 10.0f;
 	if (IManager.PressedKey(SDLK_UP)) {
@@ -313,20 +316,12 @@ void App::OnInput() {
 
 	if (IManager.PressedOnceKey(SDLK_KP_PLUS)) {
 		SceneProp.ActiveLights *= 2;
-		/*Scaling.x += 0.1f*speedFactor*DtSecs;
-		Scaling.y += 0.1f*speedFactor*DtSecs;
-		Scaling.z += 0.1f*speedFactor*DtSecs;
-		changed = true;*/
 	}
 
 	if (IManager.PressedOnceKey(SDLK_KP_MINUS)) {
 		SceneProp.ActiveLights /= 2;
 		if(SceneProp.ActiveLights<=0)
 			SceneProp.ActiveLights = 1;
-		/*Scaling.x -= 0.1f*speedFactor*DtSecs;
-		Scaling.y -= 0.1f*speedFactor*DtSecs;
-		Scaling.z -= 0.1f*speedFactor*DtSecs;
-		changed = true;*/
 	}
 
 	if (IManager.PressedKey(SDLK_KP5)) {
@@ -387,13 +382,13 @@ void App::OnInput() {
 	if (IManager.PressedKey(SDLK_d)) {
 		Cam.StrafeRight(DtSecs);
 	}
-	
+
 	float yaw = 0.005f*static_cast<float>(IManager.xDelta);
 	Cam.MoveYaw(yaw);
 
 	float pitch = 0.005f*static_cast<float>(IManager.yDelta);
 	Cam.MovePitch(pitch);
-
+*/
 
 }
 

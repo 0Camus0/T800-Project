@@ -10,7 +10,13 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <core\Win32Framework.h>
+#include <Config.h>
+#ifdef OS_LINUX
+    #include <core/LinuxFramework.h>
+#elif defined(OS_WINDOWS)
+	#include <core/Win32Framework.h>
+#endif
+
 #include "Application.h"
 
 
@@ -19,11 +25,18 @@ RootFramework *pFrameWork = 0;
 
 int main(){
 	pApp = new App;
+#ifdef OS_LINUX
+    pFrameWork = new LinuxFramework((AppBase*)pApp);
+    pFrameWork->InitGlobalVars();
+	pFrameWork->OnCreateApplication();
+#elif defined(OS_WINDOWS)
 	pFrameWork = new Win32Framework((AppBase*)pApp);
 	pFrameWork->InitGlobalVars();
 	pFrameWork->OnCreateApplication();
 	pFrameWork->UpdateApplication();
 	pFrameWork->OnDestroyApplication();
+#endif
+
 	delete pFrameWork;
 	delete pApp;
 

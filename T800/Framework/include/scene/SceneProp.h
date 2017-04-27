@@ -15,8 +15,8 @@
 
 #include <Config.h>
 
-#include <utils\xMaths.h>
-#include <utils\Camera.h>
+#include <utils/xMaths.h>
+#include <utils/Camera.h>
 #include <vector>
 
 struct Light{
@@ -35,15 +35,15 @@ struct SceneProps{
 
 	void	AddCamera(Camera*);
 	void	RemoveCamera(unsigned int index);
-	
+
 
 	std::vector<Light>	   Lights;
 	std::vector<Camera*> pCameras;
 
 	XVECTOR3			AmbientColor;
 
-	int	ActiveLights;
 	int ActiveCamera;
+	int	ActiveLights;
 };
 
 #endif

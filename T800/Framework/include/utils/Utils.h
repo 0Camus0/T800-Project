@@ -23,13 +23,21 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl3.h>
+#elif defined(USING_OPENGL_ES31)
 #include <GLES3/gl31.h>
 #elif defined(USING_OPENGL)
+#ifdef OS_WINDOWS
 #include <GL/glew.h>
+#elif defined(OS_LINUX)
+#include <GL/gl.h>
+#endif
 #endif
 
 #ifdef USING_GL_COMMON
 void checkcompilederrors(GLuint shader, GLenum type);
+void CheckGLError();
+void CheckFBStatus();
 GLuint createShader(GLenum type, char* pSource);
 #else
 void checkcompilederrors(unsigned int shader, unsigned int type);

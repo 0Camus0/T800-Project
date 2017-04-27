@@ -10,9 +10,9 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\D3DXShader.h>
-#include <scene\D3DXQuad.h>
-#include <utils\Utils.h>
+#include <video/D3DXShader.h>
+#include <scene/D3DXQuad.h>
+#include <utils/Utils.h>
 
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
@@ -124,7 +124,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	XMATRIX44 WV = pActualCamera->View;
 	VP.Inverse(&CnstBuffer.WVPInverse);
 	CnstBuffer.WVP = transform;
-	CnstBuffer.World = transform;		
+	CnstBuffer.World = transform;
 	CnstBuffer.WorldView = WV;
 	CnstBuffer.CameraPos = pActualCamera->Eye;
 

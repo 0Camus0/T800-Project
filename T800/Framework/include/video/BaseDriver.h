@@ -1,7 +1,7 @@
 /*********************************************************
 * Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
 * All Rights Reserved
-* 
+*
 * You may use, distribute and modify this code under the
 * following terms:
 * ** Do not claim that you wrote this software
@@ -14,6 +14,7 @@
 #define T800_BASEDRIVER_H
 
 #include <Config.h>
+#include <string>
 #include <vector>
 
 
@@ -44,12 +45,9 @@ public:
 
 	}
 
+    virtual ~Texture(){}
 
-	~Texture() {
-
-	}
-
-	bool			LoadTexture(char *fn);
+	bool			LoadTexture(const char *fn);
 
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
@@ -145,7 +143,7 @@ public:
 	virtual void	 DestroyDriver() = 0;
 	virtual void	 SetWindow(void *window) = 0;
 	virtual void	 SetDimensions(int,int) = 0;
-	virtual void	 Clear() = 0;	
+	virtual void	 Clear() = 0;
 	virtual void	 SwapBuffers() = 0;
 
 	virtual int 	 CreateTexture(std::string) = 0;
@@ -163,7 +161,7 @@ public:
 	virtual void		DestroyShaders() = 0;
 
 	std::vector<ShaderBase*>	Shaders;
-	std::vector<BaseRT*>		RTs;	
+	std::vector<BaseRT*>		RTs;
 	std::vector<Texture*>		Textures;
 };
 

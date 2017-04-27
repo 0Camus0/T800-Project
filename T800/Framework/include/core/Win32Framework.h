@@ -15,15 +15,15 @@
 
 #include <Config.h>
 
-#include <core\Core.h>
-#include <video\BaseDriver.h>
+#include <core/Core.h>
+#include <video/BaseDriver.h>
 
 
 #include <memory>
 
 class Win32Framework : public RootFramework {
 public:
-	Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) 	{ 
+	Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) 	{
 		pBaseApp->SetParentFramework(this);
 	}
 	void InitGlobalVars();

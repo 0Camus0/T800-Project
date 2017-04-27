@@ -10,13 +10,17 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <scene\PrimitiveManager.h>
-#include <scene\Triangle.h>
-#include <scene\Cube.h>
-#include <scene\GLMesh.h>
-#include <scene\D3DXMesh.h>
-#include <scene\D3DXQuad.h>
-#include <scene\GLQuad.h>
+#include <scene/PrimitiveManager.h>
+#include <scene/Triangle.h>
+#include <scene/Cube.h>
+#include <scene/GLMesh.h>
+#include <scene/GLQuad.h>
+
+#ifdef USING_D3D11
+#include <scene/D3DXMesh.h>
+#include <scene/D3DXQuad.h>
+#endif
+
 
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())

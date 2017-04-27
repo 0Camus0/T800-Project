@@ -10,15 +10,15 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <core\Core.h>
+#include <core/Core.h>
 
-#include <scene\PrimitiveManager.h>
-#include <scene\PrimitiveInstance.h>
-#include <scene\SceneProp.h>
+#include <scene/PrimitiveManager.h>
+#include <scene/PrimitiveInstance.h>
+#include <scene/SceneProp.h>
 
-#include <utils\xMaths.h>
-#include <utils\Camera.h>
-#include <utils\Timer.h>
+#include <utils/xMaths.h>
+#include <utils/Camera.h>
+#include <utils/Timer.h>
 
 
 
@@ -62,7 +62,7 @@ public:
 	XMATRIX44		View;
 	XMATRIX44		Projection;
 	XMATRIX44		VP;
-	
+
 	SceneProps		SceneProp;
 
 	bool			FirstFrame;

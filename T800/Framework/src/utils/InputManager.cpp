@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <utils\InputManager.h>
+#include <utils/InputManager.h>
 #include <stdio.h>
 
 InputManager::InputManager() {
@@ -28,7 +28,7 @@ InputManager::InputManager() {
 }
 
 bool InputManager::PressedOnceKey(int key) {
-	
+
 	bool ret = KeyStates[0][key];
 
 	if (!KeyStates[1][key] && KeyStates[0][key]) {

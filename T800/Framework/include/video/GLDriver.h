@@ -15,13 +15,17 @@
 
 #include <Config.h>
 
-#include <video\BaseDriver.h>
+#include <video/BaseDriver.h>
 
+#ifdef OS_WINDOWS
 #if defined(USING_OPENGL_ES20)
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES30)
+#include <EGL/egl.h>
+#include <GLES3/gl30.h>
+#elif defined(USING_OPENGL_ES31)
 #include <EGL/egl.h>
 #include <GLES3/gl31.h>
 #elif defined(USING_OPENGL)
@@ -30,6 +34,23 @@
 #else
 #include <GL/glew.h>
 #include <SDL/SDL.h>
+#endif
+#elif defined(OS_LINUX)
+#if defined(USING_OPENGL_ES20)
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#elif defined(USING_OPENGL_ES30)
+#include <EGL/egl.h>
+#include <GLES3/gl3.h>
+#elif defined(USING_OPENGL_ES31)
+#include <EGL/egl.h>
+#include <GLES3/gl31.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
+#else
+#include <GL/glew.h>
+#endif
 #endif
 
 class GLDriver : public BaseDriver {
@@ -60,7 +81,7 @@ public:
 	void	Clear();
 	void	SwapBuffers();
 	bool	CheckExtension(std::string s);
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 	EGLDisplay			eglDisplay;
 	EGLConfig			eglConfig;
 	EGLSurface			eglSurface;
@@ -69,7 +90,7 @@ public:
 	EGLNativeWindowType	eglWindow;
 #endif
 	GLint				CurrentFBO;
-#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 	GLenum				DrawBuffers[16];
 #endif
 

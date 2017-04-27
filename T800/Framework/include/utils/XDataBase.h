@@ -7,11 +7,11 @@
 
 #include <Config.h>
 
-#include <utils\xDefs.h>
+#include <utils/xDefs.h>
 
 #include <iostream>
 #include <fstream>
-#include <sstream> 
+#include <sstream>
 #include <vector>
 #include <stack>
 #include <algorithm>
@@ -39,7 +39,7 @@ namespace xF {
 	private:
 		void			CreateSubSets();
 		bool			Parse(std::string);
-		unsigned int	GetxTemplateType(std::string Line, std::string *retName = 0);
+		int	GetxTemplateType(std::string Line, std::string *retName = 0);
 
 		void		ProcessFrameBlock(std::string &actual);
 		void		ProcessMeshBlock(std::string actual);

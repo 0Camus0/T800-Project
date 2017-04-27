@@ -16,24 +16,27 @@
 #include <Config.h>
 
 #ifdef USING_OPENGL_ES20
-#include <GLES2\gl2.h>
-#include <GLES2\gl2ext.h>
-#include <video\GLTexture.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL_ES30)
-#include <GLES3\gl31.h>
-#include <video\GLTexture.h>
+#include <GLES3/gl3.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL_ES31)
+#include <GLES3/gl31.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL)
-#include <GL\glew.h>
-#include <video\GLTexture.h>
+#include <GL/glew.h>
+#include <video/GLTexture.h>
 #elif defined(USING_D3D11)
-#include <video\D3DXTexture.h>
+#include <video/D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
 
-#include <utils\xMaths.h>
-#include <utils\Utils.h>
+#include <utils/xMaths.h>
+#include <utils/Utils.h>
 
-#include <scene\PrimitiveBase.h>
+#include <scene/PrimitiveBase.h>
 
 
 
@@ -84,7 +87,7 @@ public:
 	GLuint	shaderID;
 	GLuint	vertexAttribLoc;
 	GLuint	colorAttribLoc;
-	
+
 	GLuint  matUniformLoc;
 #ifdef USE_VBO
 	triVertex		vertices[4];

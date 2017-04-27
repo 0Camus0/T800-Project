@@ -15,8 +15,8 @@
 
 #include <Config.h>
 
-#include <scene\SceneProp.h>
-#include <video\BaseDriver.h>
+#include <scene/SceneProp.h>
+#include <video/BaseDriver.h>
 
 #include <vector>
 
@@ -31,6 +31,7 @@ public:
 			Textures[i]=0;
 		}
 	}
+	virtual ~PrimitiveBase(){}
 	virtual void Create() = 0;
 	virtual void Create(char *) = 0;
 	virtual void Transform(float *t) = 0;

@@ -10,9 +10,9 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\D3DXDriver.h>
-#include <video\D3DXRT.h>
-#include <video\D3DXShader.h>
+#include <video/D3DXDriver.h>
+#include <video/D3DXRT.h>
+#include <video/D3DXShader.h>
 
 #include <iostream>
 #include <string>
@@ -66,7 +66,7 @@ void D3DXDriver::InitDriver(){
 	// Get the back buffer
 	ComPtr<ID3D11Texture2D> BackBuffer;
 	hr = DXGISwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), &BackBuffer);
-	
+
 	// Descriptor to create the Depth Buffer
 	D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width = Width;
@@ -130,7 +130,7 @@ void D3DXDriver::DestroyDriver(){
 }
 
 void D3DXDriver::SetWindow(void *window){
-	hwnd = GetActiveWindow(); // Get the HWND of the window 
+	hwnd = GetActiveWindow(); // Get the HWND of the window
 }
 
 void D3DXDriver::SetDimensions(int w, int h){
@@ -206,14 +206,14 @@ void D3DXDriver::PushRT(int id) {
 		return;
 
 	D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
-	
+
 	std::vector<ID3D11RenderTargetView**> RTVA;
 	for (int i = 0; i < pRT->number_RT; i++) {
 		RTVA.push_back(pRT->vD3D11RenderTargetView[i].GetAddressOf());
 	}
 
 	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
-	
+
 	float rgba[4];
 	rgba[0] = 0.5f;
 	rgba[1] = 0.5f;
@@ -223,7 +223,7 @@ void D3DXDriver::PushRT(int id) {
 	for (int i = 0; i < pRT->number_RT; i++) {
 		D3D11DeviceContext->ClearRenderTargetView(pRT->vD3D11RenderTargetView[i].Get(), rgba);
 	}
-	
+
 	D3D11DeviceContext->ClearDepthStencilView(pRT->D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 }
@@ -255,7 +255,7 @@ int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned in
 		delete shader;
 	}
 	return -1;
-	
+
 }
 
 ShaderBase*	D3DXDriver::GetShaderSig(unsigned int sig) {

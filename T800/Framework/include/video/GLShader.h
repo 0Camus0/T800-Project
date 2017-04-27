@@ -21,6 +21,8 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl3.h>
+#elif defined(USING_OPENGL_ES31)
 #include <GLES3/gl31.h>
 #elif defined(USING_OPENGL)
 #include <GL/glew.h>
@@ -29,7 +31,7 @@
 #include <SDL/SDL.h>
 #endif
 
-#include <utils\Utils.h>
+#include <utils/Utils.h>
 
 
 class GLShader : public ShaderBase {
@@ -64,6 +66,8 @@ public:
 		tex6_loc = -1;
 		tex7_loc = -1;
 	}
+
+	virtual ~GLShader() {}
 
 	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
 

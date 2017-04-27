@@ -10,10 +10,10 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\GLDriver.h>
-#include <video\GLTexture.h>
-#include <video\GLRT.h>
-#include <video\GLShader.h>
+#include <video/GLDriver.h>
+#include <video/GLTexture.h>
+#include <video/GLRT.h>
+#include <video/GLShader.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -21,6 +21,7 @@
 #include <iterator>
 #include <fstream>
 
+#ifdef OS_WINDOWS
 #if defined(USING_OPENGL_ES20)
 #pragma comment(lib,"libEGL.lib")
 #pragma comment(lib,"libGLESv2.lib")
@@ -31,8 +32,11 @@
 #pragma comment(lib,"glew.lib")
 #pragma comment(lib,"OpenGL32.Lib")
 #endif
+#elif defined(OS_LINUX)
+#include <GL/freeglut.h>
+#endif
 
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 void EGLError(const char* c_ptr) {
 
 	EGLint iErr = eglGetError();
@@ -48,7 +52,7 @@ bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
 }
 #endif
 void	GLDriver::InitDriver() {
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(USING_SDL)
 	EGLint numConfigs;
 
 	EGLNativeDisplayType nativeDisplay;
@@ -113,12 +117,11 @@ void	GLDriver::InitDriver() {
 	else {
 		printf("GLEW OK\n");
 	}
-	SDL_Surface *sur = SDL_GetVideoSurface();	
+	SDL_Surface *sur = SDL_GetVideoSurface();
 	width = sur->w;
 	height = sur->h;
 #endif
-	 
-	
+
 	std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
 	std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
 
@@ -134,7 +137,7 @@ void	GLDriver::InitDriver() {
 	for (unsigned int i = 0; i < ExtensionsTok.size(); i++) {
 		printf("[%s]\n", ExtensionsTok[i].c_str());
 	}
-	
+
 
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);
@@ -142,7 +145,8 @@ void	GLDriver::InitDriver() {
 	glCullFace(GL_FRONT);
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);
-#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 	for (int i = 0; i < 16; i++) {
 		DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
@@ -162,7 +166,7 @@ void	GLDriver::Update() {
 }
 
 void	GLDriver::DestroyDriver() {
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
 	eglDestroySurface(eglDisplay, eglSurface);
 	eglDestroyContext(eglDisplay, eglContext);
 	eglTerminate(eglDisplay);
@@ -170,27 +174,33 @@ void	GLDriver::DestroyDriver() {
 }
 
 void	GLDriver::SetWindow(void *window) {
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
 	eglWindow = GetActiveWindow();
 #endif
 }
 
 void	GLDriver::SetDimensions(int w, int h){
-
+    width = w;
+    height = h;
 }
 
 void	GLDriver::Clear() {
-	glClearColor(0.5,0.5,0.5,1.0);
+	glClearColor(0.5,0.0,0.5,1.0);
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 }
 
 void	GLDriver::SwapBuffers() {
+#ifdef OS_WINDOWS
 #if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
 	eglSwapBuffers(eglDisplay, eglSurface);
 #elif defined(USING_OPENGL)
 	SDL_GL_SwapBuffers();
 #endif
+#elif defined(OS_LINUX)
+    glutSwapBuffers();
+#endif
+
 }
 
 bool GLDriver::CheckExtension(std::string s){
@@ -249,11 +259,11 @@ void GLDriver::PushRT(int id) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, pRT->vFrameBuffers[0]);
 
-#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30)
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 	glDrawBuffers(pRT->number_RT, DrawBuffers);
 #endif
 
-	glClearColor(0.5, 0.5, 0.5, 1.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

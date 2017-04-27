@@ -11,7 +11,7 @@
 *********************************************************/
 
 
-#include <utils\XMaths.h>
+#include <utils/xMaths.h>
 
  void XMatMultiply(XMATRIX44 &mpout, const XMATRIX44 &mp1, const XMATRIX44 &mp2) {
 
@@ -101,7 +101,7 @@
 	mpout.m[0][0] = std::cos(rads);
 	mpout.m[0][1] = std::sin(rads);
 	mpout.m[1][0] = -std::sin(rads);
-	mpout.m[1][1] = std::cos(rads);	
+	mpout.m[1][1] = std::cos(rads);
 }
 
  void XMatRotationZRH(XMATRIX44 &mpout, const float &rads) {
@@ -762,7 +762,7 @@
 #else
 	 XMATRIX44 tmp64 = *this;
 	 float det =
-#endif	 
+#endif
 		 tmp64.m11*tmp64.m22*tmp64.m33*tmp64.m44 + tmp64.m11*tmp64.m23*tmp64.m34*tmp64.m42 + tmp64.m11*tmp64.m24*tmp64.m32*tmp64.m43
 				 + tmp64.m12*tmp64.m21*tmp64.m34*tmp64.m43 + tmp64.m12*tmp64.m23*tmp64.m31*tmp64.m44 + tmp64.m12*tmp64.m24*tmp64.m33*tmp64.m41
 				 + tmp64.m13*tmp64.m21*tmp64.m32*tmp64.m44 + tmp64.m13*tmp64.m22*tmp64.m34*tmp64.m41 + tmp64.m13*tmp64.m24*tmp64.m31*tmp64.m42

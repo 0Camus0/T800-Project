@@ -10,9 +10,9 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\GLShader.h>
-#include <scene\GLQuad.h>
-#include <utils\Utils.h>
+#include <video/GLShader.h>
+#include <scene/GLQuad.h>
+#include <utils/Utils.h>
 
 void GLQuad::Create(){
 	SigBase = Signature::HAS_TEXCOORDS0;
@@ -43,8 +43,8 @@ void GLQuad::Create(){
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };	
-	
+	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+
 	indices[0] = 2;
 	indices[1] = 1;
 	indices[2] = 0;
@@ -78,7 +78,6 @@ void GLQuad::Draw(float *t, float *vp){
 	sig |= gSig;
 	GLShader * s = dynamic_cast<GLShader*>(g_pBaseDriver->GetShaderSig(sig));
 
-	XMATRIX44 WVP = transform;
 	Camera *pActualCamera = pScProp->pCameras[0];
 	XMATRIX44 VP = pActualCamera->VP;
 	XMATRIX44 WV = pActualCamera->View;
@@ -96,14 +95,14 @@ void GLQuad::Draw(float *t, float *vp){
 		LightPositions[i] = pScProp->Lights[i].Position;
 		LightColors[i] = pScProp->Lights[i].Color;
 	}
-	
+
 	glUseProgram(s->ShaderProg);
 
 	glUniformMatrix4fv(s->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(s->matWorldViewUniformLoc, 1, GL_FALSE, &WV.m[0][0]);
 	glUniformMatrix4fv(s->matWVPInverseUniformLoc, 1, GL_FALSE, &WVPInverse.m[0][0]);
-	
+
 	glUniform4fv(s->CameraPos_Loc, 1, &CameraPos.v[0]);
 	glUniform4fv(s->CameraInfo_Loc, 1, &CameraInfo.v[0]);
 
@@ -171,6 +170,7 @@ void GLQuad::Draw(float *t, float *vp){
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);
 	}
+
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }

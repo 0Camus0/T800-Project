@@ -10,21 +10,21 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <core\Win32Framework.h>
+#include <core/Win32Framework.h>
 #ifdef USING_GL_COMMON
-#include <video\GLDriver.h>
+#include <video/GLDriver.h>
 #elif defined(USING_D3D11)
-#include <video\D3DXDriver.h>
+#include <video/D3DXDriver.h>
 #endif
 // SDL
 #include <SDL/SDL.h>
-// Windows 
+// Windows
 #include <windows.h>
 #include <mmsystem.h>
 
 void Win32Framework::InitGlobalVars() {
 
-	
+
 }
 
 void Win32Framework::OnCreateApplication(){
@@ -41,7 +41,7 @@ void Win32Framework::OnCreateApplication(){
 	//flags |= SDL_RESIZABLE;
 	int width = 1280;
 	int height = 720;
-	
+
 	if (SDL_SetVideoMode(width, height, 32, flags) == 0) {
 		printf( "Video mode set failed: %s\n",SDL_GetError());
 	}
@@ -60,7 +60,7 @@ void Win32Framework::OnCreateApplication(){
 	pBaseApp->InitVars();
 	pBaseApp->CreateAssets();
 
-	
+
 }
 void Win32Framework::OnDestroyApplication() {
 	pBaseApp->DestroyAssets();
@@ -92,7 +92,7 @@ void Win32Framework::ProcessInput() {
 				pBaseApp->IManager.KeyStates[0][evento.key.keysym.sym] = false;
 				pBaseApp->IManager.KeyStates[1][evento.key.keysym.sym] = false;
 			}break;
-	
+
 		}
 	}
 	static int xDelta = 0;
@@ -113,3 +113,4 @@ void Win32Framework::ProcessInput() {
 
 void Win32Framework::ResetApplication() {
 }
+

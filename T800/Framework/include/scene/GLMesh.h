@@ -15,22 +15,29 @@
 
 #include <Config.h>
 #ifdef USING_OPENGL_ES20
-#include <GLES2\gl2.h>
-#include <GLES2\gl2ext.h>
-#include <video\GLTexture.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL_ES30)
-#include <GLES3\gl31.h>
-#include <video\GLTexture.h>
+#include <GLES3/gl3.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL_ES31)
+#include <GLES3/gl31.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL)
-#include <GL\glew.h>
-#include <video\GLTexture.h>
+#ifdef OS_WINDOWS
+#include <GL/glew.h>
+#elif defined(OS_LINUX)
+#include <GL/gl.h>
+#endif
+#include <video/GLTexture.h>
 #endif
 
-#include <video\BaseDriver.h>
-#include <utils\Utils.h>
-#include <utils\xMaths.h>
-#include <utils\XDataBase.h>
-#include <scene\PrimitiveBase.h>
+#include <video/BaseDriver.h>
+#include <utils/Utils.h>
+#include <utils/xMaths.h>
+#include <utils/XDataBase.h>
+#include <scene/PrimitiveBase.h>
 
 #include <vector>
 
@@ -41,17 +48,18 @@ class GLMesh : public PrimitiveBase {
 public:
 	GLMesh() {}
 
+
 	struct SubSetInfo {
 		unsigned int		Sig;
 
 		unsigned long		VertexAttrib;
 		unsigned int		Id;
-		unsigned int		IdDiffuseTex;
-		unsigned int		IdSpecularTex;
-		unsigned int		IdGlossTex;
-		unsigned int		IdNormalTex;
-		unsigned int		IdReflectTex;
-		unsigned int		IdTexUniformLoc;
+		int		IdDiffuseTex;
+		int		IdSpecularTex;
+		int		IdGlossTex;
+		int		IdNormalTex;
+		int		IdReflectTex;
+		int		IdTexUniformLoc;
 
 
 		int					DiffuseId;

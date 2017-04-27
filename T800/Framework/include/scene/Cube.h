@@ -15,25 +15,28 @@
 
 #include <Config.h>
 
-#include <utils\Utils.h>
+#include <utils/Utils.h>
 
 #ifdef USING_OPENGL_ES20
-#include <GLES2\gl2.h>
-#include <GLES2\gl2ext.h>
-#include <video\GLTexture.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL_ES30)
-#include <GLES3\gl31.h>
-#include <video\GLTexture.h>
+#include <GLES3/gl3.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL_ES31)
+#include <GLES3/gl31.h>
+#include <video/GLTexture.h>
 #elif defined(USING_OPENGL)
-#include <GL\glew.h>
-#include <video\GLTexture.h>
+#include <GL/glew.h>
+#include <video/GLTexture.h>
 #elif defined(USING_D3D11)
-#include <video\D3DXTexture.h>
+#include <video/D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
 
-#include <utils\xMaths.h>
-#include <scene\PrimitiveBase.h>
+#include <utils/xMaths.h>
+#include <scene/PrimitiveBase.h>
 
 
 struct CVertex {
@@ -47,7 +50,7 @@ struct CVertex {
 
 class Cube : public PrimitiveBase {
 public:
-	Cube() 
+	Cube()
 #ifdef USING_GL_COMMON
 	: shaderID(0)
 #endif
@@ -72,7 +75,7 @@ public:
 	GLint	normalAttribLoc;
 	GLint	uvAttribLoc;
 	GLint	diffuseLoc;
-	
+
 
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;

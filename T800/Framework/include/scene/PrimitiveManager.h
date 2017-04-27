@@ -16,9 +16,9 @@
 #include <Config.h>
 
 #include <vector>
-#include <utils\xMaths.h>
-#include <scene\PrimitiveBase.h>
-#include <scene\SceneProp.h>
+#include <utils/xMaths.h>
+#include <scene/PrimitiveBase.h>
+#include <scene/SceneProp.h>
 
 class PrimitiveManager {
 public:

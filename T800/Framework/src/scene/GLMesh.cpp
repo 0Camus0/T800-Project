@@ -10,11 +10,11 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\BaseDriver.h>
-#include <video\GLShader.h>
-#include <video\GLRT.h>
-#include <scene\GLMesh.h>
-#include <utils\Utils.h>
+#include <video/BaseDriver.h>
+#include <video/GLShader.h>
+#include <video/GLRT.h>
+#include <scene/GLMesh.h>
+#include <utils/Utils.h>
 
 
 
@@ -41,10 +41,10 @@ void GLMesh::Create(char *filename) {
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 		MeshInfo  *it_MeshInfo = &Info[i];
 
-		int NumMaterials = pActual->MaterialList.Materials.size();
-		int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
+		unsigned int NumMaterials = pActual->MaterialList.Materials.size();
+		unsigned int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
 
-		for (int j = 0; j < NumMaterials; j++) {
+		for (unsigned int j = 0; j < NumMaterials; j++) {
 			xSubsetInfo *subinfo = &it->Subsets[j];
 			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo *it_subsetinfo = &it_MeshInfo->SubSets[j];
@@ -98,7 +98,7 @@ void GLMesh::Create(char *filename) {
 			unsigned short *tmpIndexex = new unsigned short[it_subsetinfo->NumVertex];
 			int counter = 0;
 			bool first = false;
-			for (int k = 0; k < NumFaceIndices; k++) {
+			for (unsigned int k = 0; k < NumFaceIndices; k++) {
 				if (pActual->MaterialList.FaceIndices[k] == j) {
 					unsigned int index = k * 3;
 					if (!first) {
@@ -168,7 +168,6 @@ void GLMesh::GatherInfo() {
 	free(fsSourceP);
 
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-		xFinalGeometry *it = &xFile.MeshInfo[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 		int Sig = 0;
 
@@ -187,7 +186,6 @@ void GLMesh::GatherInfo() {
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		for (int j = 0; j < NumMaterials; j++) {
 			int CurrSig = Sig;
-			xSubsetInfo *subinfo = &it->Subsets[j];
 			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo stmp;
 
@@ -223,7 +221,7 @@ void GLMesh::GatherInfo() {
 			}
 
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
-			stmp.Sig = CurrSig;		
+			stmp.Sig = CurrSig;
 			tmp.SubSets.push_back(stmp);
 
 			CurrSig |= Signature::GBUFF_PASS;
@@ -312,7 +310,7 @@ void GLMesh::Draw(float *t, float *vp) {
 				glUniformMatrix4fv(s->matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 				glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 				glUniformMatrix4fv(s->matWorldViewUniformLoc, 1, GL_FALSE, &WorldView.m[0][0]);
-				
+
 
 				if (s->Light0Pos_Loc != -1) {
 					glUniform4fv(s->Light0Pos_Loc, 1, &pScProp->Lights[0].Position.v[0]);

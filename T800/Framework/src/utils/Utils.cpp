@@ -10,11 +10,52 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <utils\Utils.h>
-#include <stdio.h>    
+#include <utils/Utils.h>
+#include <string>
+#include <stdio.h>
 #include <stdlib.h>
 
 #ifdef USING_GL_COMMON
+void CheckGLError(){
+    GLenum errCode;
+    if ((errCode = glGetError()) !=
+    GL_NO_ERROR)
+    {
+    printf("\nGL ERROR[%d]\n",errCode);
+    exit(errCode);
+    }
+}
+
+void CheckFBStatus(){
+GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+switch(status)
+{
+  case GL_FRAMEBUFFER_COMPLETE:
+    printf("Framebuffer complete.");
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+    printf("[ERROR] Framebuffer incomplete: Attachment is NOT complete.");
+    break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+    printf("[ERROR] Framebuffer incomplete: No image is attached to FBO.");
+   break;
+
+  case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+    printf("[ERROR] Framebuffer incomplete: Attached images have different dimensions.");
+    break;
+
+  case GL_FRAMEBUFFER_UNSUPPORTED:
+    printf("[ERROR] Unsupported by FBO implementation.");
+    break;
+
+   default:
+    printf("[ERROR] Unknown error.");
+    break;
+}
+}
+
 void checkcompilederrors(GLuint shader, GLenum type) {
 	GLint bShaderCompiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &bShaderCompiled);

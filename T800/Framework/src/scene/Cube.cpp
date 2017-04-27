@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <scene\Cube.h>
+#include <scene/Cube.h>
 
 #ifdef USING_D3D11
 extern ComPtr<ID3D11Device>            D3D11Device;
@@ -207,7 +207,7 @@ void Cube::Create() {
 	indices[33] = 21;
 	indices[34] = 22;
 	indices[35] = 23;
-	
+
 	for (int i = 0; i < 36; i += 3) {
 		int id0 = indices[i];
 		int id2 = indices[i+2];
@@ -302,7 +302,7 @@ void Cube::Draw(float *t,float *vp) {
 
 	XMATRIX44 VP = XMATRIX44(vp);
 	XMATRIX44 WVP = transform*VP;
-	
+
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 
@@ -314,14 +314,14 @@ void Cube::Draw(float *t,float *vp) {
 	if (normalAttribLoc != -1)
 		glEnableVertexAttribArray(normalAttribLoc);
 
-	if (uvAttribLoc != -1) 
+	if (uvAttribLoc != -1)
 		glEnableVertexAttribArray(uvAttribLoc);
-	
+
 	glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
-	
+
 	if (normalAttribLoc != -1)
 		glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
-	
+
 	if(uvAttribLoc!=-1)
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
 
@@ -330,7 +330,7 @@ void Cube::Draw(float *t,float *vp) {
 	glUniform1i(diffuseLoc, 0);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -339,7 +339,7 @@ void Cube::Draw(float *t,float *vp) {
 	if (normalAttribLoc != -1) {
 		glDisableVertexAttribArray(normalAttribLoc);
 	}
-	
+
 	if (uvAttribLoc!=-1) {
 		glDisableVertexAttribArray(uvAttribLoc);
 	}
@@ -358,9 +358,9 @@ void Cube::Draw(float *t,float *vp) {
 	UINT offset = 0;
 	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
 	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-	
+
 	D3D11DeviceContext->IASetInputLayout(Layout.Get());
-	
+
 	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 
 	D3DXTexture *texd3d = dynamic_cast<D3DXTexture*>(tex);

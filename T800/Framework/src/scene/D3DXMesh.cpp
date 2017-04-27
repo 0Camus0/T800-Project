@@ -10,11 +10,11 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\BaseDriver.h>
-#include <scene\D3DXMesh.h>
+#include <video/BaseDriver.h>
+#include <scene/D3DXMesh.h>
 #include <iostream>
 
-#include <video\D3DXShader.h>
+#include <video/D3DXShader.h>
 
 
 #define CHANGE_TO_RH 0
@@ -43,7 +43,7 @@ void D3DXMesh::Create(char *filename) {
 		xFinalGeometry *it = &xFile.MeshInfo[i];
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 		MeshInfo  *it_MeshInfo = &Info[i];
-	
+
 		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig));
 
 		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
@@ -61,7 +61,7 @@ void D3DXMesh::Create(char *filename) {
 
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
-		
+
 		for (int j = 0; j < NumMaterials; j++) {
 			xSubsetInfo *subinfo = &it->Subsets[j];
 			xMaterial *material = &pActual->MaterialList.Materials[j];
@@ -110,7 +110,7 @@ void D3DXMesh::Create(char *filename) {
 			}
 
 			it_subsetinfo->NumTris   = subinfo->NumTris;
-			it_subsetinfo->NumVertex = subinfo->NumVertex;			
+			it_subsetinfo->NumVertex = subinfo->NumVertex;
 			unsigned short *tmpIndexex = new unsigned short[it_subsetinfo->NumVertex];
 			int counter = 0;
 			bool first = false;
@@ -122,7 +122,7 @@ void D3DXMesh::Create(char *filename) {
 						it_subsetinfo->VertexStart = index;
 						first = true;
 					}
-					
+
 					#if CHANGE_TO_RH
 					tmpIndexex[counter++] = pActual->Triangles[index + 2];
 					tmpIndexex[counter++] = pActual->Triangles[index + 1];
@@ -147,7 +147,7 @@ void D3DXMesh::Create(char *filename) {
 			}
 
 			delete[] tmpIndexex;
-		}		
+		}
 
 
 
@@ -169,7 +169,7 @@ void D3DXMesh::Create(char *filename) {
 			unsigned short i2 = pActual->Triangles[a + 2];
 			pActual->Triangles[a + 0] = i2;
 			pActual->Triangles[a + 2] = i0;
-		}	
+		}
 #endif
 
 		bdesc = { 0 };
@@ -221,7 +221,7 @@ void D3DXMesh::GatherInfo() {
 			xSubsetInfo *subinfo = &it->Subsets[j];
 			xMaterial *material = &pActual->MaterialList.Materials[j];
 			SubSetInfo stmp;
-			
+
 			std::string Defines = "";
 
 			for (unsigned int k = 0; k < material->EffectInstance.pDefaults.size(); k++) {
@@ -250,7 +250,7 @@ void D3DXMesh::GatherInfo() {
 							CurrSig |= Signature::NO_LIGHT_AT_ALL;
 						}
 					}
-				}				
+				}
 			}
 
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
@@ -259,8 +259,8 @@ void D3DXMesh::GatherInfo() {
 
 			CurrSig |= Signature::GBUFF_PASS;
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
-		}		
-		
+		}
+
 		Info.push_back(tmp);
 	}
 }
@@ -272,12 +272,12 @@ int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, D3DXTexture** tex) {
 	for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
 		xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
 		if (mDef_2->Type == xF::xEFFECTENUM::STDX_DWORDS) {
-			if (mDef_2->NameParam == "Tiled") {					
+			if (mDef_2->NameParam == "Tiled") {
 				if (mDef_2->CaseDWORD == 1) {
 					tiled = true;
-				}				
+				}
 				break;
-			}				
+			}
 		}
 	}
 
@@ -296,9 +296,9 @@ int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, D3DXTexture** tex) {
 		std::cout << "Texture Loaded index " << id << std::endl;
 #endif
 	}else {
-		std::cout << "Texture [" << p << "] not Found" << std::endl;		
+		std::cout << "Texture [" << p << "] not Found" << std::endl;
 	}
-	
+
 	return id;
 }
 
@@ -316,12 +316,12 @@ void D3DXMesh::Draw(float *t, float *vp) {
 		for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
 			MeshInfo  *it_MeshInfo = &Info[i];
 			xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
-			
-			XMATRIX44 VP = pActualCamera->VP; 
+
+			XMATRIX44 VP = pActualCamera->VP;
 			XMATRIX44 WVP = transform*VP;
 			XMATRIX44 WorldView = transform*pActualCamera->View;
 			XVECTOR3 infoCam = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
-	
+
 			it_MeshInfo->CnstBuffer.WVP = WVP;
 			it_MeshInfo->CnstBuffer.World = transform;
 			it_MeshInfo->CnstBuffer.WorldView = WorldView;
@@ -342,14 +342,14 @@ void D3DXMesh::Draw(float *t, float *vp) {
 			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
 				bool update = false;
 				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
-				
+
 				unsigned int sig = sub_info->Sig;
 				sig |= gSig;
 				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
 
 				if(s!=last)
 					update=true;
-				
+
 				if(update){
 				D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
 				D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);

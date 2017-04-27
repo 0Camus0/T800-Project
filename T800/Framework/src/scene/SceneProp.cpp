@@ -11,7 +11,7 @@
 *********************************************************/
 
 
-#include <scene\SceneProp.h>
+#include <scene/SceneProp.h>
 
 
 void	SceneProps::AddLight(XVECTOR3 Pos, XVECTOR3 Color, bool enabled){

@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <scene\PrimitiveInstance.h>
+#include <scene/PrimitiveInstance.h>
 
 void PrimitiveInst::TranslateAbsolute(float x, float y, float z){
 	XMatTranslation(Position, x, y, z);

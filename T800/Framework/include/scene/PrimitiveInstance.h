@@ -15,9 +15,9 @@
 
 #include <Config.h>
 
-#include <scene\PrimitiveBase.h>
-#include <video\BaseDriver.h>
-#include <utils\xMaths.h>
+#include <scene/PrimitiveBase.h>
+#include <video/BaseDriver.h>
+#include <utils/xMaths.h>
 
 class PrimitiveInst {
 	public:

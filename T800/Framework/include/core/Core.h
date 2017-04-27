@@ -15,8 +15,8 @@
 
 #include <Config.h>
 
-#include <video\BaseDriver.h>
-#include <utils\InputManager.h>
+#include <video/BaseDriver.h>
+#include <utils/InputManager.h>
 
 class RootFramework;
 

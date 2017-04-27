@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video\D3DXTexture.h>
+#include <video/D3DXTexture.h>
 
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
@@ -66,9 +66,9 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 
 	if (this->props&TEXT_BASIC_FORMAT::CH_ALPHA)
 		desc.Format = DXGI_FORMAT_R8_UNORM;
-	else 
+	else
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			
+
 	desc.SampleDesc.Count = 1;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
@@ -81,7 +81,7 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	srvDesc.Format = desc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = -1;
-	
+
 	HRESULT hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
 	if(hr != S_OK){
 		this->id = -1;

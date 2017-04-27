@@ -18,9 +18,9 @@
 
 BaseDriver*	g_pBaseDriver = 0;
 
-#include <utils\Checker.h>
+#include <utils/Checker.h>
 
-bool		Texture::LoadTexture(char *fn) {
+bool		Texture::LoadTexture(const char *fn) {
 	bool found = false;
 	std::string path = "Textures/";
 	std::string filepath = path + std::string(fn);
@@ -87,6 +87,10 @@ bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
 bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
 	std::string Defines = "";
 
+#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
+	//	Defines += "#version 300 es\n\n";
+#endif
+
 	#if VDEBUG_NO_LIGHT
 	Defines += "#define NO_LIGHT\n\n";
 	#endif
@@ -119,7 +123,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define NO_LIGHT\n\n";
 	if (sig&Signature::GBUFF_PASS) {
 		Defines += "#define G_BUFFER_PASS\n\n";
-#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20)
+#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES31)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 #endif
 	}
@@ -131,7 +135,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define FSQUAD_3_TEX\n\n";
 	if (sig&Signature::DEFERRED_PASS) {
 		Defines += "#define DEFERRED_PASS\n\n";
-#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20)
+#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES31)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 #endif
 	}
