@@ -14,6 +14,7 @@ void LinuxFramework::InitGlobalVars(){
 
 void LinuxFramework::OnCreateApplication(){
     int req = 0;
+    putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
     glutInit(&req,0);
     glutInitContextProfile(GLUT_CORE_PROFILE);
 #ifdef USING_OPENGL_ES30
@@ -23,8 +24,8 @@ void LinuxFramework::OnCreateApplication(){
 #elif defined(USING_OPENGL_ES20)
     glutInitContextVersion(2,0);
 #endif
-    int width = 640;
-	int height = 360;
+    int width = 1280;
+	int height = 720;
 
     glutInitWindowSize(width,height);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);

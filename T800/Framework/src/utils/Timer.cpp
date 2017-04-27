@@ -11,6 +11,7 @@
 *********************************************************/
 
 #include <utils/Timer.h>
+#include <stdio.h>
 
 void Timer::Init() {
 #ifdef OS_WINDOWS
@@ -21,7 +22,7 @@ void Timer::Init() {
 	Dt = 0.0;
 	QueryPerformanceCounter(&StartTime);
 #elif defined(OS_LINUX)
-
+    gettimeofday(&StartTime,0);
 #endif
 }
 
@@ -33,14 +34,14 @@ void Timer::Update() {
 	QueryPerformanceCounter(&StartTime);
 	DtSecs = (Dt / 1000000.0);
 #elif defined(OS_LINUX)
-
+    timeval actual;
+    gettimeofday(&actual,0);
+    DtSecs = double((actual.tv_sec - StartTime.tv_sec)*1000.0 + (actual.tv_usec - StartTime.tv_usec)/1000.0)/1000.0;
+    gettimeofday(&StartTime,0);
+    printf("FPS %f \n",1.0/DtSecs);
 #endif
 }
 
 float	Timer::GetDTSecs() {
-#ifdef OS_WINDOWS
 	return static_cast<float>(DtSecs);
-#else
-	return 1.0f/60.0f;
-#endif
 }

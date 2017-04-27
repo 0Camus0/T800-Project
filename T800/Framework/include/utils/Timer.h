@@ -18,7 +18,7 @@
 #ifdef OS_WINDOWS
 #include <windows.h>
 #elif defined(OS_LINUX)
-#include <time.h>
+#include <sys/time.h>
 #endif
 
 class Timer {
