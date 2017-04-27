@@ -17,21 +17,15 @@
 #include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES30)
 #include <GLES3/gl3.h>
+#include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL_ES31)
 #include <GLES3/gl31.h>
+#include <GLES2/gl2ext.h>
 #elif defined(USING_OPENGL)
 #include <GL/glew.h>
 #else
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#endif
-
-#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-#ifndef GL_EXT_texture_filter_anisotropic
-#define GL_EXT_texture_filter_anisotropic 1
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
-#endif /* GL_EXT_texture_filter_anisotropic */
 #endif
 
 void	GLTexture::SetTextureParams() {
