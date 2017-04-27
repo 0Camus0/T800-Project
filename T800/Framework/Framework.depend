@@ -392,7 +392,7 @@
 	<video/BaseDriver.h>
 	<utils/InputManager.h>
 
-1493311044 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/Config.h
+1493330673 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/Config.h
 
 1493311044 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/include/video/BaseDriver.h
 	<Config.h>
@@ -712,7 +712,7 @@
 1493311044 source:/home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/src/utils/XMaths.cpp
 	<utils/xMaths.h>
 
-1493311044 source:/home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/src/video/BaseDriver.cpp
+1493329644 source:/home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/src/video/BaseDriver.cpp
 	<video/BaseDriver.h>
 	<stb_image.h>
 	<iostream>
@@ -720,7 +720,7 @@
 	<fstream>
 	<utils/Checker.h>
 
-1493311044 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Librerias/stb/include/stb_image.h
+1493328549 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Librerias/stb/include/stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdarg.h>
@@ -734,6 +734,11 @@
 	<emmintrin.h>
 	<intrin.h>
 	<arm_neon.h>
+	<stdint.h>
+	<assert.h>
+	<string.h>
+	<math.h>
+	<stdlib.h>
 
 1493311044 /home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/include/utils/Checker.h
 

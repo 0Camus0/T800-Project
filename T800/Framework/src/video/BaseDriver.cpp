@@ -39,7 +39,29 @@ bool		Texture::LoadTexture(const char *fn) {
 		std::cout << "Texture [" << filepath << "] not found, loading checker" << std::endl;
 	}else{
 		buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
+#if FORCE_LOW_RES_TEXTURES
+		if(buffer){
+
+            int nx = x / FORCED_FACTOR;
+            int ny = y / FORCED_FACTOR;
+
+            unsigned char* resizedBuf = (unsigned char*)STBI_MALLOC(nx*ny*4 + 1);
+
+            resizedBuf[nx*ny*4] = '\0';
+
+            int result = stbir_resize_uint8(buffer,x,y,0,resizedBuf,nx,ny,0,4);
+
+            stbi_image_free(buffer);
+
+            buffer = resizedBuf;
+            x = nx;
+            y = ny;
+            channels = 4;
+        }
+#endif
 	}
+
+
 
 	if (!buffer)
 		return false;

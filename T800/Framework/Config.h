@@ -21,6 +21,14 @@
 #define OS_WINDOWS
 #endif
 
+#ifndef FORCE_LOW_RES_TEXTURES
+#define FORCE_LOW_RES_TEXTURES 0
+#endif
+
+#ifndef FORCED_FACTOR
+#define FORCED_FACTOR 32
+#endif
+
 
 #ifndef VDEBUG_NO_LIGHT
 #define VDEBUG_NO_LIGHT 0

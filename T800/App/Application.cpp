@@ -76,16 +76,16 @@ void App::CreateAssets() {
 	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
+	index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-//	index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
+    index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
 	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	//index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
+	index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
 	Pigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	//index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
+	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
