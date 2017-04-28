@@ -26,7 +26,7 @@
 #endif
 
 #ifndef FORCED_FACTOR
-#define FORCED_FACTOR 32
+#define FORCED_FACTOR 2
 #endif
 
 
