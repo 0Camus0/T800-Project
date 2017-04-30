@@ -4,6 +4,7 @@ BVERSION=$1
 
 echo "Building Framework on [$BVERSION]"
 
+rm -R obj/$BVERSION/*.o
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/core/Core.cpp -o obj/$BVERSION/Core.o
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/core/LinuxFramework.cpp -o obj/$BVERSION/LinuxFramework.o
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/scene/Cube.cpp -o obj/$BVERSION/Cube.o
