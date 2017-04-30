@@ -1,4 +1,9 @@
-# T800-Project v0.1.1
+# T800-Project v0.1.3
+
+New on V0.1.3:
+	
+	- Added Linux Support, using wayland:
+		- Can build using the ./build.sh release or by using the CodeBlocks Project		
 
 New on V0.1.2:
 
