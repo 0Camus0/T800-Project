@@ -15,6 +15,10 @@
 #include <video/GLDriver.h>
 #include <utils/Utils.h>
 
+#if defined(OS_LINUX)
+#include <sys/time.h>
+#endif
+
 bool GLRT::LoadAPIRT(){
 	GLint cfmt, dfmt;
 /*
@@ -46,7 +50,10 @@ bool GLRT::LoadAPIRT(){
 
 	GLuint fbo;
 	GLuint dtex;
-
+#if defined(OS_LINUX)
+	timeval start;
+    gettimeofday(&start,0);
+#endif
 	glGenFramebuffers(1, &fbo);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -111,6 +118,25 @@ bool GLRT::LoadAPIRT(){
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dtex, 0);
 
+#if defined(OS_LINUX)
+	timeval actual;
+	gettimeofday(&actual,0);
+	double ttaken = double((actual.tv_sec - start.tv_sec)*1000.0 + (actual.tv_usec - start.tv_usec)/1000.0)/1000.0;
+
+	static int sample = 0;
+	static double avg = 0.0;
+
+	avg +=ttaken;
+	sample++;
+
+	if(sample>500){
+        avg /= static_cast<double>(sample);
+        printf("Average Time taken for FBO creation: %f \n",avg);
+        sample = 0;
+        avg = 0.0;
+	}
+
+#endif
 
 	GLTexture *pTextureDepth = new GLTexture;
 	pTextureDepth->id = dtex;
@@ -125,7 +151,7 @@ bool GLRT::LoadAPIRT(){
 void GLRT::DestroyAPIRT(){
 	GLuint FBO = vFrameBuffers[0];
 	glDeleteFramebuffers(1,&FBO);
-	for (int i = 0; i < number_RT; i++) {	
+	for (int i = 0; i < number_RT; i++) {
 		GLTexture* tex = dynamic_cast<GLTexture*>(vColorTextures[i]);
 		tex->DestroyAPITexture();
 		delete tex;

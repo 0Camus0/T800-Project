@@ -307,7 +307,7 @@
 	<utils/InputManager.h>
 	<stdio.h>
 
-1493828083 source:/home/Camus/Dev/T800-Project/T800/Framework/src/utils/Timer.cpp
+1493846985 source:/home/Camus/Dev/T800-Project/T800/Framework/src/utils/Timer.cpp
 	<utils/Timer.h>
 	<stdio.h>
 
@@ -387,11 +387,12 @@
 	<GL/glew.h>
 	<SDL/SDL.h>
 
-1493845296 source:/home/Camus/Dev/T800-Project/T800/Framework/src/video/GLRT.cpp
+1493847257 source:/home/Camus/Dev/T800-Project/T800/Framework/src/video/GLRT.cpp
 	<video/GLRT.h>
 	<video/GLTexture.h>
 	<video/GLDriver.h>
 	<utils/Utils.h>
+	<sys/time.h>
 
 1493311044 source:/home/Camus/Dev/T800-Cloned/T800-Project/T800/Framework/src/core/Core.cpp
 	<core/Core.h>
