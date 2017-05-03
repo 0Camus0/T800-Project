@@ -17,7 +17,7 @@ extern int g_AvoidInput;
 
 void LinuxFramework::OnCreateApplication(){
     int req = 0;
-    g_AvoidInput = 0;
+    g_AvoidInput = 1;
     putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
     glutInit(&req,0);
     glutInitContextProfile(GLUT_CORE_PROFILE);

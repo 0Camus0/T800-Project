@@ -234,7 +234,7 @@ void App::OnDraw() {
 	pFramework->pVideoDriver->PopRT();
 
 #if DEGENERATED_FBO_TEST
-	for(int i=0;i<10;i++){
+	for(int i=0;i<50;i++){
 		int TempFBO = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 		pFramework->pVideoDriver->PushRT(TempFBO);
 		for (int i = 0; i < 6; i++) {
