@@ -12,6 +12,7 @@
 
 #include "Application.h"
 #include <video/BaseDriver.h>
+#include <utils/InputManager.h>
 #include <scene/Cube.h>
 
 #include <stdio.h>
@@ -282,80 +283,79 @@ void App::OnInput() {
 	if (FirstFrame)
 		return;
 
-#ifdef OS_WINDOWS
 	bool changed = false;
 	const float speedFactor = 10.0f;
-	if (IManager.PressedKey(SDLK_UP)) {
+	if (IManager.PressedKey(T800K_UP)) {
 		Position.y += 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_DOWN)) {
+	if (IManager.PressedKey(T800K_DOWN)) {
 		Position.y -= 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_LEFT)) {
+	if (IManager.PressedKey(T800K_LEFT)) {
 		Position.x -= 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_RIGHT)) {
+	if (IManager.PressedKey(T800K_RIGHT)) {
 		Position.x += 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_z)) {
+	if (IManager.PressedKey(T800K_z)) {
 		Position.z -= 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_x)) {
+	if (IManager.PressedKey(T800K_x)) {
 		Position.z += 1.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedOnceKey(SDLK_KP_PLUS)) {
+	if (IManager.PressedOnceKey(T800K_KP_PLUS)) {
 		SceneProp.ActiveLights *= 2;
 	}
 
-	if (IManager.PressedOnceKey(SDLK_KP_MINUS)) {
+	if (IManager.PressedOnceKey(T800K_KP_MINUS)) {
 		SceneProp.ActiveLights /= 2;
 		if(SceneProp.ActiveLights<=0)
 			SceneProp.ActiveLights = 1;
 	}
 
-	if (IManager.PressedKey(SDLK_KP5)) {
+	if (IManager.PressedKey(T800K_KP5)) {
 		Orientation.x -= 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP6)) {
+	if (IManager.PressedKey(T800K_KP6)) {
 		Orientation.x += 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP2)) {
+	if (IManager.PressedKey(T800K_KP2)) {
 		Orientation.y -= 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP3)) {
+	if (IManager.PressedKey(T800K_KP3)) {
 		Orientation.y += 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP0)) {
+	if (IManager.PressedKey(T800K_KP0)) {
 		Orientation.z -= 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
+	if (IManager.PressedKey(T800K_KP_PERIOD)) {
 		Orientation.z += 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
 
-	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
+	if (IManager.PressedKey(T800K_KP_PERIOD)) {
 		Orientation.z += 60.0f*speedFactor*DtSecs;
 		changed = true;
 	}
@@ -368,19 +368,19 @@ void App::OnInput() {
 	//printf("Position[%f, %f, %f]\n\n", Cam.Eye.x, Cam.Eye.y, Cam.Eye.z);
 	//printf("Orientation[%f, %f, %f]\n\n", Cam.Pitch, Cam.Roll, Cam.Yaw);
 
-	if (IManager.PressedKey(SDLK_w)) {
+	if (IManager.PressedKey(T800K_w)) {
 		Cam.MoveForward(DtSecs);
 	}
 
-	if (IManager.PressedKey(SDLK_s)) {
+	if (IManager.PressedKey(T800K_s)) {
 		Cam.MoveBackward(DtSecs);
 	}
 
-	if (IManager.PressedKey(SDLK_a)) {
+	if (IManager.PressedKey(T800K_a)) {
 		Cam.StrafeLeft(DtSecs);
 	}
 
-	if (IManager.PressedKey(SDLK_d)) {
+	if (IManager.PressedKey(T800K_d)) {
 		Cam.StrafeRight(DtSecs);
 	}
 
@@ -389,7 +389,6 @@ void App::OnInput() {
 
 	float pitch = 0.005f*static_cast<float>(IManager.yDelta);
 	Cam.MovePitch(pitch);
-#endif
 
 }
 

@@ -38,7 +38,7 @@ void Timer::Update() {
     gettimeofday(&actual,0);
     DtSecs = double((actual.tv_sec - StartTime.tv_sec)*1000.0 + (actual.tv_usec - StartTime.tv_usec)/1000.0)/1000.0;
     gettimeofday(&StartTime,0);
-    printf("FPS %f \n",1.0/DtSecs);
+   // printf("FPS %f \n",1.0/DtSecs);
 #endif
 }
 
