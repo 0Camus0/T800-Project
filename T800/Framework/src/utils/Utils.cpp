@@ -31,7 +31,7 @@ GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 switch(status)
 {
   case GL_FRAMEBUFFER_COMPLETE:
-    printf("Framebuffer complete.");
+  //  printf("Framebuffer complete.");
     break;
 
   case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:

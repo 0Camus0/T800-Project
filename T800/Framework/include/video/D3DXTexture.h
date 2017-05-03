@@ -33,6 +33,7 @@ public:
 
 	void	LoadAPITexture(unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
+	void	DestroyAPITexture();
 
 	ComPtr<ID3D11Texture2D>				Tex;
 	ComPtr<ID3D11ShaderResourceView>    pSRVTex;

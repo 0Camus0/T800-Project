@@ -96,6 +96,9 @@ bool		Texture::LoadTexture(const char *fn) {
 	return true;
 }
 
+void Texture::DestroyTex(){
+	DestroyAPITexture();
+}
 
 bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
 	this->number_RT = nrt;
@@ -104,6 +107,10 @@ bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
 	this->w = w;
 	this->h = h;
 	return LoadAPIRT();
+}
+
+void BaseRT::DestroyRT(){
+	DestroyAPIRT();
 }
 
 bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {

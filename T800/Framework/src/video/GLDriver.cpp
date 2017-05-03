@@ -242,6 +242,7 @@ int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
 	if (h == 0)
 		h = height;
 	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+		glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
 		RTs.push_back(pRT);
 		return (RTs.size() - 1);
 	}
@@ -270,6 +271,16 @@ void GLDriver::PushRT(int id) {
 
 void GLDriver::PopRT() {
 	glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
+}
+
+void GLDriver::DestroyRT(int id){
+	if (id < 0 || id >= (int)RTs.size())
+		return;
+
+	RTs[id]->DestroyRT();
+	GLRT *pRT = dynamic_cast<GLRT*>(RTs[id]);
+	delete pRT;
+
 }
 
 void GLDriver::DestroyRTs() {

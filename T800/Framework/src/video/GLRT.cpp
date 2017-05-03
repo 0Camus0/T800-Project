@@ -89,7 +89,7 @@ bool GLRT::LoadAPIRT(){
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+ i, GL_TEXTURE_2D, ctex, 0);
 #endif
 
-CheckFBStatus();
+		CheckFBStatus();
 
 		pTextureColor->id = ctex;
 		vColorTextures.push_back(pTextureColor);
@@ -119,6 +119,19 @@ CheckFBStatus();
 
 	CheckFBStatus();
 
-
 	return true;
+}
+
+void GLRT::DestroyAPIRT(){
+	GLuint FBO = vFrameBuffers[0];
+	glDeleteFramebuffers(1,&FBO);
+	for (int i = 0; i < number_RT; i++) {	
+		GLTexture* tex = dynamic_cast<GLTexture*>(vColorTextures[i]);
+		tex->DestroyAPITexture();
+		delete tex;
+	}
+
+	GLTexture* tex = dynamic_cast<GLTexture*>(pDepthTexture);
+	tex->DestroyAPITexture();
+	delete tex;
 }

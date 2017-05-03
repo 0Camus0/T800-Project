@@ -40,6 +40,7 @@ public:
 
     virtual ~GLRT() {}
 	bool	LoadAPIRT();
+	void	DestroyAPIRT();
 
 	std::vector<GLuint>		vFrameBuffers;
 	std::vector<GLuint>		vGLColorTex;

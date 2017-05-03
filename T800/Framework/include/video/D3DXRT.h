@@ -30,6 +30,7 @@ using namespace Microsoft::WRL;
 class D3DXRT : public BaseRT {
 	public:
 		bool			LoadAPIRT();
+		void			DestroyAPIRT();
 
 		std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
 		std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;		

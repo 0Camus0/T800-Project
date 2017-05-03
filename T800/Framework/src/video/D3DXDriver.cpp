@@ -232,6 +232,10 @@ void D3DXDriver::PopRT() {
 	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
 }
 
+void D3DXDriver::DestroyRT(int id){
+
+}
+
 void D3DXDriver::DestroyRTs() {
 	for (unsigned int i = 0; i < RTs.size(); i++) {
 		D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[i]);

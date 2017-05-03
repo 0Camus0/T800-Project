@@ -26,6 +26,7 @@ public:
 
 	void	LoadAPITexture(unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
+	void	DestroyAPITexture();
 };
 
 #endif

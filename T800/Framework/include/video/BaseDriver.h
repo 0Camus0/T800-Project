@@ -48,9 +48,11 @@ public:
     virtual ~Texture(){}
 
 	bool			LoadTexture(const char *fn);
+	void			DestroyTex();
 
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
+	virtual void	DestroyAPITexture() = 0;
 
 	virtual void	SetTextureParams() = 0;
 	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
@@ -88,6 +90,9 @@ struct BaseRT {
 
 	bool			LoadRT(int nrt, int cf, int df, int w, int h);
 	virtual bool	LoadAPIRT() = 0;
+	
+	void			DestroyRT();
+	virtual void	DestroyAPIRT() = 0;
 
 	int w;
 	int h;
@@ -153,6 +158,7 @@ public:
 	virtual int 	 CreateRT(int nrt, int cf, int df,int w, int h) = 0;
 	virtual void	 PushRT(int id) = 0;
 	virtual void	 PopRT() = 0;
+	virtual void	 DestroyRT(int id) = 0;
 	virtual void	 DestroyRTs() = 0;
 
 	virtual int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) = 0;

@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define DEGENERATED_FBO_TEST 1
+
 #define NUM_LIGHTS 128
 #define RADI 170.0f
 
@@ -107,7 +109,6 @@ void App::CreateAssets() {
 	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 }
@@ -223,6 +224,7 @@ void App::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 
 
+
 	pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
 		Pigs[i].SetSignature(Signature::GBUFF_PASS);
@@ -231,6 +233,19 @@ void App::OnDraw() {
 	}
 	pFramework->pVideoDriver->PopRT();
 
+#if DEGENERATED_FBO_TEST
+	for(int i=0;i<10;i++){
+		int TempFBO = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+		pFramework->pVideoDriver->PushRT(TempFBO);
+		for (int i = 0; i < 6; i++) {
+			Pigs[i].SetSignature(Signature::GBUFF_PASS);
+			Pigs[i].Draw();
+			Pigs[i].SetSignature(Signature::FORWARD_PASS);
+		}
+		pFramework->pVideoDriver->PopRT();
+		pFramework->pVideoDriver->DestroyRT(TempFBO);
+	}
+#endif
 
 	pFramework->pVideoDriver->PushRT(DeferredPass);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
@@ -271,7 +286,6 @@ void App::OnDraw() {
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
 	Quads[7].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[7].Draw();
-
 
 	pFramework->pVideoDriver->SwapBuffers();
 

@@ -101,3 +101,7 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 void	D3DXTexture::LoadAPITextureCompressed(unsigned char* buffer){
 
 }
+
+void D3DXTexture::DestroyAPITexture(){
+
+}
