@@ -129,7 +129,7 @@ bool GLRT::LoadAPIRT(){
 	avg +=ttaken;
 	sample++;
 
-	if(sample>500){
+	if(sample>50){
         avg /= static_cast<double>(sample);
         printf("Average Time taken for FBO creation: %f \n",avg);
         sample = 0;
