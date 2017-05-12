@@ -28,6 +28,14 @@
 #include <sys/time.h>
 #endif
 
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+extern std::vector<std::string> g_args;
+
+
 enum {
 	SCENE = 0,
 	CROC,
@@ -115,6 +123,12 @@ void App::CreateAssets() {
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
+
+	for(unsigned int i=0;i<g_args.size();i++){
+        if(g_args[i] == "-l"){
+           SceneProp.ActiveLights = atoi( g_args[i+1].c_str() );
+        }
+	}
 }
 
 void App::DestroyAssets() {

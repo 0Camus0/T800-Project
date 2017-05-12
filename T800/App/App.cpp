@@ -19,11 +19,22 @@
 
 #include "Application.h"
 
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+std::vector<std::string> g_args;
 
 AppBase		  *pApp = 0;
 RootFramework *pFrameWork = 0;
 
-int main(){
+int main(int arg,char ** args){
+
+    for(int i=0;i<arg;i++){
+        g_args.push_back( std::string( args[i] ) );
+    }
+
 	pApp = new App;
 #ifdef OS_LINUX
     pFrameWork = new LinuxFramework((AppBase*)pApp);

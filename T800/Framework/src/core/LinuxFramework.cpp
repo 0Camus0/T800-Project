@@ -19,6 +19,14 @@ void LinuxFramework::InitGlobalVars(){
 
 extern int g_AvoidInput;
 
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+extern std::vector<std::string> g_args;
+
 void LinuxFramework::OnCreateApplication(){
     int req = 0;
     g_AvoidInput = 1;
@@ -32,8 +40,18 @@ void LinuxFramework::OnCreateApplication(){
 #elif defined(USING_OPENGL_ES20)
     glutInitContextVersion(2,0);
 #endif
-    int width = 720;
-	int height = 360;
+    int width = 1280;
+	int height = 720;
+
+	for(unsigned int i=0;i<g_args.size();i++){
+        if(g_args[i] == "-x"){
+           width = atoi( g_args[i+1].c_str() );
+        }
+
+        if(g_args[i] == "-y"){
+           height = atoi( g_args[i+1].c_str() );
+        }
+	}
 
     glutInitWindowSize(width,height);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
