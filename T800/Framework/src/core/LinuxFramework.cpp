@@ -32,8 +32,8 @@ void LinuxFramework::OnCreateApplication(){
 #elif defined(USING_OPENGL_ES20)
     glutInitContextVersion(2,0);
 #endif
-    int width = 1280;
-	int height = 720;
+    int width = 720;
+	int height = 360;
 
     glutInitWindowSize(width,height);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);

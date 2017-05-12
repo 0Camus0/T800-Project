@@ -21,8 +21,12 @@
 
 #define DEGENERATED_FBO_TEST 0
 
-#define NUM_LIGHTS 128
+#define NUM_LIGHTS 64
 #define RADI 170.0f
+
+#if defined(OS_LINUX)
+#include <sys/time.h>
+#endif
 
 enum {
 	SCENE = 0,
@@ -118,6 +122,12 @@ void App::DestroyAssets() {
 }
 
 void App::OnUpdate() {
+
+#if defined(OS_LINUX)
+	timeval start;
+    gettimeofday(&start,0);
+#endif
+
 	DtTimer.Update();
 	DtSecs = DtTimer.GetDTSecs();
 	OnInput();
@@ -217,6 +227,25 @@ void App::OnUpdate() {
 	Sel->Update();
 
 	OnDraw();
+
+#if defined(OS_LINUX)
+	timeval actual;
+	gettimeofday(&actual,0);
+	double ttaken = double( (actual.tv_sec - start.tv_sec) + (actual.tv_usec - start.tv_usec)/1000000.0);
+
+	static int sample = 0;
+	static double avg = 0.0;
+
+	avg +=ttaken;
+	sample++;
+
+	if(avg>1.0){
+        printf("FPS: %d \n",sample);
+        sample = 0;
+        avg = 0.0;
+	}
+
+#endif
 }
 
 void App::OnDraw() {
