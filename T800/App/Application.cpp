@@ -249,14 +249,29 @@ void App::OnUpdate() {
 
 	static int sample = 0;
 	static double avg = 0.0;
+	static int framescount = 0;
+
+	static int total_sample = 0;
+	static double total_avg = 0.0;
 
 	avg +=ttaken;
+	total_avg += ttaken;
 	sample++;
 
+
 	if(avg>1.0){
-        printf("FPS: %d \n",sample);
+       // printf("FPS: %d \n",sample);
+        total_sample+=sample;
+        framescount++;
         sample = 0;
         avg = 0.0;
+	}
+
+	static const double TIMETOTAKE = 60.0;
+	if(total_avg>TIMETOTAKE){
+        total_sample /= static_cast<double>(framescount);
+        printf("AVG after %f FPS: %d exiting now\n",TIMETOTAKE,total_sample);
+        exit(0);
 	}
 
 #endif
