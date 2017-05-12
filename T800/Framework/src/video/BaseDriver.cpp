@@ -114,10 +114,12 @@ void BaseRT::DestroyRT(){
 }
 
 bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
+
 	std::string Defines = "";
 
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-	//	Defines += "#version 300 es\n\n";
+		Defines += "#version 300 es\n\n";
+		Defines += "#define ES_30\n\n";
 #endif
 
 	#if VDEBUG_NO_LIGHT

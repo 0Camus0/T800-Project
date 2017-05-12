@@ -22,7 +22,7 @@
 #endif
 
 #ifndef FORCE_LOW_RES_TEXTURES
-#define FORCE_LOW_RES_TEXTURES 0
+#define FORCE_LOW_RES_TEXTURES 1
 #endif
 
 #ifndef FORCED_FACTOR
@@ -68,7 +68,7 @@
 #if defined(OS_LINUX)
 #undef USING_D3D11
 #undef USING_OPENGL
-#define USING_OPENGL_ES30
+#define USING_OPENGL_ES31
 #endif
 
 #if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)  || defined(USING_OPENGL_ES31) || defined(USING_OPENGL)

@@ -57,30 +57,64 @@ uniform highp vec4 Ambient;
 */
 
 #ifdef USE_TEXCOORD0
-varying highp vec2 vecUVCoords;
+	#ifdef ES_30
+		in highp vec2 vecUVCoords;
+	#else
+		varying highp vec2 vecUVCoords;
+	#endif
 #endif
 
 
 #ifdef USE_NORMALS
-varying highp vec4 hnormal;
+	#ifdef ES_30
+		in highp vec4 hnormal;
+	#else
+		varying highp vec4 hnormal;
+	#endif
 #endif
 
 #ifdef USE_TANGENTS
-varying highp vec4 htangent;
+	#ifdef ES_30
+		in highp vec4 htangent;
+	#else
+		varying highp vec4 htangent;
+	#endif
 #endif
 
 #ifdef USE_BINORMALS
-varying highp vec4 hbinormal;
+	#ifdef ES_30
+		in highp vec4 hbinormal;
+	#else
+		varying highp vec4 hbinormal;
+	#endif
 #endif
 
-varying highp vec4 Pos;
-varying highp vec4 WorldPos;
+#ifdef ES_30
+	in highp vec4 Pos;
+	in highp vec4 WorldPos;
+#else
+	varying highp vec4 Pos;
+	varying highp vec4 WorldPos;
+#endif
 
 #ifdef SIMPLE_COLOR
+	#ifdef ES_30
+	layout(location = 0) out highp vec4 colorOut;
+	#endif
 void main(){
-	gl_FragColor = vec4(0.5,0.5,0.5,1.0);
+	#ifdef ES_30
+		colorOut = vec4(0.5,0.5,0.5,1.0);
+	#else
+		gl_FragColor = vec4(0.5,0.5,0.5,1.0);
+	#endif
 }
 #elif defined(G_BUFFER_PASS)
+#ifdef ES_30
+	layout(location = 0) out highp vec4 colorOut_0;
+	layout(location = 1) out highp vec4 colorOut_1;
+	layout(location = 2) out highp vec4 colorOut_2;
+	layout(location = 3) out highp vec4 colorOut_3;
+#endif
 void main(){
 	lowp vec4 color    = vec4(0.5,0.5,0.5,1.0);
 	lowp vec4 normal   = vec4(0.5,0.5,0.5,1.0);
@@ -91,12 +125,20 @@ void main(){
 	mediump float shinness = 2.0;
 	
 	#ifdef DIFFUSE_MAP
-		color = texture2D(DiffuseTex,vecUVCoords);
+		#ifdef ES_30
+			color = texture(DiffuseTex,vecUVCoords);
+		#else
+			color = texture2D(DiffuseTex,vecUVCoords);
+		#endif
 	#endif
 	
 	normal.xyz   = normalize(hnormal).xyz;  
 	#ifdef NORMAL_MAP	
-		lowp vec3 normalTex  = texture2D(NormalTex,vecUVCoords).xyz;
+		#ifdef ES_30
+			lowp vec3 normalTex  = texture(NormalTex,vecUVCoords).xyz;
+		#else
+			lowp vec3 normalTex  = texture2D(NormalTex,vecUVCoords).xyz;
+		#endif
 		normalTex 		 	 = normalTex*vec3(2.0,2.0,2.0) - vec3(1.0,1.0,1.0);
 		normalTex		 	 = normalize(normalTex);
 		normalTex.g 	 	 = -normalTex.g;
@@ -110,40 +152,78 @@ void main(){
 	#endif
 	
 	#ifdef SPECULAR_MAP
-		specular = texture2D(SpecularTex,vecUVCoords);
-	#endif
-	
-	#ifdef GLOSS_MAP
-		shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
-	#endif
-	
-	gl_FragData[0].rgb  = color.rgb;
-	gl_FragData[0].a 	= specIntesivity;
-	
-	gl_FragData[1].rgb  = normal.rgb;
-	gl_FragData[1].a 	= shinness;
-	
-	gl_FragData[2].rgb  = specular.rgb;
-	gl_FragData[2].a 	= shinness;
-	
-	#ifdef NO_LIGHT
-		gl_FragData[3]	= vec4(1.0,0.0,1.0,1.0);
-	#else
-		#ifdef NORMAL_MAP	
-			gl_FragData[3] 	= vec4(0.0,0.0,0.0,1.0);
+		#ifdef ES_30
+			specular = texture(SpecularTex,vecUVCoords);
 		#else
-			gl_FragData[3] 	= vec4(0.0,0.0,1.0,1.0);
+			specular = texture2D(SpecularTex,vecUVCoords);
 		#endif
 	#endif
 	
-	#ifdef NON_LINEAR_DEPTH
-		// gl_FragDepth	= Pos.z / Pos.w;
+	#ifdef GLOSS_MAP
+		#ifdef ES_30
+			shinness = texture(GlossTex,vecUVCoords).r + shinness;
+		#else
+			shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
+		#endif		
+	#endif
+	
+	#ifdef ES_30
+		colorOut_0.rgb  = color.rgb;
+		colorOut_0.a 	= specIntesivity;
+
+		colorOut_1.rgb  = normal.rgb;
+		colorOut_1.a 	= shinness;
+
+		colorOut_2.rgb  = specular.rgb;
+		colorOut_2.a 	= shinness;
+
+		#ifdef NO_LIGHT
+			colorOut_3	= vec4(1.0,0.0,1.0,1.0);
+		#else
+			#ifdef NORMAL_MAP	
+				colorOut_3 	= vec4(0.0,0.0,0.0,1.0);
+			#else
+				colorOut_3 	= vec4(0.0,0.0,1.0,1.0);
+			#endif
+		#endif
+
+		#ifdef NON_LINEAR_DEPTH
+			// gl_FragDepth	= Pos.z / Pos.w;
+		#else
+			gl_FragDepth = Pos.z / CameraInfo.y;
+		#endif
 	#else
-		gl_FragDepth = Pos.z / CameraInfo.y;
+		gl_FragData[0].rgb  = color.rgb;
+		gl_FragData[0].a 	= specIntesivity;
+
+		gl_FragData[1].rgb  = normal.rgb;
+		gl_FragData[1].a 	= shinness;
+
+		gl_FragData[2].rgb  = specular.rgb;
+		gl_FragData[2].a 	= shinness;
+
+		#ifdef NO_LIGHT
+			gl_FragData[3]	= vec4(1.0,0.0,1.0,1.0);
+		#else
+			#ifdef NORMAL_MAP	
+				gl_FragData[3] 	= vec4(0.0,0.0,0.0,1.0);
+			#else
+				gl_FragData[3] 	= vec4(0.0,0.0,1.0,1.0);
+			#endif
+		#endif
+
+		#ifdef NON_LINEAR_DEPTH
+			// gl_FragDepth	= Pos.z / Pos.w;
+		#else
+			gl_FragDepth = Pos.z / CameraInfo.y;
+		#endif
 	#endif
 	
 }
 #else
+	#ifdef ES_30
+		layout(location = 0) out highp vec4 colorOut;
+	#endif
 void main(){
 
 	lowp vec4 color = vec4(0.5,0.5,0.5,1.0);
@@ -151,14 +231,26 @@ void main(){
 	
 #ifdef USE_TEXCOORD0
 	#ifdef NO_LIGHT
-		color = texture2D(DiffuseTex,vecUVCoords);
+		#ifdef ES_30
+			color = texture(DiffuseTex,vecUVCoords);
+		#else
+			color = texture2D(DiffuseTex,vecUVCoords);
+		#endif
 	#else
 		#ifdef DIFFUSE_MAP
-		color = texture2D(DiffuseTex,vecUVCoords);
+			#ifdef ES_30
+				color = texture(DiffuseTex,vecUVCoords);
+			#else
+				color = texture2D(DiffuseTex,vecUVCoords);
+			#endif
 		#endif
 		
 		#ifdef SPECULAR_MAP
-		lowp vec4 specularmap = texture2D(SpecularTex,vecUVCoords);
+			#ifdef ES_30
+				lowp vec4 specularmap = texture(SpecularTex,vecUVCoords);
+			#else
+				lowp vec4 specularmap = texture2D(SpecularTex,vecUVCoords);
+			#endif
 		#endif
 		
 		#ifdef USE_NORMALS
@@ -174,7 +266,11 @@ void main(){
 			
 			
 		#ifdef NORMAL_MAP	
-			lowp vec3 normalTex = texture2D(NormalTex,vecUVCoords).xyz;
+			#ifdef ES_30
+				lowp vec3 normalTex = texture(NormalTex,vecUVCoords).xyz;
+			#else
+				lowp vec3 normalTex = texture2D(NormalTex,vecUVCoords).xyz;
+			#endif
 			normalTex 		 = normalTex*vec3(2.0,2.0,2.0) - vec3(1.0,1.0,1.0);
 			normalTex		 = normalize(normalTex);
 			normalTex.g 	 = -normalTex.g;
@@ -198,7 +294,11 @@ void main(){
 			highp float shinness = 8.0;
 			
 			#ifdef GLOSS_MAP
-				shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
+				#ifdef ES_30
+					shinness = texture(GlossTex,vecUVCoords).r + shinness;
+				#else
+					shinness = texture2D(GlossTex,vecUVCoords).r + shinness;
+				#endif
 			#endif
 
 		#ifdef USING_PHONG
@@ -263,7 +363,12 @@ void main(){
 	#endif
 #endif
 
-	gl_FragColor = color;
+	#ifdef ES_30
+		colorOut = color;
+	#else
+		gl_FragColor = color;
+	#endif
+	
 }
 
 #endif

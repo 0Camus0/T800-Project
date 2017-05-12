@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define DEGENERATED_FBO_TEST 1
+#define DEGENERATED_FBO_TEST 0
 
 #define NUM_LIGHTS 128
 #define RADI 170.0f

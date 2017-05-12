@@ -1,9 +1,20 @@
-attribute highp vec4 Vertex;
-attribute highp vec2 UV;
+#ifdef ES_30
+	in highp vec4 Vertex;
+	in highp vec2 UV;
+#else
+	attribute highp vec4 Vertex;
+	attribute highp vec2 UV;
+#endif
 
-varying highp vec2 vecUVCoords;
-varying highp vec4 Pos;
-varying highp vec4 PosCorner;
+#ifdef ES_30
+	out highp vec2 vecUVCoords;
+	out highp vec4 Pos;
+	out highp vec4 PosCorner;
+#else
+	varying highp vec2 vecUVCoords;
+	varying highp vec4 Pos;
+	varying highp vec4 PosCorner;
+#endif
 
 uniform highp mat4 WVP;
 uniform highp mat4 World;

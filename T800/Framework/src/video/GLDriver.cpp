@@ -138,6 +138,8 @@ void	GLDriver::InitDriver() {
 		printf("[%s]\n", ExtensionsTok[i].c_str());
 	}
 
+	const unsigned char *version  = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    printf("GLSL Ver: %s \n",version);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);

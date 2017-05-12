@@ -121,7 +121,7 @@ bool GLRT::LoadAPIRT(){
 #if defined(OS_LINUX)
 	timeval actual;
 	gettimeofday(&actual,0);
-	double ttaken = double((actual.tv_sec - start.tv_sec)*1000.0 + (actual.tv_usec - start.tv_usec)/1000.0)/1000.0;
+	double ttaken = double( (actual.tv_sec - start.tv_sec) + (actual.tv_usec - start.tv_usec)/1000000.0);
 
 	static int sample = 0;
 	static double avg = 0.0;

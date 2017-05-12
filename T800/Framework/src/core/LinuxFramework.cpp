@@ -2,6 +2,10 @@
 #include <core/LinuxFramework.h>
 #include <stdio.h>
 
+#include <sys/time.h>
+
+
+
 LinuxFramework *LinuxFramework::thiz = 0;
 
 LinuxFramework::LinuxFramework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) 	{
@@ -28,8 +32,8 @@ void LinuxFramework::OnCreateApplication(){
 #elif defined(USING_OPENGL_ES20)
     glutInitContextVersion(2,0);
 #endif
-    int width = 1920;
-	int height = 1200;
+    int width = 1280;
+	int height = 720;
 
     glutInitWindowSize(width,height);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
@@ -50,8 +54,18 @@ void LinuxFramework::OnCreateApplication(){
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 
+	timeval start;
+    gettimeofday(&start,0);
+
+
 	pBaseApp->InitVars();
 	pBaseApp->CreateAssets();
+
+	timeval actual;
+	gettimeofday(&actual,0);
+	double ttaken = double( (actual.tv_sec - start.tv_sec) + (actual.tv_usec - start.tv_usec)/1000000.0);
+
+	printf("Asset Loading took : %f \n",ttaken);
 
 	glutMainLoop();
 }

@@ -1,7 +1,16 @@
-attribute highp vec3 MyVertex;
-attribute lowp vec3 MyColor;
+#ifdef ES_30
+	in highp vec3 MyVertex;
+	in lowp vec3 MyColor;
+#else
+	attribute highp vec3 MyVertex;
+	attribute lowp vec3 MyColor;
+#endif
 
-varying highp vec3 VertexColor;
+#ifdef ES_30
+	out highp vec3 VertexColor;
+#else
+	varying highp vec3 VertexColor;
+#endif
 
 uniform highp mat4 MyMatrix;
 
