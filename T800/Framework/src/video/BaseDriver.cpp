@@ -154,7 +154,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define NO_LIGHT\n\n";
 	if (sig&Signature::GBUFF_PASS) {
 		Defines += "#define G_BUFFER_PASS\n\n";
-#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES31)
+#if defined(USING_OPENGL_ES20)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 #endif
 	}
@@ -166,7 +166,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define FSQUAD_3_TEX\n\n";
 	if (sig&Signature::DEFERRED_PASS) {
 		Defines += "#define DEFERRED_PASS\n\n";
-#if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES31)
+#if defined(USING_OPENGL_ES20)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 #endif
 	}
