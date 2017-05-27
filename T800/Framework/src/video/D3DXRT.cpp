@@ -117,3 +117,7 @@ bool D3DXRT::LoadAPIRT() {
 
 	return true;
 }
+
+void D3DXRT::DestroyAPIRT() {
+
+}

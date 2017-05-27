@@ -96,7 +96,6 @@ bool GLRT::LoadAPIRT(){
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+ i, GL_TEXTURE_2D, ctex, 0);
 #endif
 
-		CheckFBStatus();
 
 		pTextureColor->id = ctex;
 		vColorTextures.push_back(pTextureColor);
@@ -143,7 +142,6 @@ bool GLRT::LoadAPIRT(){
 	this->pDepthTexture = pTextureDepth;
 	DepthTexture = dtex;
 
-	CheckFBStatus();
 
 	return true;
 }
