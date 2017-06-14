@@ -85,7 +85,8 @@ struct BaseRT {
 		RGBA32F,
 		BGR8,
 		BGRA8,
-		BGRA32
+		BGRA32,
+		NOTHING
 	};
 
 	bool			LoadRT(int nrt, int cf, int df, int w, int h);

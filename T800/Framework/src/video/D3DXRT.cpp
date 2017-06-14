@@ -17,10 +17,44 @@ extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 bool D3DXRT::LoadAPIRT() {
-	DXGI_FORMAT cfmt,dfmt;
+	DXGI_FORMAT cfmt;
+	DXGI_FORMAT depthFormat,depthShaderViewFormat,depthResourceViewFormat;
+	
+	switch (this->color_format){
+		case BaseRT::NOTHING:{
+			cfmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+			number_RT = 0;
+		}break;
+		case BaseRT::RGB8:
+		case BaseRT::RGBA8:{
+			cfmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+		}break;
+		case BaseRT::RGBA16F:{
+			cfmt = DXGI_FORMAT_R16G16B16A16_FLOAT;
+		}break;
+		case BaseRT::RGBA32F: {
+			cfmt = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		}break;
+	}
 
-	cfmt = DXGI_FORMAT_R8G8B8A8_UNORM;
-	dfmt = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	switch (this->depth_format) {
+		case BaseRT::NOTHING: {
+			depthFormat = DXGI_FORMAT_R32_TYPELESS;
+			depthShaderViewFormat = DXGI_FORMAT_D32_FLOAT;
+			depthResourceViewFormat = DXGI_FORMAT_R32_FLOAT;
+		}break;
+		case BaseRT::FD16: {
+			depthFormat = DXGI_FORMAT_R16_TYPELESS;
+			depthShaderViewFormat = DXGI_FORMAT_D16_UNORM;
+			depthResourceViewFormat = DXGI_FORMAT_R16_FLOAT;
+		}break;
+		case BaseRT::F32: {
+			depthFormat = DXGI_FORMAT_R32_TYPELESS;
+			depthShaderViewFormat = DXGI_FORMAT_D32_FLOAT;
+			depthResourceViewFormat = DXGI_FORMAT_R32_FLOAT;
+		}break;
+	}
+
 
 //	if (this->color_format) // TODO: check for more formats
 //	if (this->depth_format) // TODO: check for more formats
@@ -77,7 +111,7 @@ bool D3DXRT::LoadAPIRT() {
 	descDepth.Height = h;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
+	descDepth.Format = depthFormat;
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -91,7 +125,7 @@ bool D3DXRT::LoadAPIRT() {
 	}
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
 	ZeroMemory(&dsvd, sizeof(dsvd));
-	dsvd.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvd.Format = depthShaderViewFormat;
 	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
 	if (hr != S_OK) {
@@ -102,7 +136,7 @@ bool D3DXRT::LoadAPIRT() {
 	D3DXTexture *pTextureDepth = new D3DXTexture;
 	pTextureDepth->Tex = D3D11DepthTex;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	shaderResourceViewDesc.Format = depthResourceViewFormat;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
