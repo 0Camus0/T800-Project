@@ -87,34 +87,39 @@ uniform highp vec4 CameraInfo;
 uniform highp vec4 Ambient;
 
 void main(){
-	mat3 RotWorld = mat3(World);
-#ifdef USE_NORMALS
-	hnormal	= vec4(normalize(RotWorld*vec3(Normal)),1.0);
-#endif
-
-#ifdef USE_TANGENTS
-	htangent	= vec4(normalize(RotWorld*vec3(Tangent)),1.0);
-#endif
-
-#ifdef USE_BINORMALS
-	hbinormal	= vec4(normalize(RotWorld*vec3(Binormal)),1.0);
-#endif
-
-#ifdef NON_LINEAR_DEPTH
-	Pos 	 = WVP*Vertex;
+#ifdef SHADOW_MAP_PASS
+		Pos = WVP*Vertex;
+		gl_Position = Pos;
 #else
-	Pos 	 = WorldView*Vertex;
-#endif
-	WorldPos = World*Vertex;
-	
-#ifdef USE_TEXCOORD0
-	vecUVCoords = UV;
-	vecUVCoords.y = vecUVCoords.y;
-#endif
+		mat3 RotWorld = mat3(World);
+	#ifdef USE_NORMALS
+		hnormal	= vec4(normalize(RotWorld*vec3(Normal)),1.0);
+	#endif
 
-#ifdef NON_LINEAR_DEPTH
-	gl_Position = Pos;
-#else
-	gl_Position = WVP*Vertex;
+	#ifdef USE_TANGENTS
+		htangent	= vec4(normalize(RotWorld*vec3(Tangent)),1.0);
+	#endif
+
+	#ifdef USE_BINORMALS
+		hbinormal	= vec4(normalize(RotWorld*vec3(Binormal)),1.0);
+	#endif
+
+	#ifdef NON_LINEAR_DEPTH
+		Pos 	 = WVP*Vertex;
+	#else
+		Pos 	 = WorldView*Vertex;
+	#endif
+		WorldPos = World*Vertex;
+		
+	#ifdef USE_TEXCOORD0
+		vecUVCoords = UV;
+		vecUVCoords.y = vecUVCoords.y;
+	#endif
+
+	#ifdef NON_LINEAR_DEPTH
+		gl_Position = Pos;
+	#else
+		gl_Position = WVP*Vertex;
+	#endif
 #endif
 }

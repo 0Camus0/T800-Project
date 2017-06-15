@@ -73,4 +73,5 @@ public:
 	int				QuadIndex;
 	int				GBufferPass;
 	int				DeferredPass;
+	int				DepthPass;
 };

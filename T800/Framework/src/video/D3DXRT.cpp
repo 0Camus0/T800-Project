@@ -56,8 +56,6 @@ bool D3DXRT::LoadAPIRT() {
 	}
 
 
-//	if (this->color_format) // TODO: check for more formats
-//	if (this->depth_format) // TODO: check for more formats
 	HRESULT hr;
 	for (int i = 0; i < number_RT; i++) {
 		D3D11_TEXTURE2D_DESC desc = { 0 };

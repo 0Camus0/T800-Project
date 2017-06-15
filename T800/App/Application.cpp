@@ -85,6 +85,7 @@ void App::CreateAssets() {
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 1024, 1024);
 
 	PrimitiveMgr.SetVP(&VP);
 
@@ -282,6 +283,14 @@ void App::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 
 
+	pFramework->pVideoDriver->PushRT(DepthPass);
+	for (int i = 0; i < 6; i++) {
+		Pigs[i].SetSignature(Signature::SHADOW_MAP_PASS);
+		Pigs[i].Draw();
+		Pigs[i].SetSignature(Signature::FORWARD_PASS);
+	}
+	pFramework->pVideoDriver->PopRT();
+
 
 	pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
@@ -337,7 +346,7 @@ void App::OnDraw() {
 	Quads[5].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[5].Draw();
 
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[2]->pDepthTexture, 0);
 	Quads[6].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[6].Draw();
 

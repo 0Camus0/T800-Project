@@ -263,7 +263,12 @@ void GLDriver::PushRT(int id) {
 	glBindFramebuffer(GL_FRAMEBUFFER, pRT->vFrameBuffers[0]);
 
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-	glDrawBuffers(pRT->number_RT, DrawBuffers);
+	if (pRT->number_RT != 0) {
+		glDrawBuffers(pRT->number_RT, DrawBuffers);
+	}
+	else {
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	}
 #endif
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -273,6 +278,7 @@ void GLDriver::PushRT(int id) {
 
 void GLDriver::PopRT() {
 	glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 void GLDriver::DestroyRT(int id){

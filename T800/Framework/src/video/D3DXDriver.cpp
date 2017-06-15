@@ -212,6 +212,9 @@ void D3DXDriver::PushRT(int id) {
 		RTVA.push_back(pRT->vD3D11RenderTargetView[i].GetAddressOf());
 	}
 
+	if (pRT->number_RT == 0)
+		RTVA.push_back(0);
+
 	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
 
 	float rgba[4];

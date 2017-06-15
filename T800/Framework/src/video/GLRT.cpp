@@ -45,6 +45,8 @@ bool GLRT::LoadAPIRT(){
 	cfmt = GL_RGB;
 	dfmt = GL_DEPTH_COMPONENT;
 
+	if (color_format == BaseRT::NOTHING)
+		number_RT = 0;
 //	w = 1280;
 //	h = 720;
 
@@ -102,6 +104,9 @@ bool GLRT::LoadAPIRT(){
 		vFrameBuffers.push_back(fbo);
 		vGLColorTex.push_back(ctex);
 	}
+
+	if(number_RT==0)
+		vFrameBuffers.push_back(fbo);
 
 	glGenTextures(1, &dtex);
 	glBindTexture(GL_TEXTURE_2D, dtex);

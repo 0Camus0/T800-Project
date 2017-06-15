@@ -220,6 +220,10 @@ void main(){
 	#endif
 	
 }
+#elif defined(SHADOW_MAP_PASS)
+void main(){
+	//gl_FragDepth = Pos.z / CameraInfo.y;
+}
 #else
 	#ifdef ES_30
 		layout(location = 0) out highp vec4 colorOut;

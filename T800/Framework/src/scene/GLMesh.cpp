@@ -226,6 +226,10 @@ void GLMesh::GatherInfo() {
 
 			CurrSig |= Signature::GBUFF_PASS;
 			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
+			CurrSig ^= Signature::GBUFF_PASS;
+
+			CurrSig |= Signature::SHADOW_MAP_PASS;
+			g_pBaseDriver->CreateShader(vstr, fstr, CurrSig);
 		}
 
 		Info.push_back(tmp);

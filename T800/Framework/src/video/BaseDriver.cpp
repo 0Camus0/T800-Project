@@ -164,6 +164,8 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define FSQUAD_2_TEX\n\n";
 	if (sig&Signature::FSQUAD_3_TEX)
 		Defines += "#define FSQUAD_3_TEX\n\n";
+	if(sig&Signature::SHADOW_MAP_PASS)
+		Defines += "#define SHADOW_MAP_PASS\n\n";
 	if (sig&Signature::DEFERRED_PASS) {
 		Defines += "#define DEFERRED_PASS\n\n";
 #if defined(USING_OPENGL_ES20)
