@@ -161,6 +161,10 @@ FS_OUT FS( VS_OUTPUT input )   {
 
 	return fout;	
 }
+#elif defined(SHADOW_MAP_PASS)
+float FS( VS_OUTPUT input ) : SV_Depth  {
+	return input.Pos.z/input.Pos.w;
+}
 #else
 float4 FS( VS_OUTPUT input )  : SV_TARGET {
     float4  color = float4(0.5,0.5,0.5,1.0);

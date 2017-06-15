@@ -270,6 +270,8 @@ void GLDriver::PushRT(int id) {
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	}
 #endif
+	
+	glViewport(0,0, pRT->w, pRT->h);
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 
@@ -278,6 +280,7 @@ void GLDriver::PushRT(int id) {
 
 void GLDriver::PopRT() {
 	glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
+	glViewport(0, 0, width, height);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 

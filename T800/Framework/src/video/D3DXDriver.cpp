@@ -102,7 +102,6 @@ void D3DXDriver::InitDriver(){
 
 
 	// Set the Viewport of the size of the screen
-	D3D11_VIEWPORT viewport = { 0 };
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.Width = static_cast<float>(Width);
@@ -217,6 +216,15 @@ void D3DXDriver::PushRT(int id) {
 
 	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
 
+	viewport_RT.TopLeftX = 0;
+	viewport_RT.TopLeftY = 0;
+	viewport_RT.Width = static_cast<float>(pRT->w);
+	viewport_RT.Height = static_cast<float>(pRT->h);
+	viewport_RT.MinDepth = 0;
+	viewport_RT.MaxDepth = 1;
+
+	D3D11DeviceContext->RSSetViewports(1, &viewport_RT);
+
 	float rgba[4];
 	rgba[0] = 0.5f;
 	rgba[1] = 0.5f;
@@ -233,6 +241,9 @@ void D3DXDriver::PushRT(int id) {
 
 void D3DXDriver::PopRT() {
 	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
+
+
+	D3D11DeviceContext->RSSetViewports(1, &viewport);
 }
 
 void D3DXDriver::DestroyRT(int id){

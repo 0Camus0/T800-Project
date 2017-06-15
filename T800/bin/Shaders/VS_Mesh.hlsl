@@ -55,6 +55,10 @@ struct VS_OUTPUT{
 
 VS_OUTPUT VS( VS_INPUT input ){
     VS_OUTPUT OUT;
+#ifdef SHADOW_MAP_PASS
+	OUT.hposition = mul( WVP , input.position );
+	OUT.Pos		  = OUT.hposition;
+#else	
     OUT.hposition = mul( WVP , input.position );
 	
 	float3x3 RotWorld = (float3x3)World;
@@ -79,6 +83,6 @@ VS_OUTPUT VS( VS_INPUT input ){
 	OUT.Pos = mul( WorldView , input.position );
 
 	OUT.WorldPos = mul( World , input.position );
-
+#endif
     return OUT;
 }

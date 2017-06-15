@@ -57,6 +57,9 @@ public:
 	int		Width;
 	int		Height;
 	HWND	hwnd;
+
+	D3D11_VIEWPORT viewport;
+	D3D11_VIEWPORT viewport_RT;
 };
 
 #endif
