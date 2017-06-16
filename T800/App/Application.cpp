@@ -59,6 +59,8 @@ void App::InitVars() {
 	Scaling = XVECTOR3(1.0f,1.0f,1.0f);
 	SelectedMesh = 0;
 
+	CamSelection = NORMAL_CAM1;
+
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 8000.0f);
 	Cam.Speed = 10.0f;
 	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
@@ -66,6 +68,14 @@ void App::InitVars() {
 	Cam.Roll = 0.0f;
 	Cam.Yaw = 0.020f;
 	Cam.Update(0.0f);
+
+	LightCam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1.0f, 1.0f, 8000.0f);
+	LightCam.Speed = 10.0f;
+	LightCam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
+	LightCam.Pitch = 0.14f;
+	LightCam.Roll = 0.0f;
+	LightCam.Yaw = 0.020f;
+	LightCam.Update(0.0f);
 
 	SceneProp.AddCamera(&Cam);
 	for(int i=0;i<NUM_LIGHTS;i++){

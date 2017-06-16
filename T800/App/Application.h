@@ -54,6 +54,7 @@ public:
 	PrimitiveInst	Quads[10];
 
 	Camera			Cam;
+	Camera			LightCam;
 
 	XVECTOR3		Position;
 	XVECTOR3		Orientation;
@@ -74,4 +75,11 @@ public:
 	int				GBufferPass;
 	int				DeferredPass;
 	int				DepthPass;
+
+	enum {
+		NORMAL_CAM1 = 0,
+		LIGHT_CAM1,
+		MAX_CAMS
+	};
+	int				CamSelection;
 };

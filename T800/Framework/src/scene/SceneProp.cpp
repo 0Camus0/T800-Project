@@ -46,3 +46,14 @@ void	SceneProps::RemoveCamera(unsigned int index){
 
 	pCameras.erase(pCameras.begin() + index);
 }
+
+void	SceneProps::AddLightCamera(Camera* cam) {
+	pLightCameras.push_back(cam);
+}
+
+void	SceneProps::RemoveLightCamera(unsigned int index) {
+	if (index < 0 || index >= pLightCameras.size())
+		return;
+
+	pLightCameras.erase(pLightCameras.begin() + index);
+}

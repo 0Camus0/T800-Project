@@ -27,7 +27,7 @@ struct Light{
 };
 
 struct SceneProps{
-	SceneProps() : ActiveCamera(0) , ActiveLights(1) {}
+	SceneProps() : ActiveCamera(0) , ActiveLights(1), ActiveLightCamera(0){}
 
 	void	AddLight(XVECTOR3 Pos, XVECTOR3 Color,bool enabled);
 	void	RemoveLight(unsigned int index);
@@ -36,14 +36,19 @@ struct SceneProps{
 	void	AddCamera(Camera*);
 	void	RemoveCamera(unsigned int index);
 
+	void	AddLightCamera(Camera*);
+	void	RemoveLightCamera(unsigned int index);
 
 	std::vector<Light>	   Lights;
 	std::vector<Camera*> pCameras;
+
+	std::vector<Camera*> pLightCameras;
 
 	XVECTOR3			AmbientColor;
 
 	int ActiveCamera;
 	int	ActiveLights;
+	int ActiveLightCamera;
 };
 
 #endif
