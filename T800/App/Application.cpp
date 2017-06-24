@@ -71,13 +71,16 @@ void App::InitVars() {
 
 	LightCam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1.0f, 1.0f, 8000.0f);
 	LightCam.Speed = 10.0f;
-	LightCam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
+	LightCam.Eye = XVECTOR3(0.0f, 25.0f, -40.0f);
 	LightCam.Pitch = 0.14f;
 	LightCam.Roll = 0.0f;
 	LightCam.Yaw = 0.020f;
 	LightCam.Update(0.0f);
 
-	SceneProp.AddCamera(&Cam);
+	ActiveCam = &Cam;
+
+	SceneProp.AddCamera(ActiveCam);
+	SceneProp.AddLightCamera(&LightCam);
 	for(int i=0;i<NUM_LIGHTS;i++){
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -157,8 +160,9 @@ void App::OnUpdate() {
 	DtSecs = DtTimer.GetDTSecs();
 	OnInput();
 
-	Cam.Update(DtSecs);
-	VP = Cam.VP;
+
+	ActiveCam->Update(DtSecs);
+	VP = ActiveCam->VP;
 
 	int count = 1;
 	Pigs[count].TranslateAbsolute(-15.0f, 0.0f, 0.0f);
@@ -294,6 +298,7 @@ void App::OnDraw() {
 
 
 	pFramework->pVideoDriver->PushRT(DepthPass);
+	SceneProp.pCameras[0] = &LightCam;
 	for (int i = 0; i < 6; i++) {
 		Pigs[i].SetSignature(Signature::SHADOW_MAP_PASS);
 		Pigs[i].Draw();
@@ -301,6 +306,7 @@ void App::OnDraw() {
 	}
 	pFramework->pVideoDriver->PopRT();
 
+	SceneProp.pCameras[0] = &Cam;
 
 	pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
@@ -329,7 +335,7 @@ void App::OnDraw() {
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[2]->pDepthTexture, 4);
 	Quads[0].SetSignature(Signature::DEFERRED_PASS);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
@@ -459,27 +465,37 @@ void App::OnInput() {
 	//printf("Position[%f, %f, %f]\n\n", Cam.Eye.x, Cam.Eye.y, Cam.Eye.z);
 	//printf("Orientation[%f, %f, %f]\n\n", Cam.Pitch, Cam.Roll, Cam.Yaw);
 
+	if (IManager.PressedOnceKey(T800K_c)) {
+		if (ActiveCam == (&Cam)) {
+			ActiveCam = &LightCam;			
+		}
+		else {
+			ActiveCam = &Cam;
+		}
+		SceneProp.pCameras[0] = ActiveCam;
+	}
+
 	if (IManager.PressedKey(T800K_w)) {
-		Cam.MoveForward(DtSecs);
+		ActiveCam->MoveForward(DtSecs);
 	}
 
 	if (IManager.PressedKey(T800K_s)) {
-		Cam.MoveBackward(DtSecs);
+		ActiveCam->MoveBackward(DtSecs);
 	}
 
 	if (IManager.PressedKey(T800K_a)) {
-		Cam.StrafeLeft(DtSecs);
+		ActiveCam->StrafeLeft(DtSecs);
 	}
 
 	if (IManager.PressedKey(T800K_d)) {
-		Cam.StrafeRight(DtSecs);
+		ActiveCam->StrafeRight(DtSecs);
 	}
 
 	float yaw = 0.005f*static_cast<float>(IManager.xDelta);
-	Cam.MoveYaw(yaw);
+	ActiveCam->MoveYaw(yaw);
 
 	float pitch = 0.005f*static_cast<float>(IManager.yDelta);
-	Cam.MovePitch(pitch);
+	ActiveCam->MovePitch(pitch);
 
 }
 

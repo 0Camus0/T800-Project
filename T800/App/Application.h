@@ -56,6 +56,8 @@ public:
 	Camera			Cam;
 	Camera			LightCam;
 
+	Camera			*ActiveCam;
+
 	XVECTOR3		Position;
 	XVECTOR3		Orientation;
 	XVECTOR3		Scaling;
