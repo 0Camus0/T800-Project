@@ -26,6 +26,7 @@ Texture2D tex1 : register(t1);
 Texture2D tex2 : register(t2);
 Texture2D tex3 : register(t3);
 Texture2D tex4 : register(t4);
+Texture2D tex5 : register(t5);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float4 Final = float4(0.0,0.0,0.0,1.0);
 	float4 color  =  tex0.Sample( SS, input.texture0);
@@ -112,6 +113,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		
 			Final += Fresnel;
 		}
+		
+		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 	}
 
 	return Final;
