@@ -80,7 +80,7 @@ VS_OUTPUT VS( VS_INPUT input ){
 #endif
 
 
-	OUT.Pos = mul( WorldView , input.position );
+	OUT.Pos = mul( WVP , input.position );
 
 	OUT.WorldPos = mul( World , input.position );
 #endif

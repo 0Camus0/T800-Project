@@ -32,10 +32,12 @@ public:
 		XMATRIX44 World;
 		XMATRIX44 WorldView;
 		XMATRIX44 WVPInverse;
+		XMATRIX44 WVPLight;
 		XVECTOR3  LightPositions[128];
 		XVECTOR3  LightColors[128];
 		XVECTOR3  CameraPos;
 		XVECTOR3  CameraInfo;		
+		XVECTOR3  LightCameraPos;
 	};
 
 	D3DXQuad() {}

@@ -3,10 +3,12 @@ cbuffer ConstantBuffer{
 	float4x4 World;  
 	float4x4 WorldView;
 	float4x4 WVPInverse;
+	float4x4 WVPLight;
 	float4	 LightPositions[128];
 	float4	 LightColors[128];
 	float4   CameraPosition;
 	float4 	 CameraInfo;
+	float4	 LightCameraPosition;
 }
 
 struct VS_INPUT{

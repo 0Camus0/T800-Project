@@ -3,17 +3,19 @@ cbuffer ConstantBuffer{
 	float4x4 World;  
 	float4x4 WorldView;
 	float4x4 WVPInverse;
+	float4x4 WVPLight;
 	float4	 LightPositions[128];
 	float4	 LightColors[128];
 	float4   CameraPosition;
 	float4 	 CameraInfo;
+	float4	 LightCameraPosition;
 }
 
 struct VS_OUTPUT{
     float4 hposition : SV_POSITION;
     float2 texture0  : TEXCOORD;
 	float4 Pos		: TEXCOORD1;
-	float4 PosCorner : TEXCOORD2;
+	float4 PosCorner : VPOS;
 };
 
 SamplerState SS;
@@ -115,7 +117,31 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	return Final;
 
 }
-
+#elif defined(SHADOW_COMP_PASS)
+Texture2D tex0 : register(t0);
+Texture2D tex1 : register(t1);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	float4 Fcolor = float4(1.0,1.0,1.0,1.0);
+	float depth = tex0.Sample( SS, input.texture0 );
+	float4 position = CameraPosition + input.PosCorner*depth;
+	
+	float4 LightPos = mul(WVPLight , position);
+	LightPos.xyz /= LightPos.w;
+	float2 SHTC = LightPos.xy*0.5 + 0.5;
+	
+	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 ){
+		SHTC.y = 1.0 - SHTC.y;
+		float depthSM = tex1.Sample( SS, SHTC );
+		float depthPos = LightPos.z;
+		depthSM += 0.000005;
+		if( depthPos > depthSM)
+			Fcolor = 0.25*float4(1.0,1.0,1.0,1.0);	   
+	}else{
+		Fcolor = float4(1.0,1.0,1.0,1.0);
+	}
+	
+	  return Fcolor;
+}
 #elif defined(FSQUAD_1_TEX)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {

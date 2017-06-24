@@ -158,6 +158,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 	#endif
 	
 	fout.depth		= input.Pos.z / CameraInfo.y;
+	//fout.depth		= input.Pos.z / input.Pos.w;
 
 	return fout;	
 }

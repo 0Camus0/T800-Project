@@ -43,6 +43,9 @@ void D3DXQuad::Create() {
 	Dest = SigBase | Signature::FSQUAD_3_TEX;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::SHADOW_COMP_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -128,6 +131,11 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	CnstBuffer.WorldView = WV;
 	CnstBuffer.CameraPos = pActualCamera->Eye;
 
+	if (pScProp->pLightCameras.size() > 0) {
+		CnstBuffer.WVPLight = pScProp->pLightCameras[0]->VP;
+		CnstBuffer.LightCameraPos = pScProp->pLightCameras[0]->Eye;
+	}
+
 	unsigned int numLights = pScProp->ActiveLights;
 	if (numLights >= pScProp->Lights.size())
 		numLights = pScProp->Lights.size();
@@ -172,6 +180,10 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
+	}
+	else if (sig&Signature::SHADOW_COMP_PASS) {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

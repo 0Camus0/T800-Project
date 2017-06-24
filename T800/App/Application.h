@@ -77,6 +77,7 @@ public:
 	int				GBufferPass;
 	int				DeferredPass;
 	int				DepthPass;
+	int				ShadowAccumPass;
 
 	enum {
 		NORMAL_CAM1 = 0,
