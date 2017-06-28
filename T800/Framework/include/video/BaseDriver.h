@@ -142,6 +142,17 @@ public:
 
 class BaseDriver {
 public:
+	enum {
+		DEPTH_ATTACHMENT = -1,
+		COLOR0_ATTACHMENT = 0,
+		COLOR1_ATTACHMENT = 1,
+		COLOR2_ATTACHMENT = 2,
+		COLOR3_ATTACHMENT = 3,
+		COLOR4_ATTACHMENT = 4,
+		COLOR5_ATTACHMENT = 5,
+		COLOR6_ATTACHMENT = 6,
+		COLOR7_ATTACHMENT = 7,
+	};
 	BaseDriver() {  }
 	virtual	void	 InitDriver() = 0;
 	virtual void	 CreateSurfaces() = 0;
@@ -162,6 +173,7 @@ public:
 	virtual void	 PopRT() = 0;
 	virtual void	 DestroyRT(int id) = 0;
 	virtual void	 DestroyRTs() = 0;
+	virtual Texture* GetRTTexture(int id, int index) = 0;
 
 	virtual int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
 	virtual ShaderBase*	GetShaderSig(unsigned int sig) = 0;
