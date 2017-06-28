@@ -69,7 +69,7 @@ void App::InitVars() {
 	Cam.Yaw = 0.020f;
 	Cam.Update(0.0f);
 
-	LightCam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1.0f, 1.0f, 8000.0f);
+	LightCam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(60.0f), 1.0f, 0.1f, 8000.0f);
 	LightCam.Speed = 10.0f;
 	LightCam.Eye = XVECTOR3(0.0f, 25.0f, -40.0f);
 	LightCam.Pitch = 0.14f;

@@ -38,6 +38,7 @@ public:
 		XVECTOR3  CameraPos;
 		XVECTOR3  CameraInfo;		
 		XVECTOR3  LightCameraPos;
+		XVECTOR3  LightCameraInfo;
 	};
 
 	D3DXQuad() {}

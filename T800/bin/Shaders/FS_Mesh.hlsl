@@ -164,7 +164,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 }
 #elif defined(SHADOW_MAP_PASS)
 float FS( VS_OUTPUT input ) : SV_Depth  {
-	return input.Pos.z/input.Pos.w;
+	return input.Pos.z/CameraInfo.y;
 }
 #else
 float4 FS( VS_OUTPUT input )  : SV_TARGET {
