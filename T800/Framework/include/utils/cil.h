@@ -1,7 +1,6 @@
 #ifndef T800_CIL_H
 #define T800_CIL_H
 
-#include <Config.h>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -45,9 +44,37 @@ using namespace std;
 #define CIL_NO_MEMORY				0x0E4
 #define CIL_PVR_V2_NOT_SUPPORTED	0x0E5
 #define CIL_NOT_SUPPORTED_FILE		0x0E6
+#define CIL_DDS_MALFORMED			0x0E7
 #define CIL_NO_ERROR				0
 
-
+// DDS Specific 
+#define CIL_DDS_CAPS			0x00000001l
+#define CIL_DDS_HEIGHT			0x00000002l
+#define CIL_DDS_WIDTH			0x00000004l
+#define CIL_DDS_PITCH			0x00000008l
+#define CIL_DDS_PIXELFORMAT		0x00001000l
+#define CIL_DDS_MIPMAPCOUNT		0x00020000l
+#define CIL_DDS_LINEARSIZE		0x00080000l
+#define CIL_DDS_DEPTH			0x00800000l
+#define CIL_DDS_ALPHAPIXELS		0x00000001l
+#define CIL_DDS_FOURCC			0x00000004l
+#define CIL_DDS_RGB				0x00000040l
+#define CIL_DDS_RGBA			0x00000041l
+#define CIL_DDS_COMPLEX			0x00000008l
+#define CIL_DDS_TEXTURE			0x00001000l
+#define CIL_DDS_MIPMAP			0x00400000l
+#define CIL_DDS_CUBEMAP			0x00000200l
+#define CIL_DDS_CUBEMAP_POSITIVEX  0x00000400l
+#define CIL_DDS_CUBEMAP_NEGATIVEX  0x00000800l
+#define CIL_DDS_CUBEMAP_POSITIVEY  0x00001000l
+#define CIL_DDS_CUBEMAP_NEGATIVEY  0x00002000l
+#define CIL_DDS_CUBEMAP_POSITIVEZ  0x00004000l
+#define CIL_DDS_CUBEMAP_NEGATIVEZ  0x00008000l
+#define CIL_DDS_CUBEMAP_ALL_FACES  0x0000FC00l
+#define CIL_DDS_VOLUME   0x00200000l
+#define CIL_FOURCC_DXT1  0x31545844l 
+#define CIL_FOURCC_DXT3  0x33545844l 
+#define CIL_FOURCC_DXT5  0x35545844l 
 
 // KTX formats
 #define CIL_ETC1_RGB8_OES						0x8D64
@@ -404,7 +431,7 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 
 		if (prop&CIL_ETC1) {
 			current_size = (currentHeight*currentWidth*bpp) / 8;
-			current_size = std::max(current_size, 8);
+			current_size = max(current_size, 8);
 		}
 		else {
 			current_size = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
@@ -412,8 +439,8 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		for (unsigned int f = 0; f < header.faces; f++) {
 			final_size += current_size;
 		}
-		currentWidth = std::max(currentWidth >> 1, 1);
-		currentHeight = std::max(currentHeight >> 1, 1);
+		currentWidth = max(currentWidth >> 1, 1);
+		currentHeight = max(currentHeight >> 1, 1);
 
 		widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
 		heightBlocks = currentHeight / 4;
@@ -578,6 +605,55 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 	return pBuffer;
 }
 
+unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+	char ddstr[4];
+	DDS_HEADER header;
+	in_.seekg(0);
+	in_.read((char*)ddstr, 4);
+	in_.read((char*)&header, sizeof(DDS_HEADER));
+
+	if (header.dwSize != 124) {
+		in_.close();
+		prop = CIL_DDS_MALFORMED;
+		return 0;
+	}
+
+#if CIL_LOG_OUTPUT
+	cout << "DDS Data: " << endl
+		<< "	dwSize: " << header.dwSize << endl
+		<< "	dwFlags: " << header.dwFlags << endl
+		<< "	dwHeight: " << header.dwHeight << endl
+		<< "	dwWidth: " << header.dwWidth << endl
+		<< "	dwPitchOrLinearSize: " << header.dwPitchOrLinearSize << endl
+		<< "	dwDepth: " << header.dwDepth << endl
+		<< "	dwMipMapCount: " << header.dwMipMapCount << endl
+		<< "	dwCaps: " << header.dwCaps << endl
+		<< "	dwCaps2: " << header.dwCaps2 << endl
+		<< "	dwCaps3: " << header.dwCaps3 << endl
+		<< "	dwCaps4: " << header.dwCaps4 << endl
+		<< "	dwReserved2: " << header.dwMipMapCount << endl << endl;
+
+	cout << "DDS Pixel Format: " << endl
+		<< "	dwSize: " << header.ddspf.dwSize << endl
+		<< "	dwFlags: " << header.ddspf.dwFlags << endl
+		<< "	dwFourCC: " << header.ddspf.dwFourCC << endl
+		<< "	dwRGBBitCount: " << header.ddspf.dwRGBBitCount << endl
+		<< "	dwRBitMask: " << header.ddspf.dwRBitMask << endl
+		<< "	dwGBitMask: " << header.ddspf.dwGBitMask << endl
+		<< "	dwBBitMask: " << header.ddspf.dwBBitMask << endl
+		<< "	dwABitMask: " << header.ddspf.dwABitMask << endl;
+
+	char *FourCC;
+	FourCC = (char*)&header.ddspf.dwFourCC;
+	cout << "	FOURCC: " << FourCC << endl;
+#endif
+	x = header.dwWidth;
+	y = header.dwHeight;
+	mipmaps = header.dwMipMapCount;
+
+	return 0;
+}
+
 void cil_free_buffer(unsigned char *pbuff) {
 	delete[] pbuff;
 	pbuff = 0;
@@ -622,11 +698,12 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mip
 		*mipmaps = mipmaps_;
 		in_.close();
 		return buffer;
+	}else if (props_&CIL_DDS) {
+		unsigned char * buffer = load_dds(in_, x_, y_, mipmaps_, props_, buffer_size_);
 	}
 
 	return 0;
 }
 
-#endif
 
 #endif

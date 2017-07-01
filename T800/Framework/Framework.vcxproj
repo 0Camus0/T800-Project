@@ -32,6 +32,7 @@
     <ClInclude Include="include\scene\PrimitiveManager.h" />
     <ClInclude Include="include\scene\SceneProp.h" />
     <ClInclude Include="include\scene\Triangle.h" />
+    <ClInclude Include="include\utils\cil.h" />
     <ClInclude Include="include\utils\InputManager.h" />
     <ClInclude Include="include\utils\Timer.h" />
     <ClInclude Include="include\utils\Utils.h" />

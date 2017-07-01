@@ -134,6 +134,9 @@
     <ClInclude Include="include\scene\D3DXQuad.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
+    <ClInclude Include="include\utils\cil.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
