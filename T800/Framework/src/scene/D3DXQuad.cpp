@@ -134,6 +134,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	if (pScProp->pLightCameras.size() > 0) {
 		CnstBuffer.WVPLight = pScProp->pLightCameras[0]->VP;
 		CnstBuffer.LightCameraPos = pScProp->pLightCameras[0]->Eye;
+		CnstBuffer.LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
 	}
 
 	unsigned int numLights = pScProp->ActiveLights;

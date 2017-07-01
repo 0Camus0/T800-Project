@@ -9,6 +9,7 @@ cbuffer ConstantBuffer{
 	float4   CameraPosition;
 	float4 	 CameraInfo;
 	float4	 LightCameraPosition;
+	float4 	 LightCameraInfo;
 }
 
 struct VS_OUTPUT{
@@ -129,10 +130,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float4 position = CameraPosition + input.PosCorner*depth;
 	
 	float4 LightPos = mul(WVPLight , position);
-	LightPos.xyz /= LightPos.w;
+	LightPos.xy /= LightPos.w;
+	LightPos.z /= LightCameraInfo.y;
 	float2 SHTC = LightPos.xy*0.5 + 0.5;
 	
-	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 ){
+	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
 		SHTC.y = 1.0 - SHTC.y;
 		float depthSM = tex1.Sample( SS, SHTC );
 		float depthPos = LightPos.z;
