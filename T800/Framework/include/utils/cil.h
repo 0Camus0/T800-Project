@@ -19,6 +19,7 @@ using namespace std;
 #define CIL_PVRTCII_4BPP_RGB_FMT	5
 #define CIL_ETC1_FMT				6
 #define CIL_DXT1_FMT				7
+#define CIL_DXT3_FMT				9
 #define CIL_DXT5_FMT				11
 #define CIL_ETC2_FMT				23 //ETC2 RGBA not RGBA, for that we have ETC1
 #define CIL_RGBA32_FMT
@@ -75,6 +76,7 @@ using namespace std;
 #define CIL_FOURCC_DXT1  0x31545844l 
 #define CIL_FOURCC_DXT3  0x33545844l 
 #define CIL_FOURCC_DXT5  0x35545844l 
+#define CIL_FOURCC_RAW	 0
 
 // KTX formats
 #define CIL_ETC1_RGB8_OES						0x8D64
@@ -605,12 +607,43 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 	return pBuffer;
 }
 
+void dds_set_pix_format(unsigned int &format,unsigned int &bppinfo,unsigned int &prop) {	
+	switch (format){
+		case CIL_FOURCC_RAW:{
+			prop |= CIL_RAW;
+			if (bppinfo == 24)
+				prop |= CIL_RGB;
+			else
+				prop |= CIL_RGBA;
+		}break;
+		case CIL_FOURCC_DXT1: {
+			prop |= CIL_DXT1;
+			prop |= CIL_BPP_4;
+			prop |= CIL_COMPRESSED;
+		}break;
+		case CIL_FOURCC_DXT3: {
+			prop |= CIL_DXT5;
+			prop |= CIL_BPP_8;
+			prop |= CIL_COMPRESSED;
+		}break;
+		case CIL_FOURCC_DXT5: {
+			prop |= CIL_DXT5;
+			prop |= CIL_BPP_8;
+			prop |= CIL_COMPRESSED;
+		}break;
+	}
+}
+
 unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
 	char ddstr[4];
 	DDS_HEADER header;
-	in_.seekg(0);
+	in_.seekg(0, std::ios::end);
+	unsigned int FileSize = static_cast<unsigned int>(in_.tellg());
+	in_.seekg(0, std::ios::beg);
 	in_.read((char*)ddstr, 4);
+	FileSize -= 4;
 	in_.read((char*)&header, sizeof(DDS_HEADER));
+	FileSize -= sizeof(DDS_HEADER);
 
 	if (header.dwSize != 124) {
 		in_.close();
@@ -650,6 +683,57 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 	x = header.dwWidth;
 	y = header.dwHeight;
 	mipmaps = header.dwMipMapCount;
+
+	if (header.dwCaps2 & CIL_DDS_CUBEMAP) {
+		prop |= CIL_CUBE_MAP;
+	}
+
+	dds_set_pix_format(header.ddspf.dwFourCC, header.ddspf.dwRGBBitCount, prop);
+
+	int numFaces = 1;
+	if (prop&CIL_CUBE_MAP)
+		numFaces = 6;
+
+	int finalSize = 0;
+	int widthBlocks = x;
+	int heightBlocks = y;
+	if (prop&CIL_COMPRESSED) {
+		int blockSize = (prop & CIL_BPP_4) ? 8 : 16;
+		int bpp = 8;
+		if (prop&CIL_DXT1)
+			bpp = 4;
+		for (int i = 0; i < numFaces; i++) {
+			widthBlocks = x;
+			heightBlocks = y;
+			for (int j = 0; j < mipmaps; j++) {
+
+				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
+				current_size = max(current_size, blockSize);
+
+				finalSize += current_size;
+
+				widthBlocks >>= 1;
+				heightBlocks >>= 1;
+			}
+		}
+	}else{
+		mipmaps = mipmaps == 0 ? 1 : mipmaps;
+		for (int i = 0; i < numFaces; i++) {
+			widthBlocks = x;
+			heightBlocks = y;
+			for (int j = 0; j < mipmaps; j++) {
+				int current_size = (widthBlocks*heightBlocks);
+				finalSize += current_size;
+				widthBlocks >>= 1;
+				heightBlocks >>= 1;
+			}
+		}
+	}
+
+	FileSize -= finalSize;
+
+
+	
 
 	return 0;
 }

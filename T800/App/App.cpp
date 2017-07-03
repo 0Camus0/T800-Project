@@ -19,7 +19,7 @@
 
 #include "Application.h"
 
-#define CIL_DDS_DEBUG 0
+#define CIL_DDS_DEBUG 1
 
 #if CIL_DDS_DEBUG
 #include <utils/cil.h>
@@ -37,7 +37,7 @@ RootFramework *pFrameWork = 0;
 
 int main(int arg,char ** args){
 #if CIL_DDS_DEBUG
-	std::string fpa = "Textures/CubeMap_SkyDawn.dds";
+	std::string fpa = "Textures/CubeMap_Granja_RAW.dds";
 	int x, y;
 	unsigned int props, bsize;
 	unsigned char m;
