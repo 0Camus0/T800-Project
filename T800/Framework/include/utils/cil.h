@@ -690,39 +690,34 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 
 	dds_set_pix_format(header.ddspf.dwFourCC, header.ddspf.dwRGBBitCount, prop);
 
-	int numFaces = 1;
-	if (prop&CIL_CUBE_MAP)
-		numFaces = 6;
-
+	int numFaces = (prop&CIL_CUBE_MAP) ? 6 : 1;
 	int finalSize = 0;
 	int widthBlocks = x;
 	int heightBlocks = y;
+	int bpp = 8;
 	if (prop&CIL_COMPRESSED) {
-		int blockSize = (prop & CIL_BPP_4) ? 8 : 16;
-		int bpp = 8;
+		int blockSize = (prop & CIL_BPP_4) ? 8 : 16;		
 		if (prop&CIL_DXT1)
 			bpp = 4;
 		for (int i = 0; i < numFaces; i++) {
 			widthBlocks = x;
 			heightBlocks = y;
 			for (int j = 0; j < mipmaps; j++) {
-
 				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
 				current_size = max(current_size, blockSize);
-
 				finalSize += current_size;
-
 				widthBlocks >>= 1;
 				heightBlocks >>= 1;
 			}
 		}
-	}else{
+	}else{		
+		bpp = (prop&CIL_RGB) ? 24 : 32;
 		mipmaps = mipmaps == 0 ? 1 : mipmaps;
 		for (int i = 0; i < numFaces; i++) {
 			widthBlocks = x;
 			heightBlocks = y;
 			for (int j = 0; j < mipmaps; j++) {
-				int current_size = (widthBlocks*heightBlocks);
+				int current_size = (widthBlocks*heightBlocks*bpp)/8;
 				finalSize += current_size;
 				widthBlocks >>= 1;
 				heightBlocks >>= 1;
@@ -730,12 +725,24 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		}
 	}
 
+	buffersize = finalSize;
 	FileSize -= finalSize;
 
+	if (FileSize != 0) {
+		in_.close();
+		exit(666);
+	}
 
-	
+	unsigned char *buffer = new unsigned char[buffersize];
 
-	return 0;
+	if (buffer == 0) {
+		prop = CIL_NO_MEMORY;
+		return 0;
+	}
+
+	in_.read((char*)&buffer[0], buffersize);
+
+	return buffer;
 }
 
 void cil_free_buffer(unsigned char *pbuff) {
@@ -784,6 +791,13 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mip
 		return buffer;
 	}else if (props_&CIL_DDS) {
 		unsigned char * buffer = load_dds(in_, x_, y_, mipmaps_, props_, buffer_size_);
+		*props = props_;
+		*x = x_;
+		*y = y_;
+		*buffersize = buffer_size_;
+		*mipmaps = mipmaps_;
+		in_.close();
+		return buffer;
 	}
 
 	return 0;
