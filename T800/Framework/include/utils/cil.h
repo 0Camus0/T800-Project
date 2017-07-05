@@ -1,6 +1,7 @@
 #ifndef T800_CIL_H
 #define T800_CIL_H
 
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -8,7 +9,13 @@
 #include <algorithm>
 using namespace std;
 
+#define CIL_CALL_STB 1
 #define CIL_LOG_OUTPUT 1
+
+#if CIL_CALL_STB
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#endif
 
 // Formats
 #define CIL_PVRTC_2BPP_RGB_FMT		0
@@ -46,6 +53,7 @@ using namespace std;
 #define CIL_PVR_V2_NOT_SUPPORTED	0x0E5
 #define CIL_NOT_SUPPORTED_FILE		0x0E6
 #define CIL_DDS_MALFORMED			0x0E7
+#define CIL_FORWARD_TO_STB			0x0E8
 #define CIL_NO_ERROR				0
 
 // DDS Specific 
@@ -109,7 +117,7 @@ using namespace std;
 #define CIL_BPP_2				(1 << 13)
 #define CIL_BPP_4				(1 << 14)
 #define CIL_BPP_8				(1 << 15)
-#define CIL_BMP					(1 << 16)
+#define CIL_LOADED_WITH_STB		(1 << 16)
 #define CIL_PNG					(1 << 17)
 #define CIL_DDS					(1 << 18)
 #define CIL_TGA					(1 << 19)
@@ -227,7 +235,11 @@ void checkformat(ifstream &in_, unsigned int &prop) {
 		return;
 	}
 
+#if CIL_CALL_STB
+	prop = CIL_FORWARD_TO_STB;
+#else
 	prop = CIL_NOT_SUPPORTED_FILE;
+#endif
 }
 
 void	pvr_set_pix_format(uint32_t& pix_format, unsigned int &prop) {
@@ -751,7 +763,7 @@ void cil_free_buffer(unsigned char *pbuff) {
 }
 
 
-unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mipmaps, unsigned int *props, unsigned int *buffersize) {
+unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mipmaps, unsigned int *props, unsigned int *buffersize,unsigned int ForceResizeFactor = 0) {
 
 	ifstream in_(filename, ios::binary | ios::in);
 
@@ -767,10 +779,7 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mip
 	unsigned char mipmaps_;
 	checkformat(in_, props_);
 
-	if (props_ == 0) {
-		return 0;
-	}
-	else if (props_&CIL_PVR) {
+	if (props_&CIL_PVR) {
 		unsigned char * buffer = load_pvr(in_, x_, y_, mipmaps_, props_, buffer_size_);
 		*props = props_;
 		*x = x_;
@@ -799,6 +808,44 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mip
 		in_.close();
 		return buffer;
 	}
+#if CIL_CALL_STB
+	else if(props_==CIL_FORWARD_TO_STB){
+		props_ = CIL_LOADED_WITH_STB;
+		in_.close();
+		int channels;
+		unsigned char * buffer = stbi_load(filename, x, y, &channels, 0);
+		props_ |= (channels == 3) ? CIL_RGB : CIL_RGBA;
+		*mipmaps = 1;
+		*buffersize = (*x)*(*y) * channels;
+#if FORCE_LOW_RES_TEXTURES
+		if (buffer) {
+
+			int nx = *x / FORCED_FACTOR;
+			int ny = *y / FORCED_FACTOR;
+
+			unsigned char* resizedBuf = (unsigned char*)STBI_MALLOC(nx*ny * 4 + 1);
+
+			resizedBuf[nx*ny * 4] = '\0';
+
+			int result = stbir_resize_uint8(buffer, *x, *y, 0, resizedBuf, nx, ny, 0, 4);
+
+			stbi_image_free(buffer);
+
+			*buffersize = nx*ny * 4;
+			buffer = resizedBuf;
+			*x = nx;
+			*y = ny;
+			channels = 4;
+	}
+#endif
+		return buffer;
+	}
+#else
+	else if (props_ == CIL_NOT_SUPPORTED_FILE) {
+		in_.close();
+		return 0;
+	}
+#endif
 
 	return 0;
 }

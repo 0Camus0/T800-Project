@@ -13,6 +13,7 @@
 #ifndef T800_BASEDRIVER_H
 #define T800_BASEDRIVER_H
 
+#include <utils/cil.h>
 #include <Config.h>
 #include <string>
 #include <vector>
@@ -61,6 +62,7 @@ public:
 	unsigned int	size;
 	unsigned int	props;
 	unsigned int	params;
+	unsigned int	cil_props;
 	unsigned short	x, y;
 	unsigned int	id;
 	unsigned char	bounded;

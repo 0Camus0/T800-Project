@@ -10,8 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 #include <video/BaseDriver.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <utils/cil.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -38,35 +37,13 @@ bool		Texture::LoadTexture(const char *fn) {
 		channels = g_chkr.bytes_per_pixel;
 		std::cout << "Texture [" << filepath << "] not found, loading checker" << std::endl;
 	}else{
-		buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
-#if FORCE_LOW_RES_TEXTURES
-		if(buffer){
-
-            int nx = x / FORCED_FACTOR;
-            int ny = y / FORCED_FACTOR;
-
-            unsigned char* resizedBuf = (unsigned char*)STBI_MALLOC(nx*ny*4 + 1);
-
-            resizedBuf[nx*ny*4] = '\0';
-
-            int result = stbir_resize_uint8(buffer,x,y,0,resizedBuf,nx,ny,0,4);
-
-            stbi_image_free(buffer);
-
-            buffer = resizedBuf;
-            x = nx;
-            y = ny;
-            channels = 4;
-        }
-#endif
+		//buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
+		buffer = cil_load((filepath.c_str()), &x, &y, &mipmaps, &cil_props, &size);
 	}
-
-
 
 	if (!buffer)
 		return false;
 
-	size = x*y*channels;
 	bounded = 1;
 	this->x = x;
 	this->y = y;
