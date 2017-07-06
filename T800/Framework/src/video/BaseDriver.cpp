@@ -67,7 +67,7 @@ bool		Texture::LoadTexture(const char *fn) {
 
 	LoadAPITexture(buffer);
 	if(found){
-		stbi_image_free(buffer);
+		cil_free_buffer(buffer);
 	}
 
 	return true;

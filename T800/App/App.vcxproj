@@ -93,6 +93,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Framework;$(SolutionDir)Framework\include;$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\glew-2.0.0\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

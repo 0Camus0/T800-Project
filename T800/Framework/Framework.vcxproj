@@ -62,6 +62,7 @@
     <ClCompile Include="src\scene\GLQuad.cpp" />
     <ClCompile Include="src\scene\SceneProp.cpp" />
     <ClCompile Include="src\scene\Triangle.cpp" />
+    <ClCompile Include="src\utils\cil.cpp" />
     <ClCompile Include="src\utils\InputManager.cpp" />
     <ClCompile Include="src\utils\Timer.cpp" />
     <ClCompile Include="src\utils\Utils.cpp" />

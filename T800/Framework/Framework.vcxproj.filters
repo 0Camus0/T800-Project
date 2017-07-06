@@ -217,5 +217,8 @@
     <ClCompile Include="src\scene\D3DXQuad.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\cil.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
