@@ -38,6 +38,7 @@ bool		Texture::LoadTexture(const char *fn) {
 		std::cout << "Texture [" << filepath << "] not found, loading checker" << std::endl;
 	}else{
 		//buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
+		cil_props = 0;
 		buffer = cil_load((filepath.c_str()), &x, &y, &mipmaps, &cil_props, &size);
 	}
 
@@ -47,7 +48,6 @@ bool		Texture::LoadTexture(const char *fn) {
 	bounded = 1;
 	this->x = x;
 	this->y = y;
-	mipmaps = 1;
 	this->params = params;
 
 	switch (channels) {

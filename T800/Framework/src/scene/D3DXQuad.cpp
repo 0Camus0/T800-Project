@@ -102,6 +102,8 @@ void D3DXQuad::Create() {
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.MinLOD = 0;
 	sdesc.MaxLOD = 0;
+	sdesc.MipLODBias = 0.0f;
+	sdesc.MaxAnisotropy = 16;
 	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
 
 	XMatIdentity(transform);
@@ -163,6 +165,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		d3dxTextures[i] = dynamic_cast<D3DXTexture*>(Textures[i]);
 	}
 
+	d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
+
 	if (sig&Signature::DEFERRED_PASS) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
@@ -170,6 +174,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(6, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_1_TEX) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

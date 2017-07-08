@@ -20,7 +20,7 @@ struct VS_OUTPUT{
     float4 hposition : SV_POSITION;
     float2 texture0  : TEXCOORD;
 	float4 Pos		 : TEXCOORD1;
-	float4 PosCorner : TEXCOORD2;
+	float4 PosCorner : VPOS;
 };
 
 VS_OUTPUT VS( VS_INPUT input ){

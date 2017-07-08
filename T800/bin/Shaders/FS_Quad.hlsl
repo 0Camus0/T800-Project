@@ -28,12 +28,17 @@ Texture2D tex2 : register(t2);
 Texture2D tex3 : register(t3);
 Texture2D tex4 : register(t4);
 Texture2D tex5 : register(t5);
+TextureCube texEnv : register(t6);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float4 Final = float4(0.0,0.0,0.0,1.0);
 	float4 color  =  tex0.Sample( SS, input.texture0);
 	float4 matId  =	tex3.Sample( SS, input.texture0);
 	 
 	if(matId.r == 1.0 && matId.g == 0.0){
+		float depth = tex4.Sample( SS, input.texture0 );
+		float4 position = CameraPosition + input.PosCorner*depth;
+		float3  EyeDir   = normalize(CameraPosition-position).xyz;
+		float3 RefCol = texEnv.Sample( SS, EyeDir ).rgb;
 		Final = color;
 	}else{
 		float Rad = 15.0;
@@ -58,6 +63,9 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		
 		
 		float3  EyeDir   = normalize(CameraPosition-position).xyz;
+		float3 ReflectedVec = reflect(-EyeDir,normal.xyz);
+		
+		float3 RefCol = texEnv.Sample( SS, ReflectedVec ).rgb;
 		
 		int NumLights = (int)CameraInfo.w;
 			for(int i=0;i<NumLights;i++){
@@ -102,8 +110,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			}
 		if(matId.b == 0.0){
 			float  FresnelAtt	= dot(normal.xyz,EyeDir);
-			float  FresnelIntensity = 1.0f;
-			float4 FresnelCol = float4(ReflectCol.xyz,1.0);
+			float  FresnelIntensity = 2.0f;
+			float4 FresnelCol = float4(RefCol.zyx,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
 			FresnelAtt 		= 1.0 - FresnelAtt;
@@ -113,9 +121,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt;
 		
 			Final += Fresnel;
+		
 		}
 		
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
+		
 	}
 
 	return Final;

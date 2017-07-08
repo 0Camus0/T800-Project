@@ -27,6 +27,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 void D3DXMesh::Create(char *filename) {
 
+
 	std::string fname = std::string(filename);
 	if (xFile.LoadXFile(fname)) {
 		cout << " Load " << endl;

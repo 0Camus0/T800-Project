@@ -30,6 +30,7 @@ public:
 		for(int i=0;i<8;i++){
 			Textures[i]=0;
 		}
+		EnvMap = 0;
 	}
 	virtual ~PrimitiveBase(){}
 	virtual void Create() = 0;
@@ -43,9 +44,14 @@ public:
 		Textures[index] = tex;
 	}
 
+	void SetEnvironmentMap(Texture* tex) {
+		EnvMap = tex;
+	}
+
 	void SetSceneProps(SceneProps *p) { pScProp = p; }
 	SceneProps				*pScProp;
 	Texture*				 Textures[8];
+	Texture*			     EnvMap;
 	unsigned int gSig;
 };
 

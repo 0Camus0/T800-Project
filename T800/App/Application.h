@@ -79,6 +79,8 @@ public:
 	int				DepthPass;
 	int				ShadowAccumPass;
 
+	int				EnvMapTexIndex;
+
 	enum {
 		NORMAL_CAM1 = 0,
 		LIGHT_CAM1,

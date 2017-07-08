@@ -41,7 +41,12 @@ public:
 		XVECTOR3  LightCameraInfo;
 	};
 
-	D3DXQuad() {}
+	D3DXQuad() {
+		for (int i = 0; i < 8; i++) {
+			d3dxTextures[i] = 0;
+		}
+		d3dxEnvMap = 0;
+	}
 	void Create();
 	void Create(char *) {}
 	void Transform(float *t);
@@ -63,6 +68,7 @@ public:
 	
 
 	D3DXTexture*	d3dxTextures[8];
+	D3DXTexture*	d3dxEnvMap;
 
 };
 
