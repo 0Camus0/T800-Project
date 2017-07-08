@@ -47,7 +47,7 @@ void	D3DXTexture::SetTextureParams(){
 	sdesc.BorderColor[2] = 0.0f;
 	sdesc.BorderColor[3] = 0.0f;
 	sdesc.MinLOD = 0.0f;
-	sdesc.MaxLOD = 3.402823466e+38F;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxAnisotropy = 16;
 

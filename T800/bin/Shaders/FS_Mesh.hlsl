@@ -61,6 +61,8 @@ Texture2D TextureGloss : register(t2);
 Texture2D TextureNormal : register(t3);
 #endif
 
+TextureCube texEnv : register(t4);
+
 SamplerState SS;
 
 struct VS_OUTPUT{
@@ -95,7 +97,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 
 struct FS_OUT{
 	float4 color0 : SV_TARGET0;
-	float4 color1 : SV_TARGET1;
+	float2 color1 : SV_TARGET1;
 	float4 color2 : SV_TARGET2;
 	float4 color3 : SV_TARGET3;
 	float  depth  : SV_Depth;
@@ -124,10 +126,14 @@ FS_OUT FS( VS_OUTPUT input )   {
 		float3 binormal	 = normalize(input.hbinormal).xyz;
 		float3x3	TBN  =  float3x3(tangent,binormal,normal.xyz);
 		normal.xyz		 = mul(normalTex,TBN);
-		normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
-	#else
-		normal.xyz =  normal.xyz*0.5 + 0.5;
+		normal.xyz		 = normalize(normal.xyz);
 	#endif
+	
+	float2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
+    N = N*0.5+0.5;
+	
+	//normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
+	//normal			 = normalize(normal);
 	
 	#ifdef SPECULAR_MAP
 		specular.rgb = TextureSpecular.Sample( SS, input.texture0 ).rgb;	
@@ -137,12 +143,14 @@ FS_OUT FS( VS_OUTPUT input )   {
 		shinness = TextureGloss.Sample( SS, input.texture0 ).r + shinness;
 	#endif
 	
+	float3  EyeDir   = normalize(CameraPosition-input.WorldPos).xyz;
+	
 	FS_OUT fout;
 	fout.color0.rgb = color.rgb;
 	fout.color0.a 	= specIntesivity;
 	
-	fout.color1.rgb = normal.rgb;
-	fout.color1.a 	= shinness;
+	fout.color1.rg = N;
+	//fout.color1.a 	= shinness;
 	
 	fout.color2.rgb = specular.rgb;
 	fout.color2.a 	= shinness;

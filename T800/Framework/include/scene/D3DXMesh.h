@@ -34,7 +34,10 @@ using namespace xF;
 
 class D3DXMesh : public PrimitiveBase {
 public:
-	D3DXMesh()  {}
+	D3DXMesh()  {
+		d3dxEnvMap = 0;
+		EnvMap = 0;
+	}
 
 	struct CBuffer {
 		XMATRIX44 WVP;
@@ -93,6 +96,8 @@ public:
 
 	void GatherInfo();
 	int  LoadTex(std::string p, xF::xMaterial *mat,D3DXTexture** tex);
+	
+	D3DXTexture*	d3dxEnvMap;
 
 	XMATRIX44	transform;
 	XDataBase	xFile;

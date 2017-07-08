@@ -380,6 +380,11 @@ void D3DXMesh::Draw(float *t, float *vp) {
 					D3D11DeviceContext->PSSetShaderResources(3, 1, sub_info->NormalTex->pSRVTex.GetAddressOf());
 				}
 
+				if(EnvMap){
+					d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
+					D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
+				}
+
 				D3D11DeviceContext->PSSetSamplers(0, 1, sub_info->DiffuseTex->pSampler.GetAddressOf());
 
 				D3D11DeviceContext->IASetIndexBuffer(sub_info->IB.Get(), DXGI_FORMAT_R16_UINT, 0);

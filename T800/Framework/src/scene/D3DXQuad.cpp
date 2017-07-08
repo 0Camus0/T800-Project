@@ -101,7 +101,7 @@ void D3DXQuad::Create() {
 	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.MinLOD = 0;
-	sdesc.MaxLOD = 0;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxAnisotropy = 16;
 	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
