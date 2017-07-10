@@ -97,13 +97,13 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	srvDesc.Format = desc.Format;
 	if (cil_props & CIL_CUBE_MAP) {
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.Texture2D.MipLevels = -1;
 		srvDesc.TextureCube.MipLevels = -1;
 	}
 	else {
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = -1;
 	}
-
 
 	D3D11Device->CreateShaderResourceView(Tex.Get(), &srvDesc, pSRVTex.GetAddressOf());
 
