@@ -77,53 +77,60 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	desc.SampleDesc.Count = 1;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;	
 	
+	desc.MiscFlags = 0;
 	if (cil_props & CIL_CUBE_MAP) {
-		desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-		desc.MipLevels = 1;
-	}else {
-		desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;		
+	}
+	desc.MipLevels = 0;
+	desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+	HRESULT hr;
+	hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
+
+	if (hr != S_OK) {
+		this->id = -1;
+		return;
 	}
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = desc.Format;
+	if (cil_props & CIL_CUBE_MAP) {
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.Texture2D.MipLevels = -1;
+		srvDesc.TextureCube.MipLevels = -1;
+	}
+	else {
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = -1;
+	}
+
+
+	D3D11Device->CreateShaderResourceView(Tex.Get(), &srvDesc, pSRVTex.GetAddressOf());
+
 	D3D11_SUBRESOURCE_DATA initData[6];
+	int bufferSize = this->size/6;
 	if (cil_props & CIL_CUBE_MAP) {
 		unsigned char *pHead = buffer;
 		for (int i = 0; i < 6; i++) {
 			initData[i].pSysMem = pHead;
 			initData[i].SysMemPitch = sizeof(unsigned char) * this->x * 4;
-			pHead += int(this->x*this->y*4);
+			pHead += bufferSize;
 		}
-	}
-	else {
+	}else {
 		initData[0].pSysMem = buffer;
 		initData[0].SysMemPitch = sizeof(unsigned char) * this->x * 4;
 	}
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = desc.Format;
-	if (cil_props & CIL_CUBE_MAP)
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	else
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = -1;
-
-	HRESULT hr;
-	
 	if (cil_props & CIL_CUBE_MAP) {
-		hr = D3D11Device->CreateTexture2D(&desc, &initData[0], Tex.GetAddressOf());
+		for (int i = 0; i < 6; i++) {
+			D3D11DeviceContext->UpdateSubresource(Tex.Get(), i, 0, initData[i].pSysMem, initData[i].SysMemPitch, 0);
+		}
 	}else {
-		hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
-	}
-
-	if(hr != S_OK){
-		this->id = -1;
-		return;
-	}
-
-	D3D11Device->CreateShaderResourceView(Tex.Get(), &srvDesc, pSRVTex.GetAddressOf());
-	if (!(cil_props & CIL_CUBE_MAP)) {
 		D3D11DeviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData[0].SysMemPitch, 0);
-		D3D11DeviceContext->GenerateMips(pSRVTex.Get());
 	}
+
+
+	D3D11DeviceContext->GenerateMips(pSRVTex.Get());
 
 	SetTextureParams();
 	static int texid = 0;

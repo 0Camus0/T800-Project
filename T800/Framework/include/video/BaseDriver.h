@@ -63,10 +63,10 @@ public:
 	unsigned int	props;
 	unsigned int	params;
 	unsigned int	cil_props;
-	unsigned short	x, y;
+	unsigned int	x, y;
 	unsigned int	id;
-	unsigned char	bounded;
-	unsigned char	mipmaps;
+	unsigned int	bounded;
+	unsigned int	mipmaps;
 };
 
 struct BaseRT {

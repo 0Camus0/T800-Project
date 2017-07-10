@@ -218,7 +218,7 @@
       <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\cil.cpp">
-      <Filter>Source Files\scene</Filter>
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

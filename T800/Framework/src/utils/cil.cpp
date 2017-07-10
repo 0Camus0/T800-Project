@@ -177,7 +177,7 @@ void pvr_set_channel_type(uint32_t& c_type, unsigned int &prop) {
 	}
 }
 
-unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
 	pvr_v3_header header;
 	in_.seekg(0);
 	in_.read((char*)&header, sizeof(pvr_v3_header));
@@ -347,7 +347,7 @@ void ktx_set_pix_format(unsigned int &format, unsigned int &prop) {
 	}
 }
 
-unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
 	ktx_header	header;
 	in_.seekg(0);
 	in_.read((char*)&header, sizeof(ktx_header));
@@ -448,7 +448,7 @@ void dds_set_pix_format(unsigned int &format, unsigned int &bppinfo, unsigned in
 	}
 }
 
-unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
 	char ddstr[4];
 	DDS_HEADER header;
 	in_.seekg(0, std::ios::end);
@@ -516,7 +516,7 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		for (int i = 0; i < numFaces; i++) {
 			widthBlocks = x;
 			heightBlocks = y;
-			for (int j = 0; j < mipmaps; j++) {
+			for (unsigned int j = 0; j < mipmaps; j++) {
 				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
 				current_size = max(current_size, blockSize);
 				finalSize += current_size;
@@ -531,7 +531,7 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		for (int i = 0; i < numFaces; i++) {
 			widthBlocks = x;
 			heightBlocks = y;
-			for (int j = 0; j < mipmaps; j++) {
+			for (unsigned int j = 0; j < mipmaps; j++) {
 				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
 				finalSize += current_size;
 				widthBlocks >>= 1;
@@ -570,7 +570,7 @@ void cil_free_buffer(unsigned char *pbuff, unsigned int prop) {
 	}
 }
 
-unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor) {
+unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned int *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor) {
 
 	ifstream in_(filename, ios::binary | ios::in);
 
@@ -583,7 +583,7 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned char *mip
 	int x_ = 0, y_ = 0;
 	unsigned int props_ = 0;
 	unsigned int buffer_size_ = 0;
-	unsigned char mipmaps_;
+	unsigned int mipmaps_;
 	checkformat(in_, props_);
 
 	if (props_&CIL_PVR) {

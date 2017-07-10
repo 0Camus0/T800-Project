@@ -131,7 +131,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			//Final.xyz = RefCol.zyx;
 		
 		}
-		//Final.xyz = RefCol.xyz;
+		Final.xyz = RefCol.xyz;
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		
 	}
