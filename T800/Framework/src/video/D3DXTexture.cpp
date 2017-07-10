@@ -74,6 +74,7 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	else
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
+	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.SampleDesc.Count = 1;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;	
 	
@@ -96,7 +97,6 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	srvDesc.Format = desc.Format;
 	if (cil_props & CIL_CUBE_MAP) {
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-		srvDesc.Texture2D.MipLevels = -1;
 		srvDesc.TextureCube.MipLevels = -1;
 	}
 	else {
@@ -120,16 +120,17 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 		initData[0].pSysMem = buffer;
 		initData[0].SysMemPitch = sizeof(unsigned char) * this->x * 4;
 	}
-
+	D3D11_TEXTURE2D_DESC pDesc;
+	Tex->GetDesc(&pDesc);
+	int MipMapCount = pDesc.MipLevels;
 	if (cil_props & CIL_CUBE_MAP) {
 		for (int i = 0; i < 6; i++) {
-			D3D11DeviceContext->UpdateSubresource(Tex.Get(), i, 0, initData[i].pSysMem, initData[i].SysMemPitch, 0);
+				D3D11DeviceContext->UpdateSubresource(Tex.Get(), D3D11CalcSubresource(0, i, MipMapCount), 0, initData[i].pSysMem, initData[i].SysMemPitch, 0);
 		}
 	}else {
 		D3D11DeviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData[0].SysMemPitch, 0);
 	}
-
-
+		
 	D3D11DeviceContext->GenerateMips(pSRVTex.Get());
 
 	SetTextureParams();
