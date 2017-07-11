@@ -63,7 +63,7 @@ bool D3DXRT::LoadAPIRT() {
 		desc.Height = h;
 		desc.ArraySize = 1;
 		if(i==1){
-			desc.Format = DXGI_FORMAT_R16G16_UNORM;
+			desc.Format = cfmt;
 		}else{
 			desc.Format = cfmt;
 		}
@@ -96,7 +96,7 @@ bool D3DXRT::LoadAPIRT() {
 		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 		//shaderResourceViewDesc.Format = cfmt;
 		if (i == 1) {
-			shaderResourceViewDesc.Format = DXGI_FORMAT_R16G16_UNORM;
+			shaderResourceViewDesc.Format = cfmt;
 		}
 		else {
 			shaderResourceViewDesc.Format = cfmt;

@@ -33,10 +33,16 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float4 Final = float4(0.0,0.0,0.0,1.0);
 	float4 color  =  tex0.Sample( SS, input.texture0);
 	float4 matId  =	tex3.Sample( SS, input.texture0);
+	float depth = tex4.Sample( SS, input.texture0 ).r;
+	
+	#ifdef NON_LINEAR_DEPTH
+		float4 position = mul(WVPInverse,float4( input.PosCorner.xy ,depth,1.0));
+		position.xyz /= position.w;
+	#else		
+		float4 position = CameraPosition + input.PosCorner*depth;
+	#endif
 	 
 	if(matId.r == 1.0 && matId.g == 0.0){
-		float depth = tex4.Sample( SS, input.texture0 );
-		float4 position = CameraPosition + input.PosCorner*depth;
 		float3  EyeDir   = normalize(CameraPosition-position).xyz;
 		float3 RefCol = texEnv.Sample( SS, -EyeDir ).zyx;
 		Final.xyz = RefCol.xyz;
@@ -64,11 +70,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		float4 ReflectCol = tex0.Sample( SS, input.texture0*distor);
 		
 		float4 specularmap = tex2.Sample( SS, input.texture0);
-		
 
-		float depth = tex4.Sample( SS, input.texture0 );
-		float4 position = CameraPosition + input.PosCorner*depth;
-		
 		
 		float3 EyeDir   = normalize(CameraPosition-position).xyz;
 		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));		
@@ -135,7 +137,6 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		
 	}
-
 	return Final;
 
 }
@@ -145,11 +146,22 @@ Texture2D tex1 : register(t1);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float4 Fcolor = float4(1.0,1.0,1.0,1.0);
 	float depth = tex0.Sample( SS, input.texture0 );
-	float4 position = CameraPosition + input.PosCorner*depth;
+	
+	#ifdef NON_LINEAR_DEPTH
+		float4 position = mul(WVPInverse,float4( input.PosCorner.xy ,depth,1.0));
+		position.xyz /= position.w;
+		position.w = 1.0;
+	#else		
+		float4 position = CameraPosition + input.PosCorner*depth;
+	#endif
 	
 	float4 LightPos = mul(WVPLight , position);
+#ifdef NON_LINEAR_DEPTH
+	LightPos.xyz /= LightPos.w;
+#else
 	LightPos.xy /= LightPos.w;
 	LightPos.z /= LightCameraInfo.y;
+#endif
 	float2 SHTC = LightPos.xy*0.5 + 0.5;
 	
 	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){

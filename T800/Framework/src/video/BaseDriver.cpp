@@ -94,6 +94,12 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 
 	std::string Defines = "";
 
+	bool LinearDepth = true;
+
+#if defined(USING_OPENGL_ES20)
+	LinearDepth = true; // Force for ES 2.0
+#endif
+
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 		Defines += "#version 300 es\n\n";
 		Defines += "#define ES_30\n\n";
@@ -129,12 +135,8 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define REFLECT_MAP\n\n";
 	if (sig&Signature::NO_LIGHT_AT_ALL)
 		Defines += "#define NO_LIGHT\n\n";
-	if (sig&Signature::GBUFF_PASS) {
+	if (sig&Signature::GBUFF_PASS) 
 		Defines += "#define G_BUFFER_PASS\n\n";
-#if defined(USING_OPENGL_ES20)
-		Defines += "#define NON_LINEAR_DEPTH\n\n";
-#endif
-	}
 	if (sig&Signature::FSQUAD_1_TEX)
 		Defines += "#define FSQUAD_1_TEX\n\n";
 	if (sig&Signature::FSQUAD_2_TEX)
@@ -143,14 +145,15 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define FSQUAD_3_TEX\n\n";
 	if(sig&Signature::SHADOW_MAP_PASS)
 		Defines += "#define SHADOW_MAP_PASS\n\n";
+	if (!LinearDepth)
+		Defines += "#define NON_LINEAR_DEPTH\n\n";
 	if (sig&Signature::SHADOW_COMP_PASS)
 		Defines += "#define SHADOW_COMP_PASS\n\n";
-	if (sig&Signature::DEFERRED_PASS) {
+	if (sig&Signature::DEFERRED_PASS) 
 		Defines += "#define DEFERRED_PASS\n\n";
-#if defined(USING_OPENGL_ES20)
+	
+	if (!LinearDepth)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
-#endif
-	}
 
 	#ifdef USING_OPENGL
 	Defines += "#define lowp \n\n";
