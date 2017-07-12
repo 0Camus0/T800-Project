@@ -2,10 +2,13 @@ uniform highp mat4 WVP;
 uniform highp mat4 World;
 uniform highp mat4 WorldView;
 uniform highp mat4 WVPInverse;
+uniform highp mat4 WVPLight;
 uniform highp vec4 LightPositions[128];
 uniform highp vec4 LightColors[128];
 uniform highp vec4 CameraPosition;
 uniform highp vec4 CameraInfo;
+uniform highp vec4 LightCameraPosition;
+uniform highp vec4 LightCameraInfo;
 
 #ifdef ES_30
 	in highp vec2 vecUVCoords;
@@ -31,7 +34,7 @@ uniform mediump sampler2D tex5;
 uniform mediump sampler2D tex6;
 uniform mediump sampler2D tex7;
 uniform mediump sampler2D tex8;
-
+uniform mediump samplerCube texEnv;
 void main(){
 	lowp vec2 coords = vecUVCoords;
 	coords.y = 1.0 - coords.y;
@@ -46,8 +49,30 @@ void main(){
 		lowp vec4 matId  =	texture2D(tex3,coords);
 	#endif
 	
+	#ifdef ES_30
+		highp float depth = texture(tex4,coords).r;
+	#else
+		highp float depth = texture2D(tex4,coords).r;
+	#endif
+		
+#ifdef NON_LINEAR_DEPTH
+		highp vec2 vcoord = coords *2.0 - 1.0;
+		highp vec4 position = WVPInverse*vec4(vcoord ,depth,1.0);
+		position.xyz /= position.w;  //textureCube 
+#else	
+		highp vec4 position = CameraPosition + PosCorner*depth;
+#endif
+	
 	if(matId.r == 1.0 && matId.g == 0.0){
-		Final = color;
+		mediump vec3 EyeDir = normalize(CameraPosition-position).xyz;
+		
+		#ifdef ES_30
+			mediump vec3 RefCol = texture( texEnv, -EyeDir ).zyx;
+		#else
+			mediump vec3 RefCol = textureCube( texEnv, -EyeDir ).zyx;
+		#endif
+			
+		Final.xyz = RefCol.xyz;
 	}else{
 		highp float Rad = 15.0;
 		highp float cutoff = 0.8;
@@ -78,25 +103,17 @@ void main(){
 			lowp vec4 specularmap = texture(tex2,coords);
 		#else
 			lowp vec4 specularmap = texture2D(tex2,coords);
-		#endif
+		#endif		
 		
+		mediump vec3  EyeDir   = normalize(CameraPosition-position).xyz;
+		mediump vec3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
+
 		#ifdef ES_30
-			highp float depth = texture(tex4,coords).r;
+			mediump vec3 RefCol = texture( texEnv, ReflectedVec ).zyx;
 		#else
-			highp float depth = texture2D(tex4,coords).r;
-		#endif
-		
-#ifdef NON_LINEAR_DEPTH
-		highp vec2 vcoord = coords *2.0 - 1.0;
-		highp vec4 position = WVPInverse*vec4(vcoord ,depth,1.0);
-		position.xyz /= position.w;
-		position = CameraPosition + position; 
-#else	
-		highp vec4 position = CameraPosition + PosCorner*depth;
-#endif
-		
-		
-		highp vec3  EyeDir   = normalize(CameraPosition-position).xyz;
+			mediump vec3 RefCol = textureCube( texEnv, ReflectedVec ).zyx;
+		#endif		
+
 		
 		highp int NumLights =  int(CameraInfo.w);
 			for(highp int i=0;i<NumLights;i++){
@@ -154,6 +171,12 @@ void main(){
 		
 			Final += Fresnel;
 		}		
+		Final.xyz = RefCol.xyz;		
+		#ifdef ES_30
+			Final.xyz *= texture(tex5,coords).xyz;
+		#else
+			Final.xyz *= texture2D(tex5,coords).xyz;
+		#endif	
 	}
 #ifdef ES_30
 	colorOut = Final;
@@ -161,6 +184,57 @@ void main(){
 	gl_FragColor = Final;
 #endif
 	
+}
+#elif defined(SHADOW_COMP_PASS)
+uniform mediump sampler2D tex0;
+uniform mediump sampler2D tex1;
+void main(){
+	lowp vec4 Fcolor = vec4(1.0,1.0,1.0,1.0);
+	
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	#ifdef ES_30
+		highp float depth = texture(tex0,coords).r;
+	#else
+		highp float depth = texture2D(tex0,coords).r;
+	#endif
+	
+	#ifdef NON_LINEAR_DEPTH
+		highp vec4 position = WVPInverse*vec4( PosCorner.xy ,depth,1.0);
+		position.xyz /= position.w;
+		position.w = 1.0;
+	#else		
+		highp vec4 position = CameraPosition + PosCorner*depth;
+	#endif
+	
+	highp vec4 LightPos = WVPLight*position;
+#ifdef NON_LINEAR_DEPTH
+	LightPos.xyz /= LightPos.w;
+#else
+	LightPos.xy /= LightPos.w;
+	LightPos.z /= LightCameraInfo.y;
+#endif
+	highp vec2 SHTC = LightPos.xy*0.5 + 0.5;
+	
+	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
+		SHTC.y = 1.0 - SHTC.y;
+		
+		#ifdef ES_30
+			highp float depthSM = texture(tex1,SHTC).r;
+		#else
+			highp float depthSM = texture2D(tex1,SHTC).r;
+		#endif
+		
+		highp float depthPos = LightPos.z;
+		depthSM += 0.000005;
+		if( depthPos > depthSM)
+			Fcolor = 0.25*vec4(1.0,1.0,1.0,1.0);	   
+	}else{
+		Fcolor = vec4(1.0,1.0,1.0,1.0);
+	}
+	
+	  return Fcolor;
 }
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;

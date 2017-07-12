@@ -165,7 +165,15 @@ void GLQuad::Draw(float *t, float *vp){
 		glBindTexture(GL_TEXTURE_2D, Textures[2]->id);
 		glUniform1i(s->tex2_loc, 2);
 	}
-	else {
+	else if (sig&Signature::SHADOW_COMP_PASS) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Textures[1]->id);
+		glUniform1i(s->tex1_loc, 1);
+	}else {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);
