@@ -42,8 +42,9 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		float4 position = CameraPosition + input.PosCorner*depth;
 	#endif
 	 
-	if(matId.r == 1.0 && matId.g == 0.0){
-		float3  EyeDir   = normalize(CameraPosition-position).xyz;
+	 float3  EyeDir   = normalize(CameraPosition-position).xyz;
+	 
+	if(matId.r == 1.0 && matId.g == 0.0){		
 		float3 RefCol = texEnv.Sample( SS, -EyeDir ).zyx;
 		Final.xyz = RefCol.xyz;
 	}else{
@@ -53,26 +54,15 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		float4 Specular = float4(1.0,1.0,1.0,1.0);
 		float4 Fresnel	 =  float4(1.0,1.0,1.0,1.0);
 		float2 normalmap = tex1.Sample( SS, input.texture0 ).rg;
-		//float3 normal = normalize(normalmap.xyz*2 - 1);
-		//normal.z = sqrt(1-dot(normal.xy, normal.xy));
-		//normal	= normalize(normal);
-		
+
 		float4 nn = float4(normalmap,0,0)*float4(2,2,0,0) + float4(-1,-1,1,-1);
 		float l = dot(nn.xyz,-nn.xyw);
 		nn.z = l;
 		nn.xy *= sqrt(l);
 		float3 normal = nn.xyz * 2 + float3(0,0,-1);
-			
-		float2 distor = float2(normalmap.xy);	
-		if(matId.b == 1.0){
-			distor = float2(1.0,1.0);
-		}	
-		float4 ReflectCol = tex0.Sample( SS, input.texture0*distor);
-		
+				
 		float4 specularmap = tex2.Sample( SS, input.texture0);
-
 		
-		float3 EyeDir   = normalize(CameraPosition-position).xyz;
 		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));		
 		float3 RefCol = texEnv.Sample( SS, ReflectedVec ).zyx;
 		
@@ -129,11 +119,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			FresnelAtt 		= clamp(FresnelAtt , 0.0 , 1.0 );
 			Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt;
 		
-			Final += Fresnel;
-			//Final.xyz = RefCol.zyx;
-		
+			Final += Fresnel;		
 		}
-		Final.xyz = RefCol.xyz;
 
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		

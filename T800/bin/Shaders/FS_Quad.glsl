@@ -59,10 +59,10 @@ void main(){
 #else	
 		highp vec4 position = CameraPosition + PosCorner*depth;
 #endif
+
+	highp vec3 EyeDir = normalize(CameraPosition-position).xyz;
 	
 	if(matId.r == 1.0 && matId.g == 0.0){
-		mediump vec3 EyeDir = normalize(CameraPosition-position).xyz;
-		
 		#ifdef ES_30
 			mediump vec3 RefCol = texture( texEnv, -EyeDir ).zyx;
 		#else
@@ -81,35 +81,19 @@ void main(){
 		#else
 			highp vec2 normalmap = texture2D(tex1,coords).rg;
 		#endif			
-		//highp vec3 normal = normalize(normalmap.xyz*2 - 1);
-		//normal	= normalize(normal);
 		
 		highp vec4 nn = vec4(normalmap,0,0)*vec4(2,2,0,0) + vec4(-1,-1,1,-1);
 		float l = dot(nn.xyz,-nn.xyw);
 		nn.z = l;
 		nn.xy *= sqrt(l);
-		highp vec3 normal = normalize(nn.xyz * 2 + vec3(0,0,-1));
-
-
-		lowp vec2 distor = vec2(normalmap.xy);	
-		if(matId.b == 1.0){
-			distor = vec2(1.0,1.0);
-		}	
-		lowp vec2 coord2 = vecUVCoords*distor;
-		coord2.y = 1.0 - coord2.y;
-		#ifdef ES_30
-			lowp vec4 ReflectCol = texture(tex0,coord2);
-		#else
-			lowp vec4 ReflectCol = texture2D(tex0,coord2);
-		#endif
-		
+		highp vec3 normal = nn.xyz * 2 + vec3(0,0,-1);
+	
 		#ifdef ES_30
 			lowp vec4 specularmap = texture(tex2,coords);
 		#else
 			lowp vec4 specularmap = texture2D(tex2,coords);
 		#endif		
 		
-		mediump vec3 EyeDir   = normalize(CameraPosition-position).xyz;
 		mediump vec3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
 
 		#ifdef ES_30
@@ -136,7 +120,7 @@ void main(){
 				
 					highp float  specular  = 0.0;
 					highp float specIntesivity = 1.5;
-					highp float shinness = 4.0;	
+					highp float shinness = 1.0;	
 					//shinness = normal.a + shinness;
 					
 					lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
@@ -158,13 +142,13 @@ void main(){
 					attenuation = max(attenuation, 0.0);
 						
 					Final += Lambert*attenuation;
-					Final += Specular*attenuation;
+					//Final += Specular*attenuation;
 				}
 			}
 		if(matId.b == 0.0){
 			highp float  FresnelAtt	= dot(normal.xyz,EyeDir);
-			highp float  FresnelIntensity = 1.0;
-			lowp vec4 FresnelCol = vec4(ReflectCol.xyz,1.0);
+			highp float  FresnelIntensity = 6.0;
+			lowp vec4 FresnelCol = vec4(RefCol.xyz,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
 			FresnelAtt 		= 1.0 - FresnelAtt;
@@ -175,8 +159,6 @@ void main(){
 		
 			Final += Fresnel;
 		}		
-		Final.xyz = RefCol.xyz;
-
 
 		#ifdef ES_30
 			Final.xyz *= texture(tex5,coords).xyz;
