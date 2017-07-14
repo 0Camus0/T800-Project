@@ -77,6 +77,7 @@ public:
 	int			 matWorldUniformLoc;
 	int			 matWorldViewUniformLoc;
 	int			 matWVPInverseUniformLoc;
+	int		     matWVPLightLoc;
 
 	int			 vertexAttribLoc;
 	int			 normalAttribLoc;
@@ -94,6 +95,9 @@ public:
 	int			CameraPos_Loc;
 	int			CameraInfo_Loc;
 
+	int			LightCameraPos_Loc;
+	int			LightCameraInfo_Loc;
+
 	int			Ambient_loc;
 
 	int			DiffuseTex_loc;
@@ -110,6 +114,8 @@ public:
 	int			tex5_loc;
 	int			tex6_loc;
 	int			tex7_loc;
+
+	int			texEnv_loc;
 };
 
 

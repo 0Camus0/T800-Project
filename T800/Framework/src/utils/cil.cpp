@@ -625,6 +625,7 @@ unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned int *mipm
 		props_ |= (channels == 3) ? CIL_RGB : CIL_RGBA;
 		*mipmaps = 1;
 		*buffersize = (*x)*(*y) * channels;
+		*props = props_;
 #if FORCE_LOW_RES_TEXTURES
 		if (buffer) {
 

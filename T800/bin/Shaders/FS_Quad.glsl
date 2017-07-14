@@ -31,9 +31,6 @@ uniform mediump sampler2D tex2;
 uniform mediump sampler2D tex3;
 uniform mediump sampler2D tex4;
 uniform mediump sampler2D tex5;
-uniform mediump sampler2D tex6;
-uniform mediump sampler2D tex7;
-uniform mediump sampler2D tex8;
 uniform mediump samplerCube texEnv;
 void main(){
 	lowp vec2 coords = vecUVCoords;
@@ -58,7 +55,7 @@ void main(){
 #ifdef NON_LINEAR_DEPTH
 		highp vec2 vcoord = coords *2.0 - 1.0;
 		highp vec4 position = WVPInverse*vec4(vcoord ,depth,1.0);
-		position.xyz /= position.w;  //textureCube 
+		position.xyz /= position.w;  
 #else	
 		highp vec4 position = CameraPosition + PosCorner*depth;
 #endif
@@ -80,12 +77,19 @@ void main(){
 		lowp vec4 Specular = vec4(1.0,1.0,1.0,1.0);
 		lowp vec4 Fresnel	 =  vec4(1.0,1.0,1.0,1.0);
 		#ifdef ES_30
-			lowp vec4 normalmap = texture(tex1,coords);
+			highp vec2 normalmap = texture(tex1,coords).rg;
 		#else
-			lowp vec4 normalmap = texture2D(tex1,coords);
+			highp vec2 normalmap = texture2D(tex1,coords).rg;
 		#endif			
-		lowp vec4 normal = normalmap*2.0 - 1.0;
-		normal	= normalize(normal);
+		//highp vec3 normal = normalize(normalmap.xyz*2 - 1);
+		//normal	= normalize(normal);
+		
+		highp vec4 nn = vec4(normalmap,0,0)*vec4(2,2,0,0) + vec4(-1,-1,1,-1);
+		float l = dot(nn.xyz,-nn.xyw);
+		nn.z = l;
+		nn.xy *= sqrt(l);
+		highp vec3 normal = normalize(nn.xyz * 2 + vec3(0,0,-1));
+
 
 		lowp vec2 distor = vec2(normalmap.xy);	
 		if(matId.b == 1.0){
@@ -105,7 +109,7 @@ void main(){
 			lowp vec4 specularmap = texture2D(tex2,coords);
 		#endif		
 		
-		mediump vec3  EyeDir   = normalize(CameraPosition-position).xyz;
+		mediump vec3 EyeDir   = normalize(CameraPosition-position).xyz;
 		mediump vec3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
 
 		#ifdef ES_30
@@ -133,7 +137,7 @@ void main(){
 					highp float  specular  = 0.0;
 					highp float specIntesivity = 1.5;
 					highp float shinness = 4.0;	
-					shinness = normal.a + shinness;
+					//shinness = normal.a + shinness;
 					
 					lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
 					specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
@@ -171,13 +175,16 @@ void main(){
 		
 			Final += Fresnel;
 		}		
-		Final.xyz = RefCol.xyz;		
+		Final.xyz = RefCol.xyz;
+
+
 		#ifdef ES_30
 			Final.xyz *= texture(tex5,coords).xyz;
 		#else
 			Final.xyz *= texture2D(tex5,coords).xyz;
 		#endif	
 	}
+	
 #ifdef ES_30
 	colorOut = Final;
 #else
@@ -216,6 +223,7 @@ void main(){
 	LightPos.z /= LightCameraInfo.y;
 #endif
 	highp vec2 SHTC = LightPos.xy*0.5 + 0.5;
+	SHTC.y = 1.0 - SHTC.y;
 	
 	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
 		SHTC.y = 1.0 - SHTC.y;
@@ -233,8 +241,13 @@ void main(){
 	}else{
 		Fcolor = vec4(1.0,1.0,1.0,1.0);
 	}
-	
-	  return Fcolor;
+		 
+	#ifdef ES_30
+		colorOut = Fcolor;
+	#else
+		gl_FragColor = Fcolor;
+	#endif
+
 }
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;

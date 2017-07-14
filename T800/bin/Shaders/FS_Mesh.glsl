@@ -111,13 +111,13 @@ void main(){
 #elif defined(G_BUFFER_PASS)
 #ifdef ES_30
 	layout(location = 0) out highp vec4 colorOut_0;
-	layout(location = 1) out highp vec4 colorOut_1;
+	layout(location = 1) out highp vec2 colorOut_1;
 	layout(location = 2) out highp vec4 colorOut_2;
 	layout(location = 3) out highp vec4 colorOut_3;
 #endif
 void main(){
 	lowp vec4 color    = vec4(0.5,0.5,0.5,1.0);
-	lowp vec4 normal   = vec4(0.5,0.5,0.5,1.0);
+	highp vec4 normal   = vec4(0.5,0.5,0.5,1.0);
 	lowp vec4 specular = vec4(0.5,0.5,0.5,1.0);
 	lowp vec4 reflect  = vec4(0.5,0.5,0.5,1.0);
 
@@ -135,9 +135,9 @@ void main(){
 	normal.xyz   = normalize(hnormal).xyz;  
 	#ifdef NORMAL_MAP	
 		#ifdef ES_30
-			lowp vec3 normalTex  = texture(NormalTex,vecUVCoords).xyz;
+			highp vec3 normalTex  = texture(NormalTex,vecUVCoords).xyz;
 		#else
-			lowp vec3 normalTex  = texture2D(NormalTex,vecUVCoords).xyz;
+			highp vec3 normalTex  = texture2D(NormalTex,vecUVCoords).xyz;
 		#endif
 		normalTex 		 	 = normalTex*vec3(2.0,2.0,2.0) - vec3(1.0,1.0,1.0);
 		normalTex		 	 = normalize(normalTex);
@@ -146,10 +146,14 @@ void main(){
 		lowp vec3 binormal	 = normalize(hbinormal).xyz;
 		lowp mat3	TBN 	 = mat3(tangent,binormal,normal);
 		normal.xyz		 	 = TBN*normalTex;
-		normal.xyz		 	 = normalize(normal.xyz)*0.5 + 0.5;
-	#else
-		normal.xyz 			 = normal.xyz*0.5 + 0.5;
+		normal.xyz		 	 = normalize(normal.xyz);
 	#endif
+	
+	highp vec2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
+    N = N*0.5+0.5;
+	
+	//normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
+	//normal			 = normalize(normal);
 	
 	#ifdef SPECULAR_MAP
 		#ifdef ES_30
@@ -171,8 +175,8 @@ void main(){
 		colorOut_0.rgb  = color.rgb;
 		colorOut_0.a 	= specIntesivity;
 
-		colorOut_1.rgb  = normal.rgb;
-		colorOut_1.a 	= shinness;
+		colorOut_1.rg  = N;
+	//	colorOut_1.a 	= shinness;
 
 		colorOut_2.rgb  = specular.rgb;
 		colorOut_2.a 	= shinness;
@@ -196,8 +200,8 @@ void main(){
 		gl_FragData[0].rgb  = color.rgb;
 		gl_FragData[0].a 	= specIntesivity;
 
-		gl_FragData[1].rgb  = normal.rgb;
-		gl_FragData[1].a 	= shinness;
+		gl_FragData[1].rg  = N;
+	//	gl_FragData[1].a 	= shinness;
 
 		gl_FragData[2].rgb  = specular.rgb;
 		gl_FragData[2].a 	= shinness;

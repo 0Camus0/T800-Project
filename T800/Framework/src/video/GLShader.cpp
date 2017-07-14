@@ -24,8 +24,10 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
 
-	matWorldViewUniformLoc = glGetUniformLocation(ShaderProg, "WorldView");;
-	matWVPInverseUniformLoc = glGetUniformLocation(ShaderProg, "WVPInverse");;
+	matWorldViewUniformLoc = glGetUniformLocation(ShaderProg, "WorldView");
+	matWVPInverseUniformLoc = glGetUniformLocation(ShaderProg, "WVPInverse");
+	matWVPLightLoc = glGetUniformLocation(ShaderProg, "WVPLight");
+
 
 	LightPositions_Loc = glGetUniformLocation(ShaderProg, "LightPositions");
 	LightColors_Loc = glGetUniformLocation(ShaderProg, "LightColors");
@@ -33,6 +35,8 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
 	CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
 	CameraInfo_Loc = glGetUniformLocation(ShaderProg, "CameraInfo");
+	LightCameraPos_Loc = glGetUniformLocation(ShaderProg, "LightCameraPosition");
+	LightCameraInfo_Loc = glGetUniformLocation(ShaderProg, "LightCameraInfo");
 	Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
 
 	DiffuseTex_loc = glGetUniformLocation(ShaderProg, "DiffuseTex");
@@ -49,6 +53,8 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	tex5_loc = glGetUniformLocation(ShaderProg, "tex5");
 	tex6_loc = glGetUniformLocation(ShaderProg, "tex6");
 	tex7_loc = glGetUniformLocation(ShaderProg, "tex7");
+
+	texEnv_loc = glGetUniformLocation(ShaderProg, "texEnv");
 
 	return true;
 }

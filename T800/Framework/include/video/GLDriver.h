@@ -73,6 +73,7 @@ public:
 	void	PopRT();
 	void	DestroyRT(int id);
 	void	DestroyRTs();
+	Texture* GetRTTexture(int id, int index);
 
 	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
 	ShaderBase*	GetShaderSig(unsigned int sig);

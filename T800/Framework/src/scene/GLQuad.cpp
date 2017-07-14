@@ -40,6 +40,9 @@ void GLQuad::Create(){
 	Dest = SigBase | Signature::FSQUAD_3_TEX;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::SHADOW_COMP_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -84,6 +87,15 @@ void GLQuad::Draw(float *t, float *vp){
 	XMATRIX44 WVPInverse;
 	VP.Inverse(&WVPInverse);
 	XVECTOR3 CameraPos = pActualCamera->Eye;
+	XMATRIX44 WVPLight;
+	XVECTOR3 LightCameraPos;
+	XVECTOR3 LightCameraInfo;
+
+	if (pScProp->pLightCameras.size() > 0) {
+		WVPLight = pScProp->pLightCameras[0]->VP;
+		LightCameraPos = pScProp->pLightCameras[0]->Eye;
+		LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
+	}
 
 	unsigned int numLights = pScProp->ActiveLights;
 	if (numLights >= pScProp->Lights.size())
@@ -102,9 +114,13 @@ void GLQuad::Draw(float *t, float *vp){
 	glUniformMatrix4fv(s->matWorldViewProjUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(s->matWorldViewUniformLoc, 1, GL_FALSE, &WV.m[0][0]);
 	glUniformMatrix4fv(s->matWVPInverseUniformLoc, 1, GL_FALSE, &WVPInverse.m[0][0]);
+	glUniformMatrix4fv(s->matWVPLightLoc, 1, GL_FALSE, &WVPLight.m[0][0]);
 
 	glUniform4fv(s->CameraPos_Loc, 1, &CameraPos.v[0]);
 	glUniform4fv(s->CameraInfo_Loc, 1, &CameraInfo.v[0]);
+
+	glUniform4fv(s->LightCameraPos_Loc, 1, &LightCameraPos.v[0]);
+	glUniform4fv(s->LightCameraInfo_Loc, 1, &LightCameraInfo.v[0]);
 
 	glUniform4fv(s->LightPositions_Loc, numLights, &LightPositions[0].v[0]);
 	glUniform4fv(s->LightColors_Loc, numLights, &LightColors[0].v[0]);
@@ -137,6 +153,14 @@ void GLQuad::Draw(float *t, float *vp){
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, Textures[4]->id);
 		glUniform1i(s->tex4_loc, 4);
+
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, Textures[5]->id);
+		glUniform1i(s->tex5_loc, 5);
+
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, EnvMap->id);
+		glUniform1i(s->texEnv_loc, 6);
 	}
 	else if (sig&Signature::FSQUAD_1_TEX) {
 		glActiveTexture(GL_TEXTURE0);

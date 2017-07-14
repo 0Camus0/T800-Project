@@ -49,17 +49,15 @@ bool		Texture::LoadTexture(const char *fn) {
 	this->x = x;
 	this->y = y;
 	this->params = params;
+	props = 0;
 
-	switch (channels) {
-	case 1: {
-		props |= TEXT_BASIC_FORMAT::CH_ALPHA;
-	}break;
-	case 3: {
-		props |= TEXT_BASIC_FORMAT::CH_RGB;
-	}break;
-	case 4: {
+	if (cil_props&CIL_RGBA) {
 		props |= TEXT_BASIC_FORMAT::CH_RGBA;
-	}break;
+		channels = 4;
+	}
+	else {
+		props |= TEXT_BASIC_FORMAT::CH_RGB;
+		channels = 3;
 	}
 
 	memcpy(&optname[0], fn, strlen(fn));

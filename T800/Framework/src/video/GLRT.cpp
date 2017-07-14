@@ -44,6 +44,8 @@ bool GLRT::LoadAPIRT(){
 	}*/
 	cfmt = GL_RGB;
 	dfmt = GL_DEPTH_COMPONENT;
+	GLint bysize = GL_UNSIGNED_BYTE;
+		 
 
 	if (color_format == BaseRT::NOTHING)
 		number_RT = 0;
@@ -74,7 +76,15 @@ bool GLRT::LoadAPIRT(){
 		glGenTextures(1, &ctex);
 		glBindTexture(GL_TEXTURE_2D, ctex);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, cfmt, w, h, 0, cfmt, GL_UNSIGNED_BYTE, 0);
+		if (i == 1) {
+			cfmt = GL_RG;/// GL_RG16I;
+			bysize = GL_UNSIGNED_SHORT;
+		}else {
+			cfmt = GL_RGB;
+			bysize = GL_UNSIGNED_BYTE;
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, cfmt, w, h, 0, cfmt, bysize, 0);
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

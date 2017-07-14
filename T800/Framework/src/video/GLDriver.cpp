@@ -301,6 +301,19 @@ void GLDriver::DestroyRTs() {
 	}
 }
 
+Texture* GLDriver::GetRTTexture(int id, int index) {
+	if (id < 0 || id >= (int)RTs.size())
+		exit(666);
+
+	if (index == DEPTH_ATTACHMENT) {
+		return RTs[id]->pDepthTexture;
+	}
+	else {
+		return RTs[id]->vColorTextures[index];
+	}
+
+}
+
 int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
 	for (unsigned int i = 0; i < Shaders.size(); i++) {
 		if (Shaders[i]->Sig == sig) {
