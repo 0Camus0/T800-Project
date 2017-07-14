@@ -129,7 +129,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		
 			Final += Fresnel;		
 		}
-
+		Final.xyz = RefCol.xyz;
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		
 	}
@@ -162,11 +162,38 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	
 	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
 		SHTC.y = 1.0 - SHTC.y;
-		float depthSM = tex1.Sample( SS, SHTC );
+		float depthPos = LightPos.z;
+		
+		float4 Sum = float4(0.0,0.0,0.0,1.0);
+		float2 U =1.0*float2( 1.0/1536.0,1.0/1536.0);
+		float3 Vec[9];
+		Vec[0] = float3( SHTC.x - U.x , SHTC.y - U.y , 0.077847);
+		Vec[1] = float3( SHTC.x  , SHTC.y - U.y , 0.123317);
+		Vec[2] = float3( SHTC.x + U.x , SHTC.y - U.y, 0.077847);
+		Vec[3] = float3( SHTC.x - U.x , SHTC.y,0.123317 );
+		Vec[4] = float3( SHTC.x , SHTC.y,0.195346 );
+		Vec[5] = float3( SHTC.x + U.x , SHTC.y,0.123317  );
+		Vec[6] = float3( SHTC.x - U.x , SHTC.y + U.y,0.077847 );
+		Vec[7] = float3( SHTC.x  , SHTC.y + U.y,0.123317 );
+		Vec[8] = float3( SHTC.x + U.x , SHTC.y + U.y,0.077847 );
+	
+		float Int = 0.0;
+		for(int i=0;i<9;i++){
+			float A = tex1.Sample( SS, Vec[i].xy ).xyz;
+			Int += depthPos > (A-0.0000005) ? 0.25 : 1.0;
+		}
+		Int /= 9.0;
+		
+		Fcolor = Int*float4(1.0,1.0,1.0,1.0);	
+		
+		
+		/*float depthSM = tex1.Sample( SS, SHTC );
 		float depthPos = LightPos.z;
 		depthSM += 0.000005;
 		if( depthPos > depthSM)
-			Fcolor = 0.25*float4(1.0,1.0,1.0,1.0);	   
+			Fcolor = 0.25*float4(1.0,1.0,1.0,1.0);	  
+
+				*/
 	}else{
 		Fcolor = float4(1.0,1.0,1.0,1.0);
 	}
@@ -176,8 +203,29 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 #elif defined(FSQUAD_1_TEX)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	return tex0.Sample( SS, input.texture0);
+/*
+	float4 Sum = float4(0.0,0.0,0.0,1.0);
+	float2 U =1.0*float2( 1.0/1280.0,1.0/720.0);
+	float3 Vec[9];
+	Vec[0] = float3( input.texture0.x - U.x , input.texture0.y - U.y , 0.077847);
+	Vec[1] = float3( input.texture0.x  , input.texture0.y - U.y , 0.123317);
+	Vec[2] = float3( input.texture0.x + U.x , input.texture0.y - U.y, 0.077847);
+	Vec[3] = float3( input.texture0.x - U.x , input.texture0.y,0.123317 );
+	Vec[4] = float3( input.texture0.x , input.texture0.y,0.195346 );
+	Vec[5] = float3( input.texture0.x + U.x , input.texture0.y,0.123317  );
+	Vec[6] = float3( input.texture0.x - U.x , input.texture0.y + U.y,0.077847 );
+	Vec[7] = float3( input.texture0.x  , input.texture0.y + U.y,0.123317 );
+	Vec[8] = float3( input.texture0.x + U.x , input.texture0.y + U.y,0.077847 );
+	
+	for(int i=0;i<9;i++){
+	Sum.xyz += Vec[i].z * tex0.Sample( SS, Vec[i].xy ).xyz;
+	}
+	
+	return Sum;
+	*/
+	return  tex0.Sample( SS, input.texture0.xy );
 }
+
 #elif defined(FSQUAD_2_TEX)
 Texture2D tex0 : register(t0);
 Texture2D tex1 : register(t1);
