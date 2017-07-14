@@ -19,16 +19,11 @@ void	D3DXTexture::SetTextureParams(){
 	D3D11_SAMPLER_DESC sdesc;
 
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	sdesc.MaxAnisotropy = 1;
+	sdesc.MaxAnisotropy = 16;
 
-	if (params & TEXT_BASIC_PARAMS::MIPMAPS) {
-		sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-		sdesc.MaxAnisotropy = 16;
-	}
-
-	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
 	if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE) {
 		sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;

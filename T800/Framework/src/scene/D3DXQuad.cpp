@@ -96,7 +96,7 @@ void D3DXQuad::Create() {
 	}
 
 	D3D11_SAMPLER_DESC sdesc;
-	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
