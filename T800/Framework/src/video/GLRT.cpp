@@ -75,7 +75,7 @@ bool GLRT::LoadAPIRT(){
 		GLuint ctex;
 		glGenTextures(1, &ctex);
 		glBindTexture(GL_TEXTURE_2D, ctex);
-
+#ifdef USING_16BIT_NORMALS
 		if (i == 1) {
 			cfmt = GL_RG;/// GL_RG16I;
 			bysize = GL_UNSIGNED_SHORT;
@@ -83,6 +83,10 @@ bool GLRT::LoadAPIRT(){
 			cfmt = GL_RGB;
 			bysize = GL_UNSIGNED_BYTE;
 		}
+#else
+		cfmt = GL_RGB;
+		bysize = GL_UNSIGNED_BYTE;
+#endif
 
 		glTexImage2D(GL_TEXTURE_2D, 0, cfmt, w, h, 0, cfmt, bysize, 0);
 

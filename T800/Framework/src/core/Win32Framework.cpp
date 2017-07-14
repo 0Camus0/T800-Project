@@ -31,7 +31,11 @@ void Win32Framework::OnCreateApplication(){
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("Video initialization failed: %s\n",SDL_GetError());
 	}
-	SDL_WM_SetCaption("T800 Project", 0);
+#ifdef USING_GL_COMMON
+	SDL_WM_SetCaption("T800 Project GL", 0);
+#else
+	SDL_WM_SetCaption("T800 Project D3D11", 0);
+#endif
 	int flags = SDL_HWSURFACE;
 #if defined(USING_OPENGL)
 	flags = flags|SDL_OPENGL;

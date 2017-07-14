@@ -62,11 +62,15 @@ bool D3DXRT::LoadAPIRT() {
 		desc.Width = w;
 		desc.Height = h;
 		desc.ArraySize = 1;
+#ifdef USING_16BIT_NORMALS		
 		if(i==1){
-			desc.Format = cfmt;
+			desc.Format = DXGI_FORMAT_R16G16_UNORM;;
 		}else{
 			desc.Format = cfmt;
 		}
+#else
+		desc.Format = cfmt;
+#endif
 		desc.SampleDesc.Count = 1;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -94,13 +98,16 @@ bool D3DXRT::LoadAPIRT() {
 		pTextureColor->Tex = Tex;
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		//shaderResourceViewDesc.Format = cfmt;
+#ifdef USING_16BIT_NORMALS
 		if (i == 1) {
-			shaderResourceViewDesc.Format = cfmt;
+			shaderResourceViewDesc.Format = DXGI_FORMAT_R16G16_UNORM;
 		}
 		else {
 			shaderResourceViewDesc.Format = cfmt;
 		}
+#else
+		shaderResourceViewDesc.Format = cfmt;
+#endif
 		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 		shaderResourceViewDesc.Texture2D.MipLevels = 1;

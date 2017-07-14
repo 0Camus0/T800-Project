@@ -111,7 +111,11 @@ void main(){
 #elif defined(G_BUFFER_PASS)
 #ifdef ES_30
 	layout(location = 0) out highp vec4 colorOut_0;
+#ifdef USING_16BIT_NORMALS
 	layout(location = 1) out highp vec2 colorOut_1;
+#else
+	layout(location = 1) out highp vec4 colorOut_1;
+#endif
 	layout(location = 2) out highp vec4 colorOut_2;
 	layout(location = 3) out highp vec4 colorOut_3;
 #endif
@@ -148,13 +152,7 @@ void main(){
 		normal.xyz		 	 = TBN*normalTex;
 		normal.xyz		 	 = normalize(normal.xyz);
 	#endif
-	
-	highp vec2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
-    N = N*0.5+0.5;
-	
-	//normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
-	//normal			 = normalize(normal);
-	
+
 	#ifdef SPECULAR_MAP
 		#ifdef ES_30
 			specular = texture(SpecularTex,vecUVCoords);
@@ -171,13 +169,26 @@ void main(){
 		#endif		
 	#endif
 	
+		
+	#ifdef USING_16BIT_NORMALS
+		highp vec2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
+		N = N*0.5+0.5;
+	#else	
+		normal.xyz		 = normal.xyz*0.5 + 0.5;	
+		normal			 = normal;
+	#endif	
+	
+	
 	#ifdef ES_30
 		colorOut_0.rgb  = color.rgb;
 		colorOut_0.a 	= specIntesivity;
 
-		colorOut_1.rg  = N;
-	//	colorOut_1.a 	= shinness;
-
+	#ifdef USING_16BIT_NORMALS
+		colorOut_1  = vec4(N,0.0,0.0);
+	#else
+		colorOut_1.rgb  = normal.xyz;
+		colorOut_1.a 	= shinness;
+	#endif
 		colorOut_2.rgb  = specular.rgb;
 		colorOut_2.a 	= shinness;
 
@@ -199,10 +210,13 @@ void main(){
 	#else
 		gl_FragData[0].rgb  = color.rgb;
 		gl_FragData[0].a 	= specIntesivity;
-
-		gl_FragData[1].rg  = N;
-	//	gl_FragData[1].a 	= shinness;
-
+		
+#ifdef USING_16BIT_NORMALS
+		gl_FragData[1]  = vec4(N,0.0,0.0);
+#else
+		gl_FragData[1].rgb  = normal.xyz;
+		gl_FragData[1].a 	= shinness;
+#endif	
 		gl_FragData[2].rgb  = specular.rgb;
 		gl_FragData[2].a 	= shinness;
 

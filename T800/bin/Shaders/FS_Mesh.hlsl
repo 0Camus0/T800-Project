@@ -97,7 +97,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 
 struct FS_OUT{
 	float4 color0 : SV_TARGET0;
+#ifdef USING_16BIT_NORMALS	
 	float2 color1 : SV_TARGET1;
+#else
+	float4 color1 : SV_TARGET1;
+#endif	
 	float4 color2 : SV_TARGET2;
 	float4 color3 : SV_TARGET3;
 	float  depth  : SV_Depth;
@@ -128,13 +132,7 @@ FS_OUT FS( VS_OUTPUT input )   {
 		normal.xyz		 = mul(normalTex,TBN);
 		normal.xyz		 = normalize(normal.xyz);
 	#endif
-	
-	float2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
-    N = N*0.5+0.5;
-	
-	//normal.xyz		 = normalize(normal.xyz)*0.5 + 0.5;	
-	//normal			 = normalize(normal);
-	
+
 	#ifdef SPECULAR_MAP
 		specular.rgb = TextureSpecular.Sample( SS, input.texture0 ).rgb;	
 	#endif
@@ -145,12 +143,24 @@ FS_OUT FS( VS_OUTPUT input )   {
 	
 	float3  EyeDir   = normalize(CameraPosition-input.WorldPos).xyz;
 	
+	#ifdef USING_16BIT_NORMALS	
+		float2 N = normalize(normal.xy) * (sqrt(-normal.z*0.5+0.5));
+		N = N*0.5+0.5;
+	#else
+		normal.xyz		 = normal.xyz*0.5 + 0.5;	
+	#endif
+
 	FS_OUT fout;
 	fout.color0.rgb = color.rgb;
 	fout.color0.a 	= specIntesivity;
 	
-	fout.color1.rg = N;
-	//fout.color1.a 	= shinness;
+	#ifdef USING_16BIT_NORMALS
+		fout.color1 = float4(N,0.0,0.0);
+	#else
+		fout.color1.rgb = normal.xyz;
+		fout.color1.a 	= shinness;
+	#endif
+	
 	
 	fout.color2.rgb = specular.rgb;
 	fout.color2.a 	= shinness;

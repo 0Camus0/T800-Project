@@ -76,6 +76,8 @@ void main(){
 		lowp vec4 Lambert = vec4(1.0,1.0,1.0,1.0);
 		lowp vec4 Specular = vec4(1.0,1.0,1.0,1.0);
 		lowp vec4 Fresnel	 =  vec4(1.0,1.0,1.0,1.0);
+
+#ifdef USING_16BIT_NORMALS			
 		#ifdef ES_30
 			highp vec2 normalmap = texture(tex1,coords).rg;
 		#else
@@ -87,6 +89,16 @@ void main(){
 		nn.z = l;
 		nn.xy *= sqrt(l);
 		highp vec3 normal = nn.xyz * 2 + vec3(0,0,-1);
+#else
+		#ifdef ES_30
+			highp vec4 normalmap = texture(tex1,coords);
+		#else
+			highp vec4 normalmap = texture2D(tex1,coords);
+		#endif	
+		
+		highp vec3 normal = normalmap.xyz*2 - 1;
+		normal = normalize(normal);
+#endif
 	
 		#ifdef ES_30
 			lowp vec4 specularmap = texture(tex2,coords);
@@ -121,7 +133,9 @@ void main(){
 					highp float  specular  = 0.0;
 					highp float specIntesivity = 1.5;
 					highp float shinness = 1.0;	
-					//shinness = normal.a + shinness;
+					#ifndef USING_16BIT_NORMALS
+						shinness = normalmap.a + shinness;
+					#endif
 					
 					lowp vec3 ReflectedLight = normalize(EyeDir+LightDir); 
 					specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
@@ -142,7 +156,7 @@ void main(){
 					attenuation = max(attenuation, 0.0);
 						
 					Final += Lambert*attenuation;
-					//Final += Specular*attenuation;
+					Final += Specular*attenuation;
 				}
 			}
 		if(matId.b == 0.0){

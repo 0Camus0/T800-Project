@@ -159,6 +159,10 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 	Defines += "#define highp \n\n";
 	#endif
 
+#ifdef USING_16BIT_NORMALS
+	Defines += "#define USING_16BIT_NORMALS\n\n";
+#endif
+
 	src_vs = Defines + src_vs;
 	src_fs = Defines + src_fs;
 	this->Sig = sig;

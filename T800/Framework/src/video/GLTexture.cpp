@@ -44,7 +44,7 @@ void	GLTexture::SetTextureParams() {
 	glFiltering = GL_LINEAR_MIPMAP_LINEAR;
 	glWrap = GL_CLAMP_TO_EDGE;
 
-	if(params & TEXT_BASIC_PARAMS::MIPMAPS)
+	//if(params & TEXT_BASIC_PARAMS::MIPMAPS)
 		glFiltering = GL_LINEAR_MIPMAP_LINEAR;
 
 	if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE)

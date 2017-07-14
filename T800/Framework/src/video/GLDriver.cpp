@@ -144,6 +144,7 @@ void	GLDriver::InitDriver() {
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_MIPMAP);
 	glCullFace(GL_FRONT);
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);

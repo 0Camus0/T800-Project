@@ -53,14 +53,19 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		float4 Lambert = float4(1.0,1.0,1.0,1.0);
 		float4 Specular = float4(1.0,1.0,1.0,1.0);
 		float4 Fresnel	 =  float4(1.0,1.0,1.0,1.0);
+		
+	#ifdef USING_16BIT_NORMALS		
 		float2 normalmap = tex1.Sample( SS, input.texture0 ).rg;
-
 		float4 nn = float4(normalmap,0,0)*float4(2,2,0,0) + float4(-1,-1,1,-1);
 		float l = dot(nn.xyz,-nn.xyw);
 		nn.z = l;
 		nn.xy *= sqrt(l);
 		float3 normal = nn.xyz * 2 + float3(0,0,-1);
-				
+	#else
+		float4 normalmap = tex1.Sample( SS, input.texture0 );
+		float3 normal = normalmap.xyz*2 - 1;
+		normal = normalize(normal);
+	#endif
 		float4 specularmap = tex2.Sample( SS, input.texture0);
 		
 		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));		
@@ -84,7 +89,10 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 					float  specular  = 0.0;
 					float specIntesivity = 1.5;
 					float shinness = 4.0;	
-				//	shinness = normalmap.a + shinness;
+					
+					#ifndef USING_16BIT_NORMALS
+						shinness = normalmap.a + shinness;
+					#endif
 					
 					float3 ReflectedLight = normalize(EyeDir+LightDir); 
 					specular = max ( dot(ReflectedLight,normal.xyz)*0.5 + 0.5, 0.0);	
@@ -109,8 +117,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			}
 		if(matId.b == 0.0){
 			float  FresnelAtt	= dot(normal.xyz,EyeDir);
-			float  FresnelIntensity = 4.0f;
-			float4 FresnelCol = float4(RefCol.zyx,1.0);
+			float  FresnelIntensity = 6.0f;
+			float4 FresnelCol = float4(RefCol.xyz,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
 			FresnelAtt 		= 1.0 - FresnelAtt;

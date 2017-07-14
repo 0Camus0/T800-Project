@@ -103,7 +103,8 @@ void D3DXQuad::Create() {
 	sdesc.MinLOD = 0;
 	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sdesc.MipLODBias = 0.0f;
-	sdesc.MaxAnisotropy = 16;
+	sdesc.MaxAnisotropy = 1;
+	sdesc.BorderColor[0] = sdesc.BorderColor[1] = sdesc.BorderColor[2] = sdesc.BorderColor[3] = 0;
 	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
 
 	XMatIdentity(transform);
