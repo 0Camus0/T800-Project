@@ -100,7 +100,7 @@ void App::CreateAssets() {
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
-	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 1536, 1536);
+	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 512, 512);
 	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 	PrimitiveMgr.SetVP(&VP);
@@ -143,6 +143,8 @@ void App::CreateAssets() {
 	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+
+	SceneProp.UpdateGaussKernel(4.0f,11);
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 

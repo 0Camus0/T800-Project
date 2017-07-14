@@ -46,6 +46,12 @@ void D3DXQuad::Create() {
 	Dest = SigBase | Signature::SHADOW_COMP_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::VERTICAL_BLUR_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
+	Dest = SigBase | Signature::HORIZONTAL_BLUR_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -140,15 +146,21 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		CnstBuffer.LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
 	}
 
-	unsigned int numLights = pScProp->ActiveLights;
-	if (numLights >= pScProp->Lights.size())
-		numLights = pScProp->Lights.size();
+	if (sig&Signature::DEFERRED_PASS) {
+		unsigned int numLights = pScProp->ActiveLights;
+		if (numLights >= pScProp->Lights.size())
+			numLights = pScProp->Lights.size();
 
-	CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
+		CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
 
-	for(unsigned int i=0;i<numLights;i++){
-		CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
-		CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
+		for (unsigned int i = 0; i < numLights; i++) {
+			CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
+			CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
+		}
+	}else if (sig&Signature::FSQUAD_1_TEX) {
+		for (unsigned int i = 0; i < pScProp->vGaussKernel.size(); i++) {
+			CnstBuffer.LightPositions[i] = pScProp->vGaussKernel[i];
+		}	
 	}
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
@@ -192,6 +204,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	else if (sig&Signature::SHADOW_COMP_PASS) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+	}
+	else if (sig&Signature::VERTICAL_BLUR_PASS) {
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

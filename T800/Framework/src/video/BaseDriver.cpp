@@ -149,7 +149,11 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define SHADOW_COMP_PASS\n\n";
 	if (sig&Signature::DEFERRED_PASS) 
 		Defines += "#define DEFERRED_PASS\n\n";
-	
+	if (sig&Signature::VERTICAL_BLUR_PASS)
+		Defines += "#define VERTICAL_BLUR_PASS\n\n";
+	if (sig&Signature::HORIZONTAL_BLUR_PASS)
+		Defines += "#define HORIZONTAL_BLUR_PASS\n\n";
+
 	if (!LinearDepth)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 

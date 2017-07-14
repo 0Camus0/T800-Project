@@ -8,6 +8,10 @@
 #include <cmath>
 
 #include <string.h>
+#include <math.h>
+#include <iostream>
+#include <vector>
+
 
 #ifndef DOUBLE_FOR_INVERSE
 #define DOUBLE_FOR_INVERSE 1
@@ -123,6 +127,26 @@ float CadenaAnumeroFlotantePersonalizada(char *c);
 #define XVecTransform		XVecTransformRH
 #define XVecTransformNormal	XVecTransformNormalRH
 #endif
+		struct pair_ {
+		public:
+			pair_() : x(0.0f), y(0.0f) {}
+
+			float x, y;
+		};
+
+		struct sample_ {
+		public:
+			sample_() : weight(0.0f) {}
+			sample_(std::vector<pair_> p_, float w) : p(p_), weight(w) {}
+			std::vector<pair_> p;
+			float weight;
+		};
+
+		float distribution(float x, float mu, float sigma);
+		std::vector<pair_> sampleInterval(float minInclusive, float maxInclusive, float sampleCount, float sigma);
+		float integration(std::vector<pair_> samples);
+		float roundTo(float num, float decimals);
+		std::vector<sample_> UpdateKernel(float sigma, float kernelSize, float Samplecount);
 
 		struct XMATRIX44;
 		struct XVECTOR2;

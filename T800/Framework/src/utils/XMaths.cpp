@@ -13,6 +13,81 @@
 
 #include <utils/xMaths.h>
 
+
+float distribution(float x, float mu, float sigma) {
+	float d = x - mu;
+	float n = 1.0f / (sqrtf(2.0f*3.1415926535f)*sigma);
+	return expf(-(d*d) / (2.0f*sigma*sigma))*n;
+}
+
+std::vector<pair_> sampleInterval(float minInclusive, float maxInclusive, float sampleCount, float sigma) {
+	std::vector<pair_> result;
+	float stepSize = (maxInclusive - minInclusive) / (sampleCount - 1.0f);
+	for (int s = 0; s<(int)sampleCount; s++) {
+		pair_ tp;
+		tp.x = minInclusive + (float)s*stepSize;
+		tp.y = distribution(tp.x, 0.0f, sigma);
+		result.push_back(tp);
+	}
+	return result;
+}
+
+float integration(std::vector<pair_> samples) {
+	float result = samples[0].y + samples[samples.size() - 1].y;
+	for (unsigned int s = 1; s<(samples.size() - 1); s++) {
+		float sampleWeight = (s % 2 == 0) ? 2.0f : 4.0f;
+		result += sampleWeight*samples[s].y;
+	}
+	float h = (samples[samples.size() - 1].x - samples[0].x) / (samples.size() - 1);
+	return (result*h) / 3.0f;
+}
+
+float roundTo(float num, float decimals) {
+	float shift = powf(10.0f, decimals);
+	return roundf(num*shift) / shift;
+}
+
+std::vector<sample_> UpdateKernel(float sigma, float kernelSize, float Samplecount) {
+	float samplePerBin = ceilf(Samplecount / kernelSize);
+	if ((int)samplePerBin % 2 == 0)
+		samplePerBin++;
+
+	float weightSum = 0.0f;
+	float kernelLeft = -floorf(kernelSize / 2.0f);
+
+	std::vector<pair_> outsideSamplesLeft = sampleInterval(-5.0f*sigma, kernelLeft - 0.5f, samplePerBin, sigma);
+	std::vector<pair_> outsideSamplesRight = sampleInterval(-kernelLeft + 0.5f, 5.0f*sigma, samplePerBin, sigma);
+
+	std::vector<sample_> allSamples;
+	allSamples.push_back(sample_(outsideSamplesLeft, 0.0f));
+	for (float tap = 0; tap<kernelSize; tap++) {
+		float left = kernelLeft - 0.5f + tap;
+		std::vector<pair_> tapSamples = sampleInterval(left, left + 1.0f, samplePerBin, sigma);
+		float tapWeight = integration(tapSamples);
+
+		allSamples.push_back(sample_(tapSamples, tapWeight));
+		weightSum += tapWeight;
+	}
+	allSamples.push_back(sample_(outsideSamplesRight, 0.0f));
+
+	for (unsigned int i = 0; i<allSamples.size(); i++) {
+		allSamples[i].weight = roundTo(allSamples[i].weight / weightSum, 6.0f);
+	}
+
+	for (unsigned int i = 1; i < allSamples.size() - 1; i++) {
+		std::cout << roundTo(allSamples[i].weight, 6.0f) << " ";
+	}
+	/*
+	for (unsigned int i = 1; i < allSamples.size() - 1; i++) {
+	for (unsigned int j = 1; j < allSamples.size() - 1; j++) {
+	std::cout << roundTo(allSamples[i].weight*allSamples[j].weight, 6.0f) << " ";
+	}
+	std::cout << std::endl;
+	}*/
+	return allSamples;
+}
+
+
  void XMatMultiply(XMATRIX44 &mpout, const XMATRIX44 &mp1, const XMATRIX44 &mp2) {
 
 	float a00 = mp1.m[0][0], a01 = mp1.m[0][1], a02 = mp1.m[0][2], a03 = mp1.m[0][3],

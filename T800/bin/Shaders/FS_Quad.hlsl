@@ -68,8 +68,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	#endif
 		float4 specularmap = tex2.Sample( SS, input.texture0);
 		
-		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));		
-		float3 RefCol = texEnv.Sample( SS, ReflectedVec ).zyx;
+		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
+		float ratio = 1.0/1.52;
+		float3 R = refract(-EyeDir,normal.xyz,ratio);
+		float3 RefleCol = texEnv.Sample( SS, ReflectedVec ).zyx;
+		float3 RefraCol = texEnv.Sample( SS, R ).zyx;
 		
 		int NumLights = (int)CameraInfo.w;
 			for(int i=0;i<NumLights;i++){
@@ -118,7 +121,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		if(matId.b == 0.0){
 			float  FresnelAtt	= dot(normal.xyz,EyeDir);
 			float  FresnelIntensity = 6.0f;
-			float4 FresnelCol = float4(RefCol.xyz,1.0);
+			float4 FresnelCol = float4(RefleCol.xyz,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
 			FresnelAtt 		= 1.0 - FresnelAtt;
@@ -128,8 +131,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt;
 		
 			Final += Fresnel;		
+			Final.xyz += 0.26*RefraCol.xyz;
+		}else{
+			Final.xyz = RefleCol.xyz;
 		}
-		Final.xyz = RefCol.xyz;
+		
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		
 	}
@@ -162,10 +168,10 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	
 	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
 		SHTC.y = 1.0 - SHTC.y;
-		float depthPos = LightPos.z;
-		
+		/*
+		float depthPos = LightPos.z;		
 		float4 Sum = float4(0.0,0.0,0.0,1.0);
-		float2 U =1.0*float2( 1.0/1536.0,1.0/1536.0);
+		float2 U =4.0*float2( 1.0/1536.0,1.0/1536.0);
 		float3 Vec[9];
 		Vec[0] = float3( SHTC.x - U.x , SHTC.y - U.y , 0.077847);
 		Vec[1] = float3( SHTC.x  , SHTC.y - U.y , 0.123317);
@@ -186,26 +192,42 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		
 		Fcolor = Int*float4(1.0,1.0,1.0,1.0);	
 		
-		
-		/*float depthSM = tex1.Sample( SS, SHTC );
+		*/
+		float depthSM = tex1.Sample( SS, SHTC );
 		float depthPos = LightPos.z;
 		depthSM += 0.000005;
 		if( depthPos > depthSM)
 			Fcolor = 0.25*float4(1.0,1.0,1.0,1.0);	  
 
-				*/
+				
 	}else{
 		Fcolor = float4(1.0,1.0,1.0,1.0);
 	}
 	
 	  return Fcolor;
 }
+#elif defined(VERTICAL_BLUR_PASS)
+Texture2D tex0 : register(t0);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	return tex0.Sample( SS, input.texture0);
+}
+#elif defined(HORIZONTAL_BLUR_PASS)
+Texture2D tex0 : register(t0);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	return tex0.Sample( SS, input.texture0);
+}
 #elif defined(FSQUAD_1_TEX)
+
+float roundTo(float num,float decimals){
+	float shift = pow(10.0,decimals);
+	return round(num*shift) / shift;
+}
+
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
 /*
 	float4 Sum = float4(0.0,0.0,0.0,1.0);
-	float2 U =1.0*float2( 1.0/1280.0,1.0/720.0);
+	float2 U = 2.0*float2( 1.0/1280.0,1.0/720.0);
 	float3 Vec[9];
 	Vec[0] = float3( input.texture0.x - U.x , input.texture0.y - U.y , 0.077847);
 	Vec[1] = float3( input.texture0.x  , input.texture0.y - U.y , 0.123317);
@@ -223,7 +245,31 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	
 	return Sum;
 	*/
+	float4 Sum = float4(0.0,0.0,0.0,1.0);
+	float2 U = 2.0*float2( 1.0/1280.0,1.0/720.0);
+	int KernelSize = (int)LightPositions[0].x;
+	//U *= sqrt((KernelSize-2));
+	int Origin = -floor((KernelSize-2)/2);
+	float H = (float)Origin;
+	float V = (float)Origin;
+	float2 Texcoords;	
+	for(int i=1;i<(KernelSize-1);i++){		
+		Texcoords.x = input.texture0.x + H*U.x;
+		V = Origin;
+		for(int j=1;j<(KernelSize-1);j++){
+			Texcoords.y = input.texture0.y + V*U.y;
+			float weight = roundTo(LightPositions[i+1].x*LightPositions[j+1].x,6.0);
+			Sum.xyz += weight * tex0.Sample( SS, Texcoords.xy ).xyz;
+			V++;
+		}
+		H++;
+	}
+	
+	return Sum;
+	
+	/*
 	return  tex0.Sample( SS, input.texture0.xy );
+	*/
 }
 
 #elif defined(FSQUAD_2_TEX)

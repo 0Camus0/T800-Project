@@ -57,3 +57,16 @@ void	SceneProps::RemoveLightCamera(unsigned int index) {
 
 	pLightCameras.erase(pLightCameras.begin() + index);
 }
+
+void SceneProps::UpdateGaussKernel(float sigma, int kernelSize){
+	if( (kernelSize-1) % 2 != 0)
+		return;
+
+	std::vector<sample_> allSamples = UpdateKernel(sigma,(float)kernelSize,1000.0f);
+	XVECTOR3 KernelSize = XVECTOR3((float)allSamples.size(),0.0f,0.0f,0.0f);
+	vGaussKernel.clear();
+	vGaussKernel.push_back(KernelSize);
+	for(unsigned int i=0;i<allSamples.size();i++){
+		vGaussKernel.push_back(XVECTOR3(allSamples[i].weight,0.0f,0.0f,0.0f));
+	}
+}
