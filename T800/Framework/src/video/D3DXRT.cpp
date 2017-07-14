@@ -118,6 +118,8 @@ bool D3DXRT::LoadAPIRT() {
 			std::cout << "Error creating Shader Resource View index" << i << std::endl;
 			exit(444);
 		}
+		pTextureColor->x = w;
+		pTextureColor->y = h;
 		vColorTextures.push_back(pTextureColor);
 	}
 
@@ -161,6 +163,8 @@ bool D3DXRT::LoadAPIRT() {
 		std::cout << "Error creating Shader Resource View Depth " << std::endl;
 		exit(444);
 	}
+	pTextureDepth->x = w;
+	pTextureDepth->y = h;
 	pDepthTexture = pTextureDepth;
 
 

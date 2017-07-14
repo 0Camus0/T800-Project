@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define SEPARATED_BLUR 1
 #define DEGENERATED_FBO_TEST 0
 
 #define NUM_LIGHTS 64
@@ -100,8 +101,9 @@ void App::CreateAssets() {
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
-	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 512, 512);
+	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 2048, 2048);
 	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 	PrimitiveMgr.SetVP(&VP);
 
@@ -144,7 +146,10 @@ void App::CreateAssets() {
 	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 
-	SceneProp.UpdateGaussKernel(4.0f,11);
+//	float sigma = 1.0f;
+//	SceneProp.UpdateGaussKernel(sigma,(int)(sigma*3.0f));
+
+	SceneProp.UpdateGaussKernel(2.0f,2.0f,5);
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
@@ -335,6 +340,19 @@ void App::OnDraw() {
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
 
+#if SEPARATED_BLUR
+	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetSignature(Signature::VERTICAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(ShadowAccumPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetSignature(Signature::HORIZONTAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+#endif
 
 	pFramework->pVideoDriver->PushRT(DeferredPass);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR0_ATTACHMENT), 0);
@@ -348,6 +366,22 @@ void App::OnDraw() {
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
 
+#if SEPARATED_BLUR
+	
+
+	/*
+	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetSignature(Signature::HORIZONTAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(DeferredPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetSignature(Signature::VERTICAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();*/
+#endif
 
 	pFramework->pVideoDriver->Clear();
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT),0);
@@ -374,9 +408,15 @@ void App::OnDraw() {
 	Quads[6].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[6].Draw();
 
+#if	SEPARATED_BLUR
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
 	Quads[7].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[7].Draw();
+#else
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[7].SetSignature(Signature::ONE_PASS_BLUR);
+	Quads[7].Draw();
+#endif
 
 	pFramework->pVideoDriver->SwapBuffers();
 

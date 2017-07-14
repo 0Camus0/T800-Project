@@ -52,6 +52,9 @@ void D3DXQuad::Create() {
 	Dest = SigBase | Signature::HORIZONTAL_BLUR_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::ONE_PASS_BLUR;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+	
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -157,10 +160,22 @@ void D3DXQuad::Draw(float *t, float *vp) {
 			CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
 			CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
 		}
-	}else if (sig&Signature::FSQUAD_1_TEX) {
-		for (unsigned int i = 0; i < pScProp->vGaussKernel.size(); i++) {
+	}else if (sig&Signature::ONE_PASS_BLUR) {
+		CnstBuffer.LightPositions[0].x = pScProp->vGaussKernel[0].x;
+		CnstBuffer.LightPositions[0].y = pScProp->vGaussKernel[0].y;
+		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
+		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
+		for (unsigned int i = 1; i < pScProp->vGaussKernel.size(); i++) {
 			CnstBuffer.LightPositions[i] = pScProp->vGaussKernel[i];
 		}	
+	}else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
+		CnstBuffer.LightPositions[0].x = pScProp->vGaussKernel[0].x;
+		CnstBuffer.LightPositions[0].y = pScProp->vGaussKernel[0].y;
+		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
+		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
+		for (unsigned int i = 1; i < pScProp->vGaussKernel.size(); i++) {
+			CnstBuffer.LightPositions[i].x = roundTo( pScProp->vGaussKernel[i].x , 6.0f);
+		}
 	}
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
@@ -205,7 +220,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
-	else if (sig&Signature::VERTICAL_BLUR_PASS) {
+	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

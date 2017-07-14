@@ -78,6 +78,7 @@ public:
 	int				DeferredPass;
 	int				DepthPass;
 	int				ShadowAccumPass;
+	int				ExtraHelperPass;
 
 	int				EnvMapTexIndex;
 

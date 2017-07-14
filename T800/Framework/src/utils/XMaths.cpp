@@ -73,17 +73,19 @@ std::vector<sample_> UpdateKernel(float sigma, float kernelSize, float Samplecou
 	for (unsigned int i = 0; i<allSamples.size(); i++) {
 		allSamples[i].weight = roundTo(allSamples[i].weight / weightSum, 6.0f);
 	}
-
+/*
 	for (unsigned int i = 1; i < allSamples.size() - 1; i++) {
 		std::cout << roundTo(allSamples[i].weight, 6.0f) << " ";
 	}
+	*/
 	/*
 	for (unsigned int i = 1; i < allSamples.size() - 1; i++) {
 	for (unsigned int j = 1; j < allSamples.size() - 1; j++) {
 	std::cout << roundTo(allSamples[i].weight*allSamples[j].weight, 6.0f) << " ";
 	}
 	std::cout << std::endl;
-	}*/
+	}
+	*/
 	return allSamples;
 }
 

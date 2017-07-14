@@ -39,7 +39,7 @@ struct SceneProps{
 	void	AddLightCamera(Camera*);
 	void	RemoveLightCamera(unsigned int index);
 
-	void	UpdateGaussKernel(float sigma,int kernelSize);
+	void	UpdateGaussKernel(float sigma,float radius,int kernelSize);
 
 	std::vector<Light>	   Lights;
 	std::vector<Camera*> pCameras;

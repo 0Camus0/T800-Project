@@ -17,8 +17,6 @@
 #include <iostream>
 #include <string>
 
-#define DEBUG_DRIVER 0
-
 // D3D11 Main Objects
 ComPtr<IDXGISwapChain>			DXGISwapchain;	// Responsible of the swap buffers
 ComPtr<ID3D11Device>            D3D11Device;	// Device for create resources

@@ -42,6 +42,9 @@
 #define USING_8BIT_NORMALS // Default 8 bit normals
 #endif
 
+#ifndef DEBUG_DRIVER
+#define DEBUG_DRIVER 0
+#endif
 
 #ifndef VDEBUG_NO_LIGHT
 #define VDEBUG_NO_LIGHT 0

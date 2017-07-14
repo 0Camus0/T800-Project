@@ -21,6 +21,11 @@ struct VS_OUTPUT{
 
 SamplerState SS;
 
+float roundTo(float num,float decimals){
+	float shift = pow(10.0,decimals);
+	return round(num*shift) / shift;
+}
+
 #ifdef DEFERRED_PASS
 Texture2D tex0 : register(t0);
 Texture2D tex1 : register(t1);
@@ -167,39 +172,13 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	float2 SHTC = LightPos.xy*0.5 + 0.5;
 	
 	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
-		SHTC.y = 1.0 - SHTC.y;
-		/*
-		float depthPos = LightPos.z;		
-		float4 Sum = float4(0.0,0.0,0.0,1.0);
-		float2 U =4.0*float2( 1.0/1536.0,1.0/1536.0);
-		float3 Vec[9];
-		Vec[0] = float3( SHTC.x - U.x , SHTC.y - U.y , 0.077847);
-		Vec[1] = float3( SHTC.x  , SHTC.y - U.y , 0.123317);
-		Vec[2] = float3( SHTC.x + U.x , SHTC.y - U.y, 0.077847);
-		Vec[3] = float3( SHTC.x - U.x , SHTC.y,0.123317 );
-		Vec[4] = float3( SHTC.x , SHTC.y,0.195346 );
-		Vec[5] = float3( SHTC.x + U.x , SHTC.y,0.123317  );
-		Vec[6] = float3( SHTC.x - U.x , SHTC.y + U.y,0.077847 );
-		Vec[7] = float3( SHTC.x  , SHTC.y + U.y,0.123317 );
-		Vec[8] = float3( SHTC.x + U.x , SHTC.y + U.y,0.077847 );
-	
-		float Int = 0.0;
-		for(int i=0;i<9;i++){
-			float A = tex1.Sample( SS, Vec[i].xy ).xyz;
-			Int += depthPos > (A-0.0000005) ? 0.25 : 1.0;
-		}
-		Int /= 9.0;
-		
-		Fcolor = Int*float4(1.0,1.0,1.0,1.0);	
-		
-		*/
+		SHTC.y = 1.0 - SHTC.y;				
 		float depthSM = tex1.Sample( SS, SHTC );
 		float depthPos = LightPos.z;
 		depthSM += 0.000005;
 		if( depthPos > depthSM)
 			Fcolor = 0.25*float4(1.0,1.0,1.0,1.0);	  
-
-				
+		
 	}else{
 		Fcolor = float4(1.0,1.0,1.0,1.0);
 	}
@@ -209,46 +188,41 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 #elif defined(VERTICAL_BLUR_PASS)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	return tex0.Sample( SS, input.texture0);
+	float4 Sum = float4(0.0,0.0,0.0,1.0);
+	float2 U = LightPositions[0].y*float2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
+	int KernelSize = (int)LightPositions[0].x;
+	int Origin = -floor((KernelSize-2)/2);
+	float V = (float)Origin;
+	float2 Texcoords;
+	for(int i=1;i<(KernelSize-1);i++){	
+		Texcoords.xy = float2(input.texture0.x ,input.texture0.y + V*U.y);
+		Sum.xyz += LightPositions[i+1].x * tex0.Sample( SS, Texcoords.xy ).xyz;
+		V++;
+	}
+	return Sum;
 }
 #elif defined(HORIZONTAL_BLUR_PASS)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	return tex0.Sample( SS, input.texture0);
+	float4 Sum = float4(0.0,0.0,0.0,1.0);
+	float2 U = LightPositions[0].y*float2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
+	int KernelSize = (int)LightPositions[0].x;
+	int Origin = -floor((KernelSize-2)/2);
+	float H = (float)Origin;
+	float2 Texcoords;
+	for(int i=1;i<(KernelSize-1);i++){	
+		Texcoords.xy = float2(input.texture0.x + H*U.x ,input.texture0.y );
+		Sum.xyz += LightPositions[i+1].x * tex0.Sample( SS, Texcoords.xy ).xyz;
+		H++;
+	}
+	return Sum;
 }
-#elif defined(FSQUAD_1_TEX)
-
-float roundTo(float num,float decimals){
-	float shift = pow(10.0,decimals);
-	return round(num*shift) / shift;
-}
-
+#elif defined(ONE_PASS_BLUR)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-/*
 	float4 Sum = float4(0.0,0.0,0.0,1.0);
-	float2 U = 2.0*float2( 1.0/1280.0,1.0/720.0);
-	float3 Vec[9];
-	Vec[0] = float3( input.texture0.x - U.x , input.texture0.y - U.y , 0.077847);
-	Vec[1] = float3( input.texture0.x  , input.texture0.y - U.y , 0.123317);
-	Vec[2] = float3( input.texture0.x + U.x , input.texture0.y - U.y, 0.077847);
-	Vec[3] = float3( input.texture0.x - U.x , input.texture0.y,0.123317 );
-	Vec[4] = float3( input.texture0.x , input.texture0.y,0.195346 );
-	Vec[5] = float3( input.texture0.x + U.x , input.texture0.y,0.123317  );
-	Vec[6] = float3( input.texture0.x - U.x , input.texture0.y + U.y,0.077847 );
-	Vec[7] = float3( input.texture0.x  , input.texture0.y + U.y,0.123317 );
-	Vec[8] = float3( input.texture0.x + U.x , input.texture0.y + U.y,0.077847 );
-	
-	for(int i=0;i<9;i++){
-	Sum.xyz += Vec[i].z * tex0.Sample( SS, Vec[i].xy ).xyz;
-	}
-	
-	return Sum;
-	*/
-	float4 Sum = float4(0.0,0.0,0.0,1.0);
-	float2 U = 2.0*float2( 1.0/1280.0,1.0/720.0);
+	float2 U = LightPositions[0].y*float2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
 	int KernelSize = (int)LightPositions[0].x;
-	//U *= sqrt((KernelSize-2));
 	int Origin = -floor((KernelSize-2)/2);
 	float H = (float)Origin;
 	float V = (float)Origin;
@@ -266,12 +240,12 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	}
 	
 	return Sum;
-	
-	/*
-	return  tex0.Sample( SS, input.texture0.xy );
-	*/
 }
-
+#elif defined(FSQUAD_1_TEX)
+Texture2D tex0 : register(t0);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {	
+	return  tex0.Sample( SS, input.texture0.xy );
+}
 #elif defined(FSQUAD_2_TEX)
 Texture2D tex0 : register(t0);
 Texture2D tex1 : register(t1);
