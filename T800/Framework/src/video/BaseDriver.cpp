@@ -155,6 +155,9 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define HORIZONTAL_BLUR_PASS\n\n";
 	if (sig&Signature::ONE_PASS_BLUR)
 		Defines += "#define ONE_PASS_BLUR\n\n";
+	if (sig&Signature::BRIGHT_PASS)
+		Defines += "#define BRIGHT_PASS\n\n";
+	
 
 	if (!LinearDepth)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";

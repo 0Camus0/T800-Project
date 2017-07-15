@@ -26,8 +26,15 @@ struct Light{
 	int		 Enabled;
 };
 
+struct GaussFilter{
+	float sigma;
+	float radius;
+	int kernelSize;
+	void Update();
+	std::vector<XVECTOR3> vGaussKernel;
+};
 struct SceneProps{
-	SceneProps() : ActiveCamera(0) , ActiveLights(1), ActiveLightCamera(0){}
+	SceneProps() : ActiveCamera(0) , ActiveLights(1), ActiveLightCamera(0), ActiveGaussKernel(0) {}
 
 	void	AddLight(XVECTOR3 Pos, XVECTOR3 Color,bool enabled);
 	void	RemoveLight(unsigned int index);
@@ -39,20 +46,21 @@ struct SceneProps{
 	void	AddLightCamera(Camera*);
 	void	RemoveLightCamera(unsigned int index);
 
-	void	UpdateGaussKernel(float sigma,float radius,int kernelSize);
+	void	AddGaussKernel(GaussFilter*);
 
 	std::vector<Light>	   Lights;
 	std::vector<Camera*> pCameras;
 
 	std::vector<Camera*> pLightCameras;
 
-	std::vector<XVECTOR3> vGaussKernel;
+	std::vector<GaussFilter*> pGaussKernels;
 
 	XVECTOR3			AmbientColor;
 
 	int ActiveCamera;
 	int	ActiveLights;
 	int ActiveLightCamera;
+	int ActiveGaussKernel;
 };
 
 #endif

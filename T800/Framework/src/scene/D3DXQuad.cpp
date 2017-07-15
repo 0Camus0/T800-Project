@@ -54,6 +54,10 @@ void D3DXQuad::Create() {
 
 	Dest = SigBase | Signature::ONE_PASS_BLUR;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
+	Dest = SigBase | Signature::BRIGHT_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+	
 	
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
@@ -161,20 +165,20 @@ void D3DXQuad::Draw(float *t, float *vp) {
 			CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
 		}
 	}else if (sig&Signature::ONE_PASS_BLUR) {
-		CnstBuffer.LightPositions[0].x = pScProp->vGaussKernel[0].x;
-		CnstBuffer.LightPositions[0].y = pScProp->vGaussKernel[0].y;
+		CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+		CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
 		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
 		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
-		for (unsigned int i = 1; i < pScProp->vGaussKernel.size(); i++) {
-			CnstBuffer.LightPositions[i] = pScProp->vGaussKernel[i];
+		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+			CnstBuffer.LightPositions[i] = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i];
 		}	
 	}else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-		CnstBuffer.LightPositions[0].x = pScProp->vGaussKernel[0].x;
-		CnstBuffer.LightPositions[0].y = pScProp->vGaussKernel[0].y;
+		CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+		CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
 		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
 		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
-		for (unsigned int i = 1; i < pScProp->vGaussKernel.size(); i++) {
-			CnstBuffer.LightPositions[i].x = roundTo( pScProp->vGaussKernel[i].x , 6.0f);
+		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+			CnstBuffer.LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x , 6.0f);
 		}
 	}
 
@@ -204,7 +208,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(6, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
 	}
-	else if (sig&Signature::FSQUAD_1_TEX) {
+	else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_2_TEX) {

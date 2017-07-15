@@ -29,6 +29,11 @@ enum {
 	DRAW_ALL,
 };
 
+enum{
+	SHADOW_KERNEL = 0,
+	BLOOM_KERNEL = 1  
+};
+
 class App : public AppBase {
 public:
 	App() : AppBase() {}
@@ -56,6 +61,9 @@ public:
 	Camera			Cam;
 	Camera			LightCam;
 
+	GaussFilter		ShadowFilter;
+	GaussFilter		BloomFilter;
+
 	Camera			*ActiveCam;
 
 	XVECTOR3		Position;
@@ -78,6 +86,7 @@ public:
 	int				DeferredPass;
 	int				DepthPass;
 	int				ShadowAccumPass;
+	int				BloomAccumPass;
 	int				ExtraHelperPass;
 
 	int				EnvMapTexIndex;

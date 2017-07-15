@@ -241,6 +241,21 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	
 	return Sum;
 }
+#elif defined(BRIGHT_PASS)
+Texture2D tex0 : register(t0);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	float4 Col = tex0.Sample( SS, input.texture0.xy );
+	
+	 float lum = dot( Col.rgb, float3( 0.299, 0.587, 0.114 ) );
+
+    if( lum < 0.8 )
+        Col = float4( 0.0f, 0.0f, 0.0f, 1.0f );
+	else{
+		Col.rgb *= Col.rgb;
+	}
+	
+	return Col;
+}
 #elif defined(FSQUAD_1_TEX)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {	
@@ -250,7 +265,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 Texture2D tex0 : register(t0);
 Texture2D tex1 : register(t1);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	return tex0.Sample( SS, input.texture0);
+	return tex0.Sample( SS, input.texture0) + tex1.Sample( SS, input.texture0);
 }
 #elif defined(FSQUAD_3_TEX)
 Texture2D tex0 : register(t0);
