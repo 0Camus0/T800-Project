@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <string.h>
 
 BaseDriver*	g_pBaseDriver = 0;
 
@@ -133,7 +134,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define REFLECT_MAP\n\n";
 	if (sig&Signature::NO_LIGHT_AT_ALL)
 		Defines += "#define NO_LIGHT\n\n";
-	if (sig&Signature::GBUFF_PASS) 
+	if (sig&Signature::GBUFF_PASS)
 		Defines += "#define G_BUFFER_PASS\n\n";
 	if (sig&Signature::FSQUAD_1_TEX)
 		Defines += "#define FSQUAD_1_TEX\n\n";
@@ -147,7 +148,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define NON_LINEAR_DEPTH\n\n";
 	if (sig&Signature::SHADOW_COMP_PASS)
 		Defines += "#define SHADOW_COMP_PASS\n\n";
-	if (sig&Signature::DEFERRED_PASS) 
+	if (sig&Signature::DEFERRED_PASS)
 		Defines += "#define DEFERRED_PASS\n\n";
 	if (sig&Signature::VERTICAL_BLUR_PASS)
 		Defines += "#define VERTICAL_BLUR_PASS\n\n";
@@ -157,7 +158,7 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define ONE_PASS_BLUR\n\n";
 	if (sig&Signature::BRIGHT_PASS)
 		Defines += "#define BRIGHT_PASS\n\n";
-	
+
 
 	if (!LinearDepth)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";

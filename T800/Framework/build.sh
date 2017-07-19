@@ -30,6 +30,8 @@ echo "Compiling src/utils/InputManager.cpp -> obj/$BVERSION/InputManager.o"
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/utils/InputManager.cpp -o obj/$BVERSION/InputManager.o
 echo "Compiling  src/utils/Timer.cpp  -> obj/$BVERSION/Timer.o"
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/utils/Timer.cpp -o obj/$BVERSION/Timer.o
+echo "Compiling src/utils/cil.cpp  -> obj/$BVERSION/cil.o"
+g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/utils/cil.cpp -o obj/$BVERSION/cil.o
 echo "Compiling src/utils/Utils.cpp  -> obj/$BVERSION/Utils.o"
 g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude -I../Framework -I../Librerias/stb/include -I../Librerias/freeglut-linux/include -I../Librerias/glew-2.0.0/include -c src/utils/Utils.cpp -o obj/$BVERSION/Utils.o
 echo "Compiling src/utils/XDataBase.cpp  -> obj/$BVERSION/XDataBase.o"
@@ -49,6 +51,6 @@ g++ -std=c++11 -Wall -DOS_LINUX -DFREEGLUT_GLES -DFREEGLUT_WAYLAND -O3 -Iinclude
 echo "Erasing old bin/$BVERSION/libFramework.a"
 rm -f bin/$BVERSION/libFramework.a
 echo "Generating bin/$BVERSION/libFramework.a"
-ar -r -s bin/$BVERSION/libFramework.a obj/$BVERSION/Core.o obj/$BVERSION/LinuxFramework.o obj/$BVERSION/Cube.o obj/$BVERSION/GLMesh.o obj/$BVERSION/GLQuad.o obj/$BVERSION/PrimitiveInstance.o obj/$BVERSION/PrimitiveManager.o obj/$BVERSION/SceneProp.o obj/$BVERSION/Triangle.o obj/$BVERSION/Camera.o obj/$BVERSION/InputManager.o obj/$BVERSION/Timer.o obj/$BVERSION/Utils.o obj/$BVERSION/XDataBase.o obj/$BVERSION/XMaths.o obj/$BVERSION/BaseDriver.o obj/$BVERSION/GLDriver.o obj/$BVERSION/GLRT.o obj/$BVERSION/GLShader.o obj/$BVERSION/GLTexture.o
+ar -r -s bin/$BVERSION/libFramework.a obj/$BVERSION/Core.o obj/$BVERSION/LinuxFramework.o obj/$BVERSION/Cube.o obj/$BVERSION/GLMesh.o obj/$BVERSION/GLQuad.o obj/$BVERSION/PrimitiveInstance.o obj/$BVERSION/PrimitiveManager.o obj/$BVERSION/SceneProp.o obj/$BVERSION/Triangle.o obj/$BVERSION/Camera.o obj/$BVERSION/InputManager.o obj/$BVERSION/Timer.o obj/$BVERSION/Utils.o obj/$BVERSION/cil.o obj/$BVERSION/XDataBase.o obj/$BVERSION/XMaths.o obj/$BVERSION/BaseDriver.o obj/$BVERSION/GLDriver.o obj/$BVERSION/GLRT.o obj/$BVERSION/GLShader.o obj/$BVERSION/GLTexture.o
 
 

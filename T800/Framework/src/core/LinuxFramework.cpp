@@ -29,7 +29,7 @@ extern std::vector<std::string> g_args;
 
 void LinuxFramework::OnCreateApplication(){
     int req = 0;
-    g_AvoidInput = 1;
+    g_AvoidInput = 0;
     putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
     glutInit(&req,0);
     glutInitContextProfile(GLUT_CORE_PROFILE);

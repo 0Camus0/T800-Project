@@ -100,7 +100,7 @@ void App::InitVars() {
 	BloomFilter.radius = 2.0f;
 	BloomFilter.sigma = 3.0f;
 	BloomFilter.Update();
-	
+
 	SceneProp.AddGaussKernel(&ShadowFilter);
 	SceneProp.AddGaussKernel(&BloomFilter);
 	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
@@ -552,7 +552,7 @@ void App::OnInput() {
 
 	if (IManager.PressedOnceKey(T800K_c)) {
 		if (ActiveCam == (&Cam)) {
-			ActiveCam = &LightCam;			
+			ActiveCam = &LightCam;
 		}
 		else {
 			ActiveCam = &Cam;
