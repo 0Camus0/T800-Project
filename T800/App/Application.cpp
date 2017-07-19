@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SEPARATED_BLUR 1
+#define SEPARATED_BLUR 0
 #define DEGENERATED_FBO_TEST 0
 
 #define NUM_LIGHTS 64
@@ -97,7 +97,7 @@ void App::InitVars() {
 	ShadowFilter.Update();
 
 	BloomFilter.kernelSize = 21;
-	BloomFilter.radius = 3.0f;
+	BloomFilter.radius = 2.0f;
 	BloomFilter.sigma = 3.0f;
 	BloomFilter.Update();
 	

@@ -10,6 +10,12 @@ uniform highp vec4 CameraInfo;
 uniform highp vec4 LightCameraPosition;
 uniform highp vec4 LightCameraInfo;
 
+
+highp float roundTo(highp float num,highp float decimals){
+	highp float shift = pow(10.0,decimals);
+	return round(num*shift) / shift;
+}
+
 #ifdef ES_30
 	in highp vec2 vecUVCoords;
 	in highp vec4 Pos;
@@ -245,6 +251,123 @@ void main(){
 	#endif
 
 }
+#elif defined(VERTICAL_BLUR_PASS)
+uniform mediump sampler2D tex0;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
+	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
+	highp int KernelSize = int(LightPositions[0].x);
+	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	mediump float V = float(Origin);
+	mediump vec2 Texcoords;
+	for(mediump int i=1;i<(KernelSize-1);i++){	
+		Texcoords.xy = vec2(coords.x ,coords.y + V*U.y);
+		#ifdef ES_30
+			Sum.xyz += LightPositions[i+1].x * texture( tex0, Texcoords.xy ).xyz;
+		#else
+			Sum.xyz += LightPositions[i+1].x * texture2D( tex0, Texcoords.xy ).xyz;
+		#endif
+		V++;
+	}
+
+	#ifdef ES_30
+		colorOut = Sum;
+	#else
+		gl_FragColor = Sum;
+	#endif
+}
+#elif defined(HORIZONTAL_BLUR_PASS)
+uniform mediump sampler2D tex0;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
+	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
+	highp int KernelSize = int(LightPositions[0].x);
+	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	mediump float H = float(Origin);
+	mediump vec2 Texcoords;
+	for(mediump int i=1;i<(KernelSize-1);i++){	
+		Texcoords.xy = vec2(coords.x + H*U.x ,coords.y );
+		#ifdef ES_30
+			Sum.xyz += LightPositions[i+1].x * texture( tex0, Texcoords.xy ).xyz;
+		#else
+			Sum.xyz += LightPositions[i+1].x * texture2D( tex0, Texcoords.xy ).xyz;
+		#endif
+		H++;
+	}
+	
+	#ifdef ES_30
+		colorOut = Sum;
+	#else
+		gl_FragColor = Sum;
+	#endif
+}
+#elif defined(ONE_PASS_BLUR)
+uniform mediump sampler2D tex0;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
+	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
+	highp int KernelSize = int(LightPositions[0].x);
+	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	mediump float H = float(Origin);
+	mediump float V = float(Origin);
+	mediump vec2 Texcoords;	
+	for(mediump int i=1;i<(KernelSize-1);i++){		
+		Texcoords.x = coords.x + H*U.x;
+		V = Origin;
+		for(mediump int j=1;j<(KernelSize-1);j++){
+			Texcoords.y = coords.y + V*U.y;
+			mediump float weight = roundTo(LightPositions[i+1].x*LightPositions[j+1].x,6.0);
+			#ifdef ES_30
+				Sum.xyz += weight * texture( tex0, Texcoords.xy ).xyz;
+			#else
+				Sum.xyz += weight * texture2D( tex0, Texcoords.xy ).xyz;
+			#endif
+			V++;
+		}
+		H++;
+	}
+	
+	#ifdef ES_30
+		colorOut = Sum;
+	#else
+		gl_FragColor = Sum;
+	#endif
+}
+#elif defined(BRIGHT_PASS)
+uniform mediump sampler2D tex0;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	#ifdef ES_30
+		mediump vec4 Col = texture( tex0, coords);
+	#else
+		mediump vec4 Col = texture2D( tex0, coords );
+	#endif
+	
+	float lum = dot( Col.rgb, vec3( 0.299, 0.587, 0.114 ) );
+
+    if( lum < 0.8 )
+        Col = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
+	else{
+		Col.rgb *= Col.rgb;
+	}
+	
+	#ifdef ES_30
+		colorOut = Col;
+	#else
+		gl_FragColor = Col;
+	#endif
+}
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;
 void main(){
@@ -260,10 +383,13 @@ void main(){
 uniform mediump sampler2D tex0;
 uniform mediump sampler2D tex1;
 void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
 	#ifdef ES_30
-		colorOut = texture(tex0,vecUVCoords);
+		colorOut = texture(tex0,coords) + texture(tex1,coords);
 	#else
-		gl_FragColor = texture2D(tex0,vecUVCoords);
+		gl_FragColor = texture2D(tex0,coords) +  texture2D(tex1,coords);
 	#endif
 }
 #elif defined(FSQUAD_3_TEX)

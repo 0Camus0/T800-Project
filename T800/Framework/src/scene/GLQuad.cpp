@@ -43,6 +43,18 @@ void GLQuad::Create(){
 	Dest = SigBase | Signature::SHADOW_COMP_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::VERTICAL_BLUR_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
+	Dest = SigBase | Signature::HORIZONTAL_BLUR_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
+	Dest = SigBase | Signature::ONE_PASS_BLUR;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
+	Dest = SigBase | Signature::BRIGHT_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -90,6 +102,8 @@ void GLQuad::Draw(float *t, float *vp){
 	XMATRIX44 WVPLight;
 	XVECTOR3 LightCameraPos;
 	XVECTOR3 LightCameraInfo;
+	XVECTOR3 CameraInfo;
+	unsigned int numLights = pScProp->ActiveLights;
 
 	if (pScProp->pLightCameras.size() > 0) {
 		WVPLight = pScProp->pLightCameras[0]->VP;
@@ -97,15 +111,34 @@ void GLQuad::Draw(float *t, float *vp){
 		LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
 	}
 
-	unsigned int numLights = pScProp->ActiveLights;
-	if (numLights >= pScProp->Lights.size())
-		numLights = pScProp->Lights.size();
+	if (sig&Signature::DEFERRED_PASS) {
+		if (numLights >= pScProp->Lights.size())
+			numLights = pScProp->Lights.size();
 
-	XVECTOR3 CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
+		CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
 
-	for (unsigned int i = 0; i < numLights; i++) {
-		LightPositions[i] = pScProp->Lights[i].Position;
-		LightColors[i] = pScProp->Lights[i].Color;
+		for (unsigned int i = 0; i < numLights; i++) {
+			LightPositions[i] = pScProp->Lights[i].Position;
+			LightColors[i] = pScProp->Lights[i].Color;
+		}
+	}
+	else if (sig&Signature::ONE_PASS_BLUR) {
+		LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+		LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
+		LightPositions[0].z = (float)Textures[0]->x;
+		LightPositions[0].w = (float)Textures[0]->y;
+		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+			LightPositions[i] = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i];
+		}
+	}
+	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
+		LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+		LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
+		LightPositions[0].z = (float)Textures[0]->x;
+		LightPositions[0].w = (float)Textures[0]->y;
+		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+			LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x, 6.0f);
+		}
 	}
 
 	glUseProgram(s->ShaderProg);
@@ -121,9 +154,16 @@ void GLQuad::Draw(float *t, float *vp){
 
 	glUniform4fv(s->LightCameraPos_Loc, 1, &LightCameraPos.v[0]);
 	glUniform4fv(s->LightCameraInfo_Loc, 1, &LightCameraInfo.v[0]);
-
-	glUniform4fv(s->LightPositions_Loc, numLights, &LightPositions[0].v[0]);
-	glUniform4fv(s->LightColors_Loc, numLights, &LightColors[0].v[0]);
+	
+	if (sig&Signature::DEFERRED_PASS) {
+		glUniform4fv(s->LightPositions_Loc, numLights, &LightPositions[0].v[0]);
+		glUniform4fv(s->LightColors_Loc, numLights, &LightColors[0].v[0]);
+	}
+	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS || sig&Signature::ONE_PASS_BLUR) {
+		int NumUniforms = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size();
+		glUniform4fv(s->LightPositions_Loc, NumUniforms, &LightPositions[0].v[0]);
+		glUniform4fv(s->LightColors_Loc, NumUniforms, &LightColors[0].v[0]);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
@@ -162,7 +202,7 @@ void GLQuad::Draw(float *t, float *vp){
 		glBindTexture(GL_TEXTURE_CUBE_MAP, EnvMap->id);
 		glUniform1i(s->texEnv_loc, 6);
 	}
-	else if (sig&Signature::FSQUAD_1_TEX) {
+	else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);
@@ -197,7 +237,13 @@ void GLQuad::Draw(float *t, float *vp){
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, Textures[1]->id);
 		glUniform1i(s->tex1_loc, 1);
-	}else {
+	}
+	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS || sig&Signature::ONE_PASS_BLUR) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
+		glUniform1i(s->tex0_loc, 0);
+	}
+	else {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);
