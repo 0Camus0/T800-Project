@@ -90,11 +90,11 @@ void main(){
 			highp vec2 normalmap = texture2D(tex1,coords).rg;
 		#endif			
 		
-		highp vec4 nn = vec4(normalmap,0,0)*vec4(2,2,0,0) + vec4(-1,-1,1,-1);
+		highp vec4 nn = vec4(normalmap,0.0,0.0)*vec4(2.0,2.0,0.0,0.0) + vec4(-1.0,-1.0,1.0,-1.0);
 		float l = dot(nn.xyz,-nn.xyw);
 		nn.z = l;
 		nn.xy *= sqrt(l);
-		highp vec3 normal = nn.xyz * 2 + vec3(0,0,-1);
+		highp vec3 normal = nn.xyz * 2.0 + vec3(0.0,0.0,-1.0);
 #else
 		#ifdef ES_30
 			highp vec4 normalmap = texture(tex1,coords);
@@ -102,7 +102,7 @@ void main(){
 			highp vec4 normalmap = texture2D(tex1,coords);
 		#endif	
 		
-		highp vec3 normal = normalmap.xyz*2 - 1;
+		highp vec3 normal = normalmap.xyz*2.0 - 1.0;
 		normal = normalize(normal);
 #endif
 	
@@ -112,13 +112,21 @@ void main(){
 			lowp vec4 specularmap = texture2D(tex2,coords);
 		#endif		
 		
-		mediump vec3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
-
+		highp vec3 ReflectedVec = reflect(-EyeDir,normal.xyz);	
+		highp float ratio = 1.0/1.52;
+		highp vec3 R = refract(-EyeDir,normal.xyz,ratio);
+		
 		#ifdef ES_30
-			mediump vec3 RefCol = texture( texEnv, ReflectedVec ).zyx;
+			mediump vec3 RefleCol = texture( texEnv, ReflectedVec ).zyx;
 		#else
-			mediump vec3 RefCol = textureCube( texEnv, ReflectedVec ).zyx;
+			mediump vec3 RefleCol = textureCube( texEnv, ReflectedVec ).zyx;
 		#endif		
+		
+		#ifdef ES_30
+			mediump vec3 RefraCol = texture( texEnv, R ).zyx;
+		#else
+			mediump vec3 RefraCol = textureCube( texEnv, R ).zyx;
+		#endif	
 
 		
 		highp int NumLights =  int(CameraInfo.w);
@@ -168,7 +176,7 @@ void main(){
 		if(matId.b == 0.0){
 			highp float  FresnelAtt	= dot(normal.xyz,EyeDir);
 			highp float  FresnelIntensity = 6.0;
-			lowp vec4 FresnelCol = vec4(RefCol.xyz,1.0);
+			lowp vec4 FresnelCol = vec4(RefleCol.xyz,1.0);
 
 			FresnelAtt		= abs(FresnelAtt);
 			FresnelAtt 		= 1.0 - FresnelAtt;
@@ -178,6 +186,9 @@ void main(){
 			Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt;
 		
 			Final += Fresnel;
+			Final.xyz += 0.26*RefraCol.xyz;
+		}else{
+			Final.xyz = RefleCol.xyz;
 		}		
 
 		#ifdef ES_30
@@ -260,7 +271,7 @@ void main(){
 	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
 	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
 	highp int KernelSize = int(LightPositions[0].x);
-	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	highp int Origin = -(KernelSize-2)/2;
 	mediump float V = float(Origin);
 	mediump vec2 Texcoords;
 	for(mediump int i=1;i<(KernelSize-1);i++){	
@@ -288,7 +299,7 @@ void main(){
 	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
 	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
 	highp int KernelSize = int(LightPositions[0].x);
-	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	highp int Origin = -(KernelSize-2)/2;
 	mediump float H = float(Origin);
 	mediump vec2 Texcoords;
 	for(mediump int i=1;i<(KernelSize-1);i++){	
@@ -316,13 +327,13 @@ void main(){
 	mediump vec4 Sum = vec4(0.0,0.0,0.0,1.0);
 	mediump vec2 U = LightPositions[0].y*vec2( 1.0/LightPositions[0].z,1.0/LightPositions[0].w);
 	highp int KernelSize = int(LightPositions[0].x);
-	highp int Origin = int(-floor(int((KernelSize-2)/2)));
+	highp int Origin = -(KernelSize-2)/2;
 	mediump float H = float(Origin);
 	mediump float V = float(Origin);
 	mediump vec2 Texcoords;	
 	for(mediump int i=1;i<(KernelSize-1);i++){		
 		Texcoords.x = coords.x + H*U.x;
-		V = Origin;
+		V = float(Origin);
 		for(mediump int j=1;j<(KernelSize-1);j++){
 			Texcoords.y = coords.y + V*U.y;
 			mediump float weight = roundTo(LightPositions[i+1].x*LightPositions[j+1].x,6.0);
@@ -354,7 +365,7 @@ void main(){
 		mediump vec4 Col = texture2D( tex0, coords );
 	#endif
 	
-	float lum = dot( Col.rgb, vec3( 0.299, 0.587, 0.114 ) );
+	mediump float lum = dot( Col.rgb, vec3( 0.299, 0.587, 0.114 ) );
 
     if( lum < 0.8 )
         Col = vec4( 0.0f, 0.0f, 0.0f, 1.0f );

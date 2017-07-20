@@ -175,7 +175,6 @@ void main(){
 		N = N*0.5+0.5;
 	#else	
 		normal.xyz		 = normal.xyz*0.5 + 0.5;	
-		normal			 = normal;
 	#endif	
 	
 	

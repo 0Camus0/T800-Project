@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SEPARATED_BLUR 0
+#define SEPARATED_BLUR 1
 #define DEGENERATED_FBO_TEST 0
 
 #define NUM_LIGHTS 64
