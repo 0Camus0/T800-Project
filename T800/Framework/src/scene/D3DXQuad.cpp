@@ -57,7 +57,9 @@ void D3DXQuad::Create() {
 
 	Dest = SigBase | Signature::BRIGHT_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
-	
+
+	Dest = SigBase | Signature::HDR_COMP_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 	
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
@@ -138,6 +140,12 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	UINT offset = 0;
 	UINT stride = sizeof(Vert);
 
+	for (int i = 0; i < 8; i++) {
+		d3dxTextures[i] = dynamic_cast<D3DXTexture*>(Textures[i]);
+	}
+
+	d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
+
 	Camera *pActualCamera = pScProp->pCameras[0];
 	XMATRIX44 VP = pActualCamera->VP;
 	XMATRIX44 WV = pActualCamera->View;
@@ -180,6 +188,10 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
 			CnstBuffer.LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x , 6.0f);
 		}
+	}else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS){
+		D3D11_TEXTURE2D_DESC pDesc;
+		d3dxTextures[0]->Tex->GetDesc(&pDesc);
+		CnstBuffer.CameraPos.w = (float)pDesc.MipLevels;
 	}
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
@@ -192,12 +204,6 @@ void D3DXQuad::Draw(float *t, float *vp) {
 
 	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
 	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
-
-	for (int i = 0; i < 8; i++) {
-		d3dxTextures[i] = dynamic_cast<D3DXTexture*>(Textures[i]);
-	}
-
-	d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
 
 	if (sig&Signature::DEFERRED_PASS) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
@@ -215,7 +221,7 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
-	else if (sig&Signature::FSQUAD_3_TEX) {
+	else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {			
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
@@ -230,6 +236,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
+
+	
 
 	D3D11DeviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -74,7 +74,8 @@ bool D3DXRT::LoadAPIRT() {
 		desc.SampleDesc.Count = 1;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.MipLevels = 1;
+		desc.MipLevels = GenMips ? 0 : 1;
+		desc.MiscFlags = GenMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 		ComPtr<ID3D11Texture2D> Tex;
 		hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
 		if (hr != S_OK) {
@@ -110,12 +111,12 @@ bool D3DXRT::LoadAPIRT() {
 #endif
 		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels = 1;
+		shaderResourceViewDesc.Texture2D.MipLevels = GenMips ? -1 : 1;
 
 		hr = D3D11Device->CreateShaderResourceView(Tex.Get(), &shaderResourceViewDesc, &pTextureColor->pSRVTex);
 		if (hr != S_OK) {
 			delete pTextureColor;
-			std::cout << "Error creating Shader Resource View index" << i << std::endl;
+			std::cout << "Error creating Shader Resource View index " << i << std::endl;
 			exit(444);
 		}
 		pTextureColor->x = w;

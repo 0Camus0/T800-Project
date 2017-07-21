@@ -98,7 +98,7 @@ void App::InitVars() {
 
 	BloomFilter.kernelSize = 21;
 	BloomFilter.radius = 2.0f;
-	BloomFilter.sigma = 3.0f;
+	BloomFilter.sigma = 5.0f;
 	BloomFilter.Update();
 
 	SceneProp.AddGaussKernel(&ShadowFilter);
@@ -114,7 +114,7 @@ void App::CreateAssets() {
 	EnvMapTexIndex = g_pBaseDriver->CreateTexture(string("CubeMap_Granja_RAW.dds"));
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
-	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA32F, BaseRT::F32, 0, 0,true);
 	DepthPass = pFramework->pVideoDriver->CreateRT(0, BaseRT::NOTHING, BaseRT::F32, 512, 512);
 	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
@@ -415,7 +415,7 @@ void App::OnDraw() {
 #endif
 
 	pFramework->pVideoDriver->Clear();
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT),0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT),0);
 	Quads[1].SetSignature(Signature::FSQUAD_1_TEX);
 	Quads[1].Draw();
 
@@ -446,12 +446,12 @@ void App::OnDraw() {
 #if	SEPARATED_BLUR
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 1);
-	Quads[7].SetSignature(Signature::FSQUAD_2_TEX);
+	Quads[7].SetSignature(Signature::HDR_COMP_PASS);
 	Quads[7].Draw();
 #else
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 1);
-	Quads[7].SetSignature(Signature::FSQUAD_2_TEX);
+	Quads[7].SetSignature(Signature::HDR_COMP_PASS);
 	Quads[7].Draw();
 #endif
 

@@ -91,7 +91,7 @@ struct BaseRT {
 		NOTHING
 	};
 
-	bool			LoadRT(int nrt, int cf, int df, int w, int h);
+	bool			LoadRT(int nrt, int cf, int df, int w, int h, bool GenMips=false);
 	virtual bool	LoadAPIRT() = 0;
 	
 	void			DestroyRT();
@@ -102,6 +102,7 @@ struct BaseRT {
 	int number_RT;
 	int color_format;
 	int depth_format;
+	bool GenMips;
 
 	std::vector<Texture*>							vColorTextures;
 	Texture*										pDepthTexture;
@@ -134,7 +135,8 @@ enum Signature {
 	VERTICAL_BLUR_PASS = 262144,
 	HORIZONTAL_BLUR_PASS = 524288,
 	ONE_PASS_BLUR = 1048576,
-	BRIGHT_PASS = 2097152
+	BRIGHT_PASS = 2097152,
+	HDR_COMP_PASS = 4194304
 };
 
 class ShaderBase {
@@ -159,7 +161,7 @@ public:
 		COLOR6_ATTACHMENT = 6,
 		COLOR7_ATTACHMENT = 7,
 	};
-	BaseDriver() {  }
+	BaseDriver() : CurrentRT(-1) {  }
 	virtual	void	 InitDriver() = 0;
 	virtual void	 CreateSurfaces() = 0;
 	virtual void	 DestroySurfaces() = 0;
@@ -174,7 +176,7 @@ public:
 	virtual Texture* GetTexture(int id) = 0;
 	virtual void	 DestroyTexture() = 0;
 
-	virtual int 	 CreateRT(int nrt, int cf, int df,int w, int h) = 0;
+	virtual int 	 CreateRT(int nrt, int cf, int df,int w, int h, bool genMips = false) = 0;
 	virtual void	 PushRT(int id) = 0;
 	virtual void	 PopRT() = 0;
 	virtual void	 DestroyRT(int id) = 0;
@@ -189,6 +191,7 @@ public:
 	std::vector<ShaderBase*>	Shaders;
 	std::vector<BaseRT*>		RTs;
 	std::vector<Texture*>		Textures;
+	int							CurrentRT;
 };
 
 

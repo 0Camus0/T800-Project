@@ -76,12 +76,13 @@ void Texture::DestroyTex(){
 	DestroyAPITexture();
 }
 
-bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h) {
+bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h, bool GenMips) {
 	this->number_RT = nrt;
 	this->color_format = cf;
 	this->depth_format = df;
 	this->w = w;
 	this->h = h;
+	this->GenMips = GenMips;
 	return LoadAPIRT();
 }
 
@@ -158,7 +159,9 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 		Defines += "#define ONE_PASS_BLUR\n\n";
 	if (sig&Signature::BRIGHT_PASS)
 		Defines += "#define BRIGHT_PASS\n\n";
-
+	if (sig&Signature::HDR_COMP_PASS)
+		Defines += "#define HDR_COMP_PASS\n\n";
+	
 
 	if (!LinearDepth)
 		Defines += "#define NON_LINEAR_DEPTH\n\n";

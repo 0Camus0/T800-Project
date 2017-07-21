@@ -88,6 +88,7 @@ public:
 	int				ShadowAccumPass;
 	int				BloomAccumPass;
 	int				ExtraHelperPass;
+	//int				
 
 	int				EnvMapTexIndex;
 

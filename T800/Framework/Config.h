@@ -22,7 +22,7 @@
 #endif
 
 #ifndef FORCE_LOW_RES_TEXTURES
-#define FORCE_LOW_RES_TEXTURES 1
+#define FORCE_LOW_RES_TEXTURES 0
 #endif
 
 #ifndef FORCED_FACTOR
@@ -65,7 +65,7 @@
 #define OGLES31 4
 #define OGL 5
 
-#define DRIVER_SELECTED OGLES30
+#define DRIVER_SELECTED D3DX
 
 #if   DRIVER_SELECTED == OGLES20
 	#define USING_OPENGL_ES20

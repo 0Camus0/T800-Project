@@ -138,7 +138,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			Final += Fresnel;		
 			Final.xyz += 0.26*RefraCol.xyz;
 		}else{
-			Final.xyz = RefleCol.xyz;
+			//Final.xyz = RefleCol.xyz;
 		}
 		
 		Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
@@ -244,17 +244,42 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 #elif defined(BRIGHT_PASS)
 Texture2D tex0 : register(t0);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
-	float4 Col = tex0.Sample( SS, input.texture0.xy );
+	float4 color = tex0.Sample( SS, input.texture0);
 	
-	 float lum = dot( Col.rgb, float3( 0.299, 0.587, 0.114 ) );
+	float FLum = dot(color.rgb, float3(0.299f, 0.587f, 0.114f));
+	
+	if(FLum < 1.0)
+		color = float4(0.0,0.0,0.0,1.0);
+		
+	return color;
+	
+	
+}
+#elif defined(HDR_COMP_PASS)
+Texture2D tex0 : register(t0);
+Texture2D tex1 : register(t1);
+Texture2D tex2 : register(t2);
+float4 FS( VS_OUTPUT input ) : SV_TARGET {
+	int mip = ((int)CameraPosition.w) - 1;
+	float4 color = tex0.Sample( SS, input.texture0);
+	float avgLuminance = dot( tex0.SampleLevel( SS, input.texture0 , mip).rgb , float3(0.299f, 0.587f, 0.114f) );
 
-    if( lum < 0.8 )
-        Col = float4( 0.0f, 0.0f, 0.0f, 1.0f );
-	else{
-		Col.rgb *= Col.rgb;
-	}
-	
-	return Col;
+    float exposure = 0;
+	     	
+    avgLuminance = max(avgLuminance, 0.001f);
+    float keyValue = 0;
+    keyValue = 1.03f - (2.0f / (2 + log10(avgLuminance + 1)));
+
+    float linearExposure = (keyValue / avgLuminance);
+    exposure = log2(max(linearExposure, 0.0001f));
+    color = exp2(exposure) * color;
+    
+ 	
+ 	float pixelLuminance = max(dot(color.rgb, float3(0.299f, 0.587f, 0.114f)), 0.0001f);
+    float toneMappedLuminance = log10(1 + pixelLuminance) / log10(1.0 + avgLuminance);
+	color = toneMappedLuminance * pow(color / pixelLuminance, 1.0f); 
+	color.a = 1.0;
+	return color + tex1.Sample( SS, input.texture0);;
 }
 #elif defined(FSQUAD_1_TEX)
 Texture2D tex0 : register(t0);

@@ -181,14 +181,14 @@ void  D3DXDriver::DestroyTexture(){
 	}
 }
 
-int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
+int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h,bool GenMips) {
 	D3DXRT	*pRT = new D3DXRT;
 	if (w == 0)
 		w = Width;
 	if (h == 0)
 		h = Height;
 	pRT->number_RT = nrt;
-	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+	if (pRT->LoadRT(nrt, cf, df, w, h, GenMips)) {
 		RTs.push_back(pRT);
 		return (RTs.size() - 1);
 	}
@@ -199,8 +199,12 @@ int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
 }
 
 void D3DXDriver::PushRT(int id) {
-	if (id < 0 || id >= (int)RTs.size())
+	if (id < 0 || id >= (int)RTs.size()){
+		CurrentRT = -1;
 		return;
+	}
+
+	CurrentRT = id;
 
 	D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
 
@@ -242,6 +246,15 @@ void D3DXDriver::PopRT() {
 
 
 	D3D11DeviceContext->RSSetViewports(1, &viewport);
+
+	if(CurrentRT>=0){
+		if(RTs[CurrentRT]->GenMips){
+			D3DXTexture* pTex = dynamic_cast<D3DXTexture*>(RTs[CurrentRT]->vColorTextures[0]);
+			D3D11DeviceContext->GenerateMips(pTex->pSRVTex.Get());
+		}
+		
+	}
+
 }
 
 void D3DXDriver::DestroyRT(int id){
