@@ -34,7 +34,7 @@ struct GaussFilter{
 	std::vector<XVECTOR3> vGaussKernel;
 };
 struct SceneProps{
-	SceneProps() : ActiveCamera(0) , ActiveLights(1), ActiveLightCamera(0), ActiveGaussKernel(0), Exposure(0.2f) , BloomFactor(1.0f) {}
+	SceneProps() : ActiveCamera(0) , ActiveLights(1), ActiveLightCamera(0), ActiveGaussKernel(0), Exposure(0.3f) , BloomFactor(1.1f) {}
 
 	void	AddLight(XVECTOR3 Pos, XVECTOR3 Color,bool enabled);
 	void	RemoveLight(unsigned int index);

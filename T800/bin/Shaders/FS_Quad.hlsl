@@ -138,8 +138,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			Final += Fresnel;		
 			Final.xyz += 0.26*RefraCol.xyz;
 		}
-		Final.xyz = RefleCol.xyz;
-		
+	
 		//Final.xyz *= tex5.Sample( SS, input.texture0).xyz;
 		
 	}
@@ -259,6 +258,7 @@ Texture2D tex0 : register(t0);
 Texture2D tex1 : register(t1);
 Texture2D tex2 : register(t2);
 float4 FS( VS_OUTPUT input ) : SV_TARGET {
+/*
 	int mip = ((int)CameraPosition.w) - 1;
 	float3 color = tex0.Sample( SS, input.texture0).rgb;
 	float avgLuminance = dot( tex0.SampleLevel( SS, input.texture0 , mip).rgb , float3(0.299f, 0.587f, 0.114f) );
@@ -281,9 +281,9 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	
 
 	return float4(FCol * (BloomFac-Bloom) + Bloom, 1.0f);
+	*/
 	
 	
-	/*
 	int mip = ((int)CameraPosition.w) - 1;
 	float4 color = tex0.Sample( SS, input.texture0);
 	float avgLuminance = dot( tex0.SampleLevel( SS, input.texture0 , mip).rgb , float3(0.299f, 0.587f, 0.114f) );
@@ -299,10 +299,10 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
     
  	
  	float pixelLuminance = max(dot(color.rgb, float3(0.299f, 0.587f, 0.114f)), 0.0001f);
-    float toneMappedLuminance = log10(1 + pixelLuminance) / log10(1.0 + 1.01);
+    float toneMappedLuminance = log10(1 + pixelLuminance) / log10(1.0 + LightPositions[0].y);
 	color = toneMappedLuminance * pow(color / pixelLuminance, 1.0f); 
 	color.a = 1.0;
-	return color; // + tex1.Sample( SS, input.texture0);*/
+	return color + LightPositions[0].x*tex1.Sample( SS, input.texture0);
 }
 #elif defined(FSQUAD_1_TEX)
 Texture2D tex0 : register(t0);

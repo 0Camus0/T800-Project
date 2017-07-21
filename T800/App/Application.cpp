@@ -98,9 +98,9 @@ void App::InitVars() {
 	ShadowFilter.sigma = 1.0f;
 	ShadowFilter.Update();
 
-	BloomFilter.kernelSize = 33;
-	BloomFilter.radius = 2.0f;
-	BloomFilter.sigma = 5.0f;
+	BloomFilter.kernelSize = 29;
+	BloomFilter.radius = 3.0f;
+	BloomFilter.sigma = 3.0f;
 	BloomFilter.Update();
 
 	SceneProp.AddGaussKernel(&ShadowFilter);
