@@ -34,6 +34,17 @@ enum{
 	BLOOM_KERNEL = 1  
 };
 
+enum {
+	CHANGE_EXPOSURE = 0,
+	CHANGE_BLOOM_FACTOR,
+	CHANGE_NUM_LIGHTS,
+	CHANGE_ACTIVE_GAUSS_KERNEL,
+	CHANGE_GAUSS_KERNEL_SAMPLE_COUNT,
+	CHANGE_GAUSS_KERNEL_RADIUS,
+	CHANGE_GAUSS_KERNEL_DEVIATION,
+	CHANGE_MAX_NUM_OPTIONS
+};
+
 class App : public AppBase {
 public:
 	App() : AppBase() {}
@@ -49,6 +60,11 @@ public:
 	void OnResume();
 
 	void OnReset();
+
+
+	void ChangeSettingsOnPlus();
+	void ChangeSettingsOnMinus();
+	void printCurrSelection();
 
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	Cubes[10];
@@ -98,4 +114,6 @@ public:
 		MAX_CAMS
 	};
 	int				CamSelection;
+	int				SceneSettingSelection;
+	int				ChangeActiveGaussSelection;
 };

@@ -37,6 +37,7 @@
 extern std::vector<std::string> g_args;
 
 
+
 enum {
 	SCENE = 0,
 	CROC,
@@ -61,6 +62,7 @@ void App::InitVars() {
 	SelectedMesh = 0;
 
 	CamSelection = NORMAL_CAM1;
+	SceneSettingSelection = CHANGE_EXPOSURE;
 
 	Cam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(45.0f), 1280.0f / 720.0f, 1.0f, 8000.0f);
 	Cam.Speed = 10.0f;
@@ -96,7 +98,7 @@ void App::InitVars() {
 	ShadowFilter.sigma = 1.0f;
 	ShadowFilter.Update();
 
-	BloomFilter.kernelSize = 21;
+	BloomFilter.kernelSize = 33;
 	BloomFilter.radius = 2.0f;
 	BloomFilter.sigma = 5.0f;
 	BloomFilter.Update();
@@ -104,6 +106,7 @@ void App::InitVars() {
 	SceneProp.AddGaussKernel(&ShadowFilter);
 	SceneProp.AddGaussKernel(&BloomFilter);
 	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
+	ChangeActiveGaussSelection = SHADOW_KERNEL;
 
 	RTIndex = -1;
 	FirstFrame = true;
@@ -416,7 +419,7 @@ void App::OnDraw() {
 
 	pFramework->pVideoDriver->Clear();
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT),0);
-	Quads[1].SetSignature(Signature::FSQUAD_1_TEX);
+	Quads[1].SetSignature(Signature::FSQUAD_3_TEX);
 	Quads[1].Draw();
 
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
@@ -460,6 +463,136 @@ void App::OnDraw() {
 	FirstFrame = false;
 }
 
+void  App::ChangeSettingsOnPlus() {
+	switch (SceneSettingSelection) {
+		case CHANGE_EXPOSURE: {
+			float prevVal = SceneProp.Exposure;
+			SceneProp.Exposure += 0.1;
+			cout << "[CHANGE_EXPOSURE] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.Exposure << "]" << endl;
+		}break;
+		case CHANGE_BLOOM_FACTOR: {
+			float prevVal = SceneProp.BloomFactor;
+			SceneProp.BloomFactor += 0.1;
+			cout << "[CHANGE_BLOOM_FACTOR] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.BloomFactor << "]" << endl;
+		}break;
+		case CHANGE_NUM_LIGHTS: {			
+			int prevVal = SceneProp.ActiveLights;
+			SceneProp.ActiveLights *= 2;
+			if (SceneProp.ActiveLights >= 127) {
+				SceneProp.ActiveLights = 127;
+			}
+			cout << "[CHANGE_NUM_LIGHTS] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.ActiveLights << "]" << endl;
+		}break;
+		case CHANGE_ACTIVE_GAUSS_KERNEL: {
+			int prevVal = ChangeActiveGaussSelection;
+			ChangeActiveGaussSelection++;
+			if (ChangeActiveGaussSelection >= SceneProp.pGaussKernels.size()) {
+				ChangeActiveGaussSelection = SceneProp.pGaussKernels.size() - 1;
+			}
+			cout << "[CHANGE_ACTIVE_GAUSS_KERNEL] Previous Value[" << prevVal << "] Actual Value[" << ChangeActiveGaussSelection << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_SAMPLE_COUNT: {
+			int prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize += 2;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_SAMPLE_COUNT] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_RADIUS: {
+			float prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius += 0.5;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_RADIUS] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_DEVIATION: {
+			float prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma += 0.5;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_DEVIATION] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma << "]" << endl;
+		}break;
+	}
+}
+
+void  App::ChangeSettingsOnMinus() {
+	switch (SceneSettingSelection) {
+		case CHANGE_EXPOSURE: {
+			float prevVal = SceneProp.Exposure;
+			SceneProp.Exposure -= 0.1;
+			cout << "[CHANGE_EXPOSURE] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.Exposure << "]" << endl;
+		}break;
+		case CHANGE_BLOOM_FACTOR: {
+			float prevVal = SceneProp.BloomFactor;
+			SceneProp.BloomFactor -= 0.1;
+			cout << "[CHANGE_BLOOM_FACTOR] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.BloomFactor << "]" << endl;
+		}break;
+		case CHANGE_NUM_LIGHTS: {
+			int prevVal = SceneProp.ActiveLights;
+			SceneProp.ActiveLights /= 2;
+			if (SceneProp.ActiveLights <= 0) {
+				SceneProp.ActiveLights = 1;
+			}
+			cout << "[CHANGE_NUM_LIGHTS] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.ActiveLights << "]" << endl;
+		}break;
+		case CHANGE_ACTIVE_GAUSS_KERNEL: {
+			int prevVal = ChangeActiveGaussSelection;
+			ChangeActiveGaussSelection--;
+			if (ChangeActiveGaussSelection < 0) {
+				ChangeActiveGaussSelection = 0;
+			}
+			cout << "[CHANGE_ACTIVE_GAUSS_KERNEL] Previous Value[" << prevVal << "] Actual Value[" << ChangeActiveGaussSelection << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_SAMPLE_COUNT: {
+			int prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize -= 2;
+			if (SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize <= 2) {
+				SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize = 3;
+			}
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_SAMPLE_COUNT] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_RADIUS: {
+			float prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius -= 0.5f;
+			if (SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius <= 0.5f) {
+				SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius = 0.5f;
+			}
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_RADIUS] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius << "]" << endl;
+		}break;
+		case CHANGE_GAUSS_KERNEL_DEVIATION: {
+			float prevVal = SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma -= 0.5;
+			SceneProp.pGaussKernels[ChangeActiveGaussSelection]->Update();
+			cout << "[CHANGE_GAUSS_KERNEL_DEVIATION] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma << "]" << endl;
+		}break;
+	}
+}
+
+void App::printCurrSelection() {
+	switch (SceneSettingSelection) {
+	case CHANGE_EXPOSURE: {
+		cout << "Option[CHANGE_EXPOSURE] Value[" << SceneProp.Exposure << "]" << endl;
+	}break;
+	case CHANGE_BLOOM_FACTOR: {
+		cout << "Option[CHANGE_BLOOM_FACTOR] Value[" << SceneProp.BloomFactor << "]" << endl;
+	}break;
+	case CHANGE_NUM_LIGHTS: {
+		cout << "Option[CHANGE_NUM_LIGHTS] Value[" << SceneProp.ActiveLights << "]" << endl;
+	}break;
+	case CHANGE_ACTIVE_GAUSS_KERNEL: {
+		cout << "Option[CHANGE_ACTIVE_GAUSS_KERNEL] Value[" << ChangeActiveGaussSelection << "]" << endl;
+	}break;
+	case CHANGE_GAUSS_KERNEL_SAMPLE_COUNT: {
+		cout << "Option[CHANGE_GAUSS_KERNEL_SAMPLE_COUNT] Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->kernelSize << "]" << endl;
+	}break;
+	case CHANGE_GAUSS_KERNEL_RADIUS: {
+		cout << "Option[CHANGE_GAUSS_KERNEL_RADIUS] Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->radius << "]" << endl;
+	}break;
+	case CHANGE_GAUSS_KERNEL_DEVIATION: {
+		cout << "Option[CHANGE_GAUSS_KERNEL_DEVIATION] Value[" << SceneProp.pGaussKernels[ChangeActiveGaussSelection]->sigma << "]" << endl;
+	}break;
+	}
+}
+
 void App::OnInput() {
 
 	if (FirstFrame)
@@ -498,13 +631,30 @@ void App::OnInput() {
 	}
 
 	if (IManager.PressedOnceKey(T800K_KP_PLUS)) {
-		SceneProp.ActiveLights *= 2;
+		ChangeSettingsOnPlus();	
 	}
 
 	if (IManager.PressedOnceKey(T800K_KP_MINUS)) {
-		SceneProp.ActiveLights /= 2;
-		if(SceneProp.ActiveLights<=0)
-			SceneProp.ActiveLights = 1;
+
+		ChangeSettingsOnMinus();		
+	}
+
+	if (IManager.PressedOnceKey(T800K_b)) {
+		SceneSettingSelection--;
+		if (SceneSettingSelection < 0) {
+			SceneSettingSelection = CHANGE_MAX_NUM_OPTIONS - 1;
+		}
+
+		printCurrSelection();
+	}
+
+	if (IManager.PressedOnceKey(T800K_n)) {
+		SceneSettingSelection++;
+		if(SceneSettingSelection == CHANGE_MAX_NUM_OPTIONS) {
+			SceneSettingSelection = CHANGE_EXPOSURE;
+		}
+
+		printCurrSelection();
 	}
 
 	if (IManager.PressedKey(T800K_KP5)) {

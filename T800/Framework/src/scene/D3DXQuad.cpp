@@ -188,10 +188,12 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
 			CnstBuffer.LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x , 6.0f);
 		}
-	}else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS){
+	}else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS || sig&Signature::FSQUAD_3_TEX){
 		D3D11_TEXTURE2D_DESC pDesc;
 		d3dxTextures[0]->Tex->GetDesc(&pDesc);
 		CnstBuffer.CameraPos.w = (float)pDesc.MipLevels;
+		CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
+		CnstBuffer.LightPositions[0].y = pScProp->Exposure;
 	}
 
 	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
