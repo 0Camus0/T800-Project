@@ -467,12 +467,12 @@ void  App::ChangeSettingsOnPlus() {
 	switch (SceneSettingSelection) {
 		case CHANGE_EXPOSURE: {
 			float prevVal = SceneProp.Exposure;
-			SceneProp.Exposure += 0.1;
+			SceneProp.Exposure += 0.1f;
 			cout << "[CHANGE_EXPOSURE] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.Exposure << "]" << endl;
 		}break;
 		case CHANGE_BLOOM_FACTOR: {
 			float prevVal = SceneProp.BloomFactor;
-			SceneProp.BloomFactor += 0.1;
+			SceneProp.BloomFactor += 0.1f;
 			cout << "[CHANGE_BLOOM_FACTOR] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.BloomFactor << "]" << endl;
 		}break;
 		case CHANGE_NUM_LIGHTS: {			
@@ -486,7 +486,7 @@ void  App::ChangeSettingsOnPlus() {
 		case CHANGE_ACTIVE_GAUSS_KERNEL: {
 			int prevVal = ChangeActiveGaussSelection;
 			ChangeActiveGaussSelection++;
-			if (ChangeActiveGaussSelection >= SceneProp.pGaussKernels.size()) {
+			if (ChangeActiveGaussSelection >= (int)SceneProp.pGaussKernels.size()) {
 				ChangeActiveGaussSelection = SceneProp.pGaussKernels.size() - 1;
 			}
 			cout << "[CHANGE_ACTIVE_GAUSS_KERNEL] Previous Value[" << prevVal << "] Actual Value[" << ChangeActiveGaussSelection << "]" << endl;
@@ -516,12 +516,12 @@ void  App::ChangeSettingsOnMinus() {
 	switch (SceneSettingSelection) {
 		case CHANGE_EXPOSURE: {
 			float prevVal = SceneProp.Exposure;
-			SceneProp.Exposure -= 0.1;
+			SceneProp.Exposure -= 0.1f;
 			cout << "[CHANGE_EXPOSURE] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.Exposure << "]" << endl;
 		}break;
 		case CHANGE_BLOOM_FACTOR: {
 			float prevVal = SceneProp.BloomFactor;
-			SceneProp.BloomFactor -= 0.1;
+			SceneProp.BloomFactor -= 0.1f;
 			cout << "[CHANGE_BLOOM_FACTOR] Previous Value[" << prevVal << "] Actual Value[" << SceneProp.BloomFactor << "]" << endl;
 		}break;
 		case CHANGE_NUM_LIGHTS: {
