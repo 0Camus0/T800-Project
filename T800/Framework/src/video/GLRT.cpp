@@ -20,20 +20,31 @@
 #endif
 
 bool GLRT::LoadAPIRT(){
-	GLint cfmt, dfmt;
-/*
-	switch (cfmt) {
-		case FD16: {
+	GLint cfmt, dfmt, cinternal;
+	GLint bysize = 0;
+
+	switch (this->color_format) {
+		case  BaseRT::NOTHING: {
+			number_RT = 0;
+			cfmt = GL_RGB;
+			cinternal = GL_RGBA;
+			bysize = GL_UNSIGNED_BYTE;
 		}break;
-		case F32: {
-		}break;
-		case RGB8: {
-		}break;
+		case RGB8: 
 		case RGBA8: {
+			cfmt = GL_RGB;
+			cinternal = GL_RGBA;
+			bysize = GL_UNSIGNED_BYTE;
 		}break;
 		case RGBA16F: {
+			cfmt = GL_RGB16F;
+			cinternal = GL_RGBA;
+			bysize = GL_FLOAT;
 		}break;
 		case RGBA32F: {
+			cfmt = GL_RGB32F;
+			cinternal = GL_RGBA;
+			bysize = GL_FLOAT;
 		}break;
 		case BGR8: {
 		}break;
@@ -41,17 +52,11 @@ bool GLRT::LoadAPIRT(){
 		}break;
 		case BGRA32: {
 		}break;
-	}*/
-	cfmt = GL_RGB;
+	}
+	
 	dfmt = GL_DEPTH_COMPONENT;
-	GLint bysize = GL_UNSIGNED_BYTE;
+	
 		 
-
-	if (color_format == BaseRT::NOTHING)
-		number_RT = 0;
-//	w = 1280;
-//	h = 720;
-
 	GLuint fbo;
 	GLuint dtex;
 #if defined(OS_LINUX)
@@ -71,27 +76,23 @@ bool GLRT::LoadAPIRT(){
 	}
 #endif
 	for (int i = 0; i < number_RT; i++) {
-
+		GLint cffmt = cfmt;
+		GLint cbysize = bysize;
 		GLuint ctex;
 		glGenTextures(1, &ctex);
 		glBindTexture(GL_TEXTURE_2D, ctex);
 #ifdef USING_16BIT_NORMALS
 		if (i == 1) {
-			cfmt = GL_RG;/// GL_RG16I;
-			bysize = GL_UNSIGNED_SHORT;
-		}else {
-			cfmt = GL_RGB;
-			bysize = GL_UNSIGNED_BYTE;
+			cffmt = GL_RG;/// GL_RG16I;
+			cinternal = GL_RG;
+			cbysize = GL_UNSIGNED_SHORT;
 		}
-#else
-		cfmt = GL_RGB;
-		bysize = GL_UNSIGNED_BYTE;
 #endif
 
-		glTexImage2D(GL_TEXTURE_2D, 0, cfmt, w, h, 0, cfmt, bysize, 0);
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, cffmt, w, h, 0, cinternal, cbysize, 0);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

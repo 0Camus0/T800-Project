@@ -68,7 +68,7 @@ public:
 	Texture* GetTexture(int id);
 	void	 DestroyTexture();
 
-	int 	CreateRT(int nrt, int cf, int df, int w, int h);
+	int 	CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
 	void	PushRT(int id);
 	void	PopRT();
 	void	DestroyRT(int id);

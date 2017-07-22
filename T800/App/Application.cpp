@@ -114,7 +114,7 @@ void App::InitVars() {
 
 void App::CreateAssets() {
 
-	EnvMapTexIndex = g_pBaseDriver->CreateTexture(string("CubeMap_Granja_RAW.dds"));
+	EnvMapTexIndex = g_pBaseDriver->CreateTexture(string("CubeMap_Mountains.dds"));
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA32F, BaseRT::F32, 0, 0,true);
@@ -419,7 +419,7 @@ void App::OnDraw() {
 
 	pFramework->pVideoDriver->Clear();
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT),0);
-	Quads[1].SetSignature(Signature::FSQUAD_3_TEX);
+	Quads[1].SetSignature(Signature::HDR_COMP_PASS);
 	Quads[1].Draw();
 
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);

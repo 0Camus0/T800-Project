@@ -55,6 +55,9 @@ void GLQuad::Create(){
 	Dest = SigBase | Signature::BRIGHT_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | Signature::HDR_COMP_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
 	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -140,6 +143,11 @@ void GLQuad::Draw(float *t, float *vp){
 			LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x, 6.0f);
 		}
 	}
+	else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS || sig&Signature::FSQUAD_3_TEX) {
+		CameraPos.w = 10.0f;
+		LightPositions[0].x = pScProp->BloomFactor;
+		LightPositions[0].y = pScProp->Exposure;
+	}
 
 	glUseProgram(s->ShaderProg);
 
@@ -216,7 +224,7 @@ void GLQuad::Draw(float *t, float *vp){
 		glBindTexture(GL_TEXTURE_2D, Textures[1]->id);
 		glUniform1i(s->tex1_loc, 1);
 	}
-	else if (sig&Signature::FSQUAD_3_TEX) {
+	else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Textures[0]->id);
 		glUniform1i(s->tex0_loc, 0);

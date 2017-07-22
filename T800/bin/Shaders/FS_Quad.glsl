@@ -379,6 +379,20 @@ void main(){
 		gl_FragColor = Col;
 	#endif
 }
+#elif defined(HDR_COMP_PASS)
+uniform mediump sampler2D tex0;
+uniform mediump sampler2D tex1;
+uniform mediump sampler2D tex2;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	coords.y = 1.0 - coords.y;
+	
+	#ifdef ES_30
+		colorOut = texture(tex0,coords);
+	#else
+		gl_FragColor = textureLod(tex0,coords,9);
+	#endif
+}
 #elif defined(FSQUAD_1_TEX)
 uniform mediump sampler2D tex0;
 void main(){

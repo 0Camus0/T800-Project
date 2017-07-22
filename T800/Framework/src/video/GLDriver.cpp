@@ -237,13 +237,13 @@ void GLDriver::DestroyTexture() {
 	}
 }
 
-int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
+int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips) {
 	GLRT	*pRT = new GLRT;
 	if (w == 0)
 		w = width;
 	if (h == 0)
 		h = height;
-	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+	if (pRT->LoadRT(nrt, cf, df, w, h, genMips)) {
 		glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
 		RTs.push_back(pRT);
 		return (RTs.size() - 1);
@@ -257,6 +257,8 @@ int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
 void GLDriver::PushRT(int id) {
 	if (id < 0 || id >= (int)RTs.size())
 		return;
+
+	CurrentRT = id;
 
 	GLRT *pRT = dynamic_cast<GLRT*>(RTs[id]);
 
@@ -282,6 +284,14 @@ void GLDriver::PopRT() {
 	glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
 	glViewport(0, 0, width, height);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	if (CurrentRT >= 0) {
+		if (RTs[CurrentRT]->GenMips) {
+			glBindTexture(GL_TEXTURE_2D, RTs[CurrentRT]->vColorTextures[0]->id);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+	}
+	
 }
 
 void GLDriver::DestroyRT(int id){
