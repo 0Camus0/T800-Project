@@ -4,7 +4,30 @@
 
 #include <sys/time.h>
 
+#ifdef USING_WAYLAND_NATIVE
+struct wl_compositor    *wlnd_compositor = 0;
+struct wl_shell         *wlnd_shell = 0;
 
+static void registry_add_object(void *data, struct wl_registry *registry,
+                     uint32_t name, const char *interface, uint32_t version){
+    if (!strcmp(interface,"wl_compositor")) {
+        wlnd_compositor = (wl_compositor*)wl_registry_bind (registry, name, &wl_compositor_interface, 1);
+    }else if (strcmp(interface, "wl_shell") == 0) {
+        wlnd_shell = (wl_shell*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
+    }
+}
+
+static void registry_remove_object(void *data,
+        struct wl_registry *registry, uint32_t name)
+{}
+
+static struct wl_registry_listener registry_listener = {
+                                                    registry_add_object,
+                                                    registry_remove_object
+                                                    };
+
+extern void EGLError(const char* c_ptr);
+#endif
 
 LinuxFramework *LinuxFramework::thiz = 0;
 
@@ -28,18 +51,16 @@ extern int g_AvoidInput;
 extern std::vector<std::string> g_args;
 
 void LinuxFramework::OnCreateApplication(){
+
+#ifdef USING_WAYLAND_NATIVE
+    printf("Using Wayland Camus\n");
+#else
+    printf("Using Wayland Freeglut\n");
+#endif
+
     int req = 0;
     g_AvoidInput = 0;
     putenv( (char *) "__GL_SYNC_TO_VBLANK=1" );
-    glutInit(&req,0);
-    glutInitContextProfile(GLUT_CORE_PROFILE);
-#ifdef USING_OPENGL_ES30
-    glutInitContextVersion(3,0);
-#elif defined(USING_OPENGL_ES31)
-    glutInitContextVersion(3,1);
-#elif defined(USING_OPENGL_ES20)
-    glutInitContextVersion(2,0);
-#endif
     int width = 1280;
 	int height = 720;
 
@@ -53,6 +74,18 @@ void LinuxFramework::OnCreateApplication(){
         }
 	}
 
+#ifdef USING_FREEGLUT
+    glutInit(&req,0);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+#ifdef USING_OPENGL_ES30
+    glutInitContextVersion(3,0);
+#elif defined(USING_OPENGL_ES31)
+    glutInitContextVersion(3,1);
+#elif defined(USING_OPENGL_ES20)
+    glutInitContextVersion(2,0);
+#endif
+
+
     glutInitWindowSize(width,height);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
     glutCreateWindow("T800");
@@ -63,7 +96,103 @@ void LinuxFramework::OnCreateApplication(){
     glutReshapeFunc(ResizeWindow);
     glutKeyboardFunc(KeyboardEvent);
     glutKeyboardUpFunc(KeyboardReleaseEvent);
+#elif defined(USING_WAYLAND_NATIVE)
+    wlnd_display = wl_display_connect(NULL);
+    if (wlnd_display == NULL) {
+        fprintf(stderr, "Can't connect to display\n");
+        exit(1);
+    }
+    printf("connected to display\n");
 
+    wl_registry *registry = wl_display_get_registry(wlnd_display);
+    wl_registry_add_listener(registry, &registry_listener, NULL);
+
+    wl_display_dispatch(wlnd_display);
+    wl_display_roundtrip(wlnd_display);
+
+    if (wlnd_compositor == NULL) {
+        fprintf(stderr, "Can't find compositor\n");
+	exit(1);
+    } else {
+        fprintf(stderr, "Found compositor\n");
+    }
+
+    wlnd_surface = wl_compositor_create_surface(wlnd_compositor);
+    if (wlnd_surface == NULL) {
+        fprintf(stderr, "Can't create surface\n");
+        exit(1);
+    } else {
+        fprintf(stderr, "Created surface\n");
+    }
+
+    wlnd_shell_surface = wl_shell_get_shell_surface(wlnd_shell, wlnd_surface);
+    wl_shell_surface_set_toplevel(wlnd_shell_surface);
+
+    wland_region = wl_compositor_create_region(wlnd_compositor);
+    wl_region_add(wland_region, 0, 0,
+		  width,
+		  height);
+    wl_surface_set_opaque_region(wlnd_surface, wland_region);
+
+
+
+
+	EGLint numConfigs;
+
+	eglDisplay = eglGetDisplay((EGLNativeDisplayType)wlnd_display);
+
+	EGLError("eglGetDisplay");
+
+	EGLint iMajorVersion, iMinorVersion;
+
+	if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
+		std::cout << "Failed to initialize egl" << std::endl;
+	}else{
+		std::cout << "EGL version " << iMajorVersion << "." << iMinorVersion << std::endl;
+	}
+
+	eglBindAPI(EGL_OPENGL_ES_API);
+
+	EGLError("eglBindAPI");
+
+	const EGLint attribs[] = {
+		EGL_SURFACE_TYPE,	EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
+		EGL_BLUE_SIZE,		8,
+		EGL_GREEN_SIZE,		8,
+		EGL_RED_SIZE,		8,
+		EGL_DEPTH_SIZE,		24,
+		EGL_NONE
+	};
+
+	if(!eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs)){
+		std::cout << "Failed to choose config" << std::endl;
+	}
+
+	EGLError("eglChooseConfig");
+
+	EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+	eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, ai32ContextAttribs);
+
+	EGLError("eglCreateContext");
+
+	wland_egl_window = wl_egl_window_create(wlnd_surface,width, height);
+    if (wland_egl_window == EGL_NO_SURFACE) {
+        fprintf(stderr, "Can't create egl window\n");
+	exit(1);
+    } else {
+        fprintf(stderr, "Created egl window\n");
+    }
+
+    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, (EGLNativeWindowType) wland_egl_window, NULL);
+
+	EGLError("eglCreateWindowSurface");
+
+	if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+		std::cout << "Failed to make current" << std::endl;
+		return;
+	}
+#endif
     pVideoDriver = new GLDriver;
     pVideoDriver->SetDimensions(width, height);
 
@@ -85,7 +214,11 @@ void LinuxFramework::OnCreateApplication(){
 
 	printf("Asset Loading took : %f \n",ttaken);
 
+#ifdef USING_FREEGLUT
 	glutMainLoop();
+#elif defined(USING_WAYLAND_NATIVE)
+    UpdateApplication();
+#endif // USING_FREEGLUT
 }
 
 void LinuxFramework::OnDestroyApplication(){
@@ -101,7 +234,14 @@ void LinuxFramework::OnResumeApplication(){
 }
 
 void LinuxFramework::UpdateApplication(){
+#ifdef USING_FREEGLUT
     pBaseApp->OnUpdate();
+#elif defined(USING_WAYLAND_NATIVE)
+    while(m_alive){
+        pBaseApp->OnUpdate();
+        eglSwapBuffers(eglDisplay, eglSurface);
+    }
+#endif
 }
 
 void LinuxFramework::ProcessInput(){
@@ -112,6 +252,7 @@ void LinuxFramework::ResetApplication(){
 
 }
 
+#ifdef USING_FREEGLUT
 // STATIC
 void LinuxFramework::IdleFunction(){
     thiz->UpdateApplication();
@@ -150,3 +291,4 @@ void LinuxFramework::KeyboardReleaseEvent(unsigned char key, int x, int y){
 	thiz->pBaseApp->IManager.KeyStates[0][key] = false;
 	thiz->pBaseApp->IManager.KeyStates[1][key] = false;
 }
+#endif

@@ -200,7 +200,10 @@ void	GLDriver::SwapBuffers() {
 	SDL_GL_SwapBuffers();
 #endif
 #elif defined(OS_LINUX)
+#ifdef USING_FREEGLUT
     glutSwapBuffers();
+#elif defined(USING_WAYLAND_NATIVE)
+#endif
 #endif
 
 }

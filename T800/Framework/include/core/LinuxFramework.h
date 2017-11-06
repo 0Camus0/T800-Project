@@ -19,7 +19,21 @@
 #include <core/Core.h>
 #include <video/BaseDriver.h>
 
-#include <GL/freeglut.h>
+#ifdef USING_FREEGLUT
+    #include <GL/freeglut.h>
+#elif defined(USING_WAYLAND_NATIVE)
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    #include <wayland-client.h>
+    #include <wayland-server.h>
+    #include <wayland-client-protocol.h>
+    #include <wayland-egl.h>
+
+    #include <EGL/egl.h>
+    #include <GLES2/gl2.h>
+#endif
 
 #include <memory>
 
@@ -36,13 +50,25 @@ public:
 	void ResetApplication();
 	~LinuxFramework() {	}
 
+#ifdef USING_FREEGLUT
 	static void IdleFunction();
     static void MouseClickFunction(int button, int state, int x, int y);
     static void MouseMoveFunction(int x, int y);
     static void ResizeWindow(int w, int h);
     static void KeyboardEvent(unsigned char key, int x, int y);
     static void KeyboardReleaseEvent(unsigned char key, int x, int y);
+#elif defined(USING_WAYLAND_NATIVE)
+    struct wl_display       *wlnd_display;
+    struct wl_surface       *wlnd_surface;
+    struct wl_egl_window    *wland_egl_window;
+    struct wl_shell_surface *wlnd_shell_surface;
+    struct wl_region        *wland_region;
 
+    EGLDisplay  eglDisplay;
+    EGLConfig   eglConfig;
+    EGLSurface  eglSurface;
+    EGLContext  eglContext;
+#endif
 	bool	m_alive;
 
 	static LinuxFramework* thiz;
