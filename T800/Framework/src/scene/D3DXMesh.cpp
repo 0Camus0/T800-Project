@@ -15,18 +15,19 @@
 #include <iostream>
 
 #include <video/D3DXShader.h>
-
+#include <video/D3DXDriver.h>
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
 
 
-extern ComPtr<ID3D11Device>            D3D11Device;
-extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
 
 
 void D3DXMesh::Create(char *filename) {
-
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 
 	std::string fname = std::string(filename);
 	if (xFile.LoadXFile(fname)) {
@@ -47,14 +48,15 @@ void D3DXMesh::Create(char *filename) {
 
 		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig));
 
-		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
+    deviceContext->IASetInputLayout(s->Layout.Get());
 
 		D3D11_BUFFER_DESC bdesc = { 0 };
 		bdesc.Usage = D3D11_USAGE_DEFAULT;
 		bdesc.ByteWidth = sizeof(D3DXMesh::CBuffer);
 		bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		hr = D3D11Device->CreateBuffer(&bdesc, 0, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+
+		hr = device->CreateBuffer(&bdesc, 0, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
 		if (hr != S_OK) {
 			printf("Error Creating Buffer Layout\n");
 			return;
@@ -136,12 +138,13 @@ void D3DXMesh::Create(char *filename) {
 				}
 			}
 
-			D3D11_BUFFER_DESC bdesc = { 0 };
-			bdesc.ByteWidth = it_subsetinfo->NumTris * 3 * sizeof(USHORT);
-			bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-			D3D11_SUBRESOURCE_DATA subData = { tmpIndexex, 0, 0 };
 
-			hr = D3D11Device->CreateBuffer(&bdesc, &subData, &it_subsetinfo->IB);
+      t800::BufferDesc bdesc;
+      bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(USHORT);
+      bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+      it_subsetinfo->IB = std::make_shared<t800::D3DXIndexBuffer>();
+      it_subsetinfo->IB->Create(*D3D11Device, bdesc, tmpIndexex);
+      hr = S_OK; 
 			if (hr != S_OK) {
 				printf("Error Creating Index Buffer\n");
 				return;
@@ -154,15 +157,17 @@ void D3DXMesh::Create(char *filename) {
 
 		it_MeshInfo->VertexSize = it->VertexSize;
 
-		bdesc = { 0 };
-		bdesc.ByteWidth = pActual->NumVertices*it->VertexSize;
-		bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		D3D11_SUBRESOURCE_DATA subData = { &it->pData[0], 0, 0 };
-		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &it_MeshInfo->VB);
-		if (hr != S_OK) {
-			printf("Error Creating Vertex Buffer\n");
-			return;
-		}
+
+    t800::BufferDesc buffdesc;
+    buffdesc.byteWidth = pActual->NumVertices*it->VertexSize;
+    buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+    it_MeshInfo->VB = std::make_shared<t800::D3DXVertexBuffer>();
+    it_MeshInfo->VB->Create(*D3D11Device, buffdesc, &it->pData[0]);
+    hr = S_OK;
+    if (hr != S_OK) {
+      printf("Error Creating Vertex Buffer\n");
+      return;
+    }
 
 #if CHANGE_TO_RH
 		for (std::size_t a = 0; a < pActual->Triangles.size(); a += 3) {
@@ -173,16 +178,15 @@ void D3DXMesh::Create(char *filename) {
 		}
 #endif
 
-		bdesc = { 0 };
-		bdesc.ByteWidth = pActual->Triangles.size() * sizeof(unsigned short);
-		bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		subData = { &pActual->Triangles[0], 0, 0 };
-
-		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &it_MeshInfo->IB);
-		if (hr != S_OK) {
-			printf("Error Creating Index Buffer\n");
-			return;
-		}
+    buffdesc.byteWidth = pActual->Triangles.size() * sizeof(unsigned short);
+    buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+    it_MeshInfo->IB = std::make_shared<t800::D3DXIndexBuffer>();
+    it_MeshInfo->IB->Create(*D3D11Device, buffdesc, &pActual->Triangles[0]);
+    hr = S_OK;
+    if (hr != S_OK) {
+      printf("Error Creating Index Buffer\n");
+      return;
+    }
 	}
 
 	XMatIdentity(transform);
@@ -313,7 +317,8 @@ void D3DXMesh::Transform(float *t) {
 }
 
 void D3DXMesh::Draw(float *t, float *vp) {
-
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	if (t)
 		transform = t;
 
@@ -343,7 +348,7 @@ void D3DXMesh::Draw(float *t, float *vp) {
 			int Sig = -1;
 			D3DXShader *s = 0;
 			D3DXShader *last = (D3DXShader*)32;
-			D3D11DeviceContext->IASetVertexBuffers(0, 1, it_MeshInfo->VB.GetAddressOf(), &stride, &offset);
+      it_MeshInfo->VB->Set(*D3D11DeviceContext,stride,offset);
 
 			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
 				bool update = false;
@@ -357,40 +362,40 @@ void D3DXMesh::Draw(float *t, float *vp) {
 					update=true;
 
 				if(update){
-				D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
-				D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
-				D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
+          deviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+          deviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+          deviceContext->IASetInputLayout(s->Layout.Get());
 
-				D3D11DeviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
-				D3D11DeviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
-				D3D11DeviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+          deviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
+          deviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+          deviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
 				}
 
-				D3D11DeviceContext->PSSetShaderResources(0, 1, sub_info->DiffuseTex->pSRVTex.GetAddressOf());
+        deviceContext->PSSetShaderResources(0, 1, sub_info->DiffuseTex->pSRVTex.GetAddressOf());
 
 				if (s->Sig&Signature::SPECULAR_MAP){
-					D3D11DeviceContext->PSSetShaderResources(1, 1, sub_info->SpecularTex->pSRVTex.GetAddressOf());
+          deviceContext->PSSetShaderResources(1, 1, sub_info->SpecularTex->pSRVTex.GetAddressOf());
 				}
 
 				if (s->Sig&Signature::GLOSS_MAP) {;
-					D3D11DeviceContext->PSSetShaderResources(2, 1, sub_info->GlossfTex->pSRVTex.GetAddressOf());
+        deviceContext->PSSetShaderResources(2, 1, sub_info->GlossfTex->pSRVTex.GetAddressOf());
 				}
 
 				if (s->Sig&Signature::NORMAL_MAP) {
-					D3D11DeviceContext->PSSetShaderResources(3, 1, sub_info->NormalTex->pSRVTex.GetAddressOf());
+          deviceContext->PSSetShaderResources(3, 1, sub_info->NormalTex->pSRVTex.GetAddressOf());
 				}
 
 				if(EnvMap){
 					d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
-					D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
+          deviceContext->PSSetShaderResources(4, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
 				}
 
-				D3D11DeviceContext->PSSetSamplers(0, 1, sub_info->DiffuseTex->pSampler.GetAddressOf());
+        deviceContext->PSSetSamplers(0, 1, sub_info->DiffuseTex->pSampler.GetAddressOf());
 
-				D3D11DeviceContext->IASetIndexBuffer(sub_info->IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+        sub_info->IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
 
-				D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        deviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
 				last = s;
 				}
 			}

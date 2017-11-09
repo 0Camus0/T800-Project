@@ -25,6 +25,52 @@
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
+
+namespace t800 {
+  class D3DXDeviceContext : public DeviceContext{
+  public:
+    void** GetAPIContext() const override;
+    void release() override;
+  private:
+    ID3D11DeviceContext* APIContext;
+  };
+  class D3DXDevice : public Device{
+  public:
+    void** GetAPIDevice() const override;
+    void release() override;
+  private:
+    ID3D11Device* APIDevice;
+  };
+  class D3DXVertexBuffer : public VertexBuffer {
+  public:
+    D3DXVertexBuffer() = default;
+    D3DXVertexBuffer(D3DXVertexBuffer const& other) = default;
+    D3DXVertexBuffer(D3DXVertexBuffer&& other) = default;
+
+    void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) override;
+    void* GetAPIBuffer() const override;
+    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
+    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) override;
+    void release() override;
+  private:
+    ID3D11Buffer* APIBuffer;
+  };
+  class D3DXIndexBuffer : public IndexBuffer {
+  public:
+    void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
+    void* GetAPIBuffer() const override;
+    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
+    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) override;
+    void release() override;
+  private:
+    ID3D11Buffer* APIBuffer;
+  };
+}
+
+
+
 class D3DXDriver : public BaseDriver {
 public:
 	D3DXDriver() {  }

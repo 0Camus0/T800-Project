@@ -13,10 +13,12 @@
 #include <video/D3DXRT.h>
 #include <iostream>
 
-extern ComPtr<ID3D11Device>            D3D11Device;
-extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
 
 bool D3DXRT::LoadAPIRT() {
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	DXGI_FORMAT cfmt;
 	DXGI_FORMAT depthFormat,depthShaderViewFormat,depthResourceViewFormat;
 	
@@ -77,7 +79,7 @@ bool D3DXRT::LoadAPIRT() {
 		desc.MipLevels = GenMips ? 0 : 1;
 		desc.MiscFlags = GenMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 		ComPtr<ID3D11Texture2D> Tex;
-		hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
+		hr = device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
 		if (hr != S_OK) {
 			std::cout << "Error loading RT texture index " << i << std::endl;
 			exit(444);
@@ -88,7 +90,7 @@ bool D3DXRT::LoadAPIRT() {
 		rtDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtDesc.Format = desc.Format;
 		ComPtr<ID3D11RenderTargetView> RTV;
-		hr = D3D11Device->CreateRenderTargetView(Tex.Get(), &rtDesc, &RTV);
+		hr = device->CreateRenderTargetView(Tex.Get(), &rtDesc, &RTV);
 		if (hr != S_OK) {
 			std::cout << "Error creating RTV index " << i << std::endl;
 			exit(444);
@@ -113,7 +115,7 @@ bool D3DXRT::LoadAPIRT() {
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 		shaderResourceViewDesc.Texture2D.MipLevels = GenMips ? -1 : 1;
 
-		hr = D3D11Device->CreateShaderResourceView(Tex.Get(), &shaderResourceViewDesc, &pTextureColor->pSRVTex);
+		hr = device->CreateShaderResourceView(Tex.Get(), &shaderResourceViewDesc, &pTextureColor->pSRVTex);
 		if (hr != S_OK) {
 			delete pTextureColor;
 			std::cout << "Error creating Shader Resource View index " << i << std::endl;
@@ -136,7 +138,7 @@ bool D3DXRT::LoadAPIRT() {
 	descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	hr = D3D11Device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);
+	hr = device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);
 	if (hr != S_OK) {
 		std::cout << "Error loading RT depth texture " << std::endl;
 		exit(444);
@@ -145,7 +147,7 @@ bool D3DXRT::LoadAPIRT() {
 	ZeroMemory(&dsvd, sizeof(dsvd));
 	dsvd.Format = depthShaderViewFormat;
 	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
+	hr = device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
 	if (hr != S_OK) {
 		std::cout << "Error creating Depth Stencil View " << std::endl;
 		exit(444);
@@ -158,7 +160,7 @@ bool D3DXRT::LoadAPIRT() {
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-	hr = D3D11Device->CreateShaderResourceView(D3D11DepthTex.Get(), &shaderResourceViewDesc, &pTextureDepth->pSRVTex);
+	hr = device->CreateShaderResourceView(D3D11DepthTex.Get(), &shaderResourceViewDesc, &pTextureDepth->pSRVTex);
 	if (hr != S_OK) {
 		delete pTextureDepth;
 		std::cout << "Error creating Shader Resource View Depth " << std::endl;

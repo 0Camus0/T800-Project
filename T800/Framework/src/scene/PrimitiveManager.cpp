@@ -11,8 +11,6 @@
 *********************************************************/
 
 #include <scene/PrimitiveManager.h>
-#include <scene/Triangle.h>
-#include <scene/Cube.h>
 #include <scene/GLMesh.h>
 #include <scene/GLQuad.h>
 
@@ -30,16 +28,10 @@ PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 }
 
 int  PrimitiveManager::CreateTriangle() {
-	PrimitiveBase *primitive = new Trangle();
-	primitive->Create();
-	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);
 }
 
 int	 PrimitiveManager::CreateCube(){
-	PrimitiveBase *primitive = new Cube();
-	primitive->Create();
-	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);
 }
 

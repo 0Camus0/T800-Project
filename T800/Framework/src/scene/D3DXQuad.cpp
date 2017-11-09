@@ -14,10 +14,12 @@
 #include <scene/D3DXQuad.h>
 #include <utils/Utils.h>
 
-extern ComPtr<ID3D11Device>            D3D11Device;
-extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
 
 void D3DXQuad::Create() {
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	SigBase = Signature::HAS_TEXCOORDS0;
 	unsigned int Dest;
 	char *vsSourceP = file2string("Shaders/VS_Quad.hlsl");
@@ -80,7 +82,7 @@ void D3DXQuad::Create() {
 	bdesc.ByteWidth = sizeof(CBuffer);
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	HRESULT hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	HRESULT hr = device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
 	if (hr != S_OK) {
 		printf("Error Creating Constant Buffer\n");
 		return;
@@ -92,7 +94,7 @@ void D3DXQuad::Create() {
 
 	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
 
-	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
+	hr = device->CreateBuffer(&bdesc, &subData, &VB);
 	if (hr != S_OK) {
 		printf("Error Creating Vertex Buffer\n");
 		return;
@@ -104,7 +106,7 @@ void D3DXQuad::Create() {
 
 	subData = { indices, 0, 0 };
 
-	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB);
+	hr = device->CreateBuffer(&bdesc, &subData, &IB);
 	if (hr != S_OK) {
 		printf("Error Creating Index Buffer\n");
 		return;
@@ -120,7 +122,7 @@ void D3DXQuad::Create() {
 	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxAnisotropy = 1;
 	sdesc.BorderColor[0] = sdesc.BorderColor[1] = sdesc.BorderColor[2] = sdesc.BorderColor[3] = 0;
-	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
+	device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
 
 	XMatIdentity(transform);
 }
@@ -133,7 +135,8 @@ void D3DXQuad::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	unsigned int sig = SigBase;
 	sig |= gSig;
 	D3DXShader * s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
@@ -196,54 +199,54 @@ void D3DXQuad::Draw(float *t, float *vp) {
 		CnstBuffer.LightPositions[0].y = pScProp->Exposure;
 	}
 
-	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
-	D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
+	deviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+  deviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+  deviceContext->IASetInputLayout(s->Layout.Get());
 
-	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
-	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+  deviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+  deviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+  deviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 
-	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
-	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+  deviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+  deviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
 
 	if (sig&Signature::DEFERRED_PASS) {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(6, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
+		deviceContext->PSSetShaderResources(6, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_2_TEX) {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {			
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::SHADOW_COMP_PASS) {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 	else {
-		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 	}
 
 	
 
-	D3D11DeviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
-	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D11DeviceContext->DrawIndexed(6, 0, 0);
+  deviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+  deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  deviceContext->DrawIndexed(6, 0, 0);
 }
 
 void D3DXQuad::Destroy(){

@@ -19,13 +19,163 @@
 
 // D3D11 Main Objects
 ComPtr<IDXGISwapChain>			DXGISwapchain;	// Responsible of the swap buffers
-ComPtr<ID3D11Device>            D3D11Device;	// Device for create resources
-ComPtr<ID3D11DeviceContext>     D3D11DeviceContext; // Context to set and manipulate the resources
+//ComPtr<ID3D11Device>            D3D11Device;	// Device for create resources
+//ComPtr<ID3D11DeviceContext>     D3D11DeviceContext; // Context to set and manipulate the resources
 ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;  // View into the back buffer
 ComPtr<ID3D11DepthStencilView>  D3D11DepthStencilTargetView; // View into the depth buffer
 ComPtr<ID3D11Texture2D>			D3D11DepthTex;	// Actual depth buffer texture
 
+
+
+namespace t800 {
+  void ** D3DXDeviceContext::GetAPIContext() const
+  {
+    return (void**)&APIContext;
+  }
+  void D3DXDeviceContext::release()
+  {
+    APIContext->Release();
+  }
+  void ** D3DXDevice::GetAPIDevice() const
+  {
+    return (void**)&APIDevice;
+  }
+  void D3DXDevice::release()
+  {
+    APIDevice->Release();
+  }
+  void D3DXVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetVertexBuffers(0, 1, &APIBuffer, &stride, &offset);
+  }
+  void * D3DXVertexBuffer::GetAPIBuffer() const
+  {
+    return APIBuffer;
+  }
+  void D3DXVertexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    D3D11_USAGE usage;
+    switch (desc.usage)
+    {
+    case T8_BUFFER_USAGE::DEFAULT :
+      usage = D3D11_USAGE_DEFAULT;
+    break;
+    case T8_BUFFER_USAGE::DINAMIC:
+      usage = D3D11_USAGE_DYNAMIC;
+      break;
+    case T8_BUFFER_USAGE::STATIC:
+      usage = D3D11_USAGE_IMMUTABLE;
+      break;
+    default:
+      usage = D3D11_USAGE_DEFAULT;
+      break;
+    }
+    D3D11_BUFFER_DESC apiDesc{0};
+    apiDesc.ByteWidth = desc.byteWidth;
+    apiDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    apiDesc.Usage = usage;
+    //apiDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+    //apiDesc.StructureByteStride = ;
+    //apiDesc.MiscFlags = ;
+
+    if (initialData != nullptr)
+    {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+      D3D11_SUBRESOURCE_DATA subData = { initialData, 0, 0 };
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, &subData, &APIBuffer);
+    }
+    else
+    {
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, 0, &APIBuffer);
+    }
+
+  }
+  void D3DXVertexBuffer::UpdateFromSystemCopy(const DeviceContext& deviceContext)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, &sysMemCpy[0], 0, 0);
+  }
+  void D3DXVertexBuffer::UpdateFromBuffer(const DeviceContext& deviceContext,const void * buffer)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, buffer, 0, 0);
+  }
+  void D3DXVertexBuffer::release()
+  {
+    APIBuffer->Release();
+    sysMemCpy.clear();
+  }
+  void D3DXIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
+  {
+    DXGI_FORMAT apiformat;
+    if (format == T8_IB_FORMAR::R16)
+      apiformat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
+    else
+      apiformat = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetIndexBuffer(APIBuffer, apiformat, offset);
+  }
+  void * D3DXIndexBuffer::GetAPIBuffer() const
+  {
+    return APIBuffer;
+  }
+  void D3DXIndexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    D3D11_USAGE usage;
+    switch (desc.usage)
+    {
+    case T8_BUFFER_USAGE::DEFAULT:
+      usage = D3D11_USAGE_DEFAULT;
+      break;
+    case T8_BUFFER_USAGE::DINAMIC:
+      usage = D3D11_USAGE_DYNAMIC;
+      break;
+    case T8_BUFFER_USAGE::STATIC:
+      usage = D3D11_USAGE_IMMUTABLE;
+      break;
+    default:
+      usage = D3D11_USAGE_DEFAULT;
+      break;
+    }
+    D3D11_BUFFER_DESC apiDesc{ 0 };
+    apiDesc.ByteWidth = desc.byteWidth;
+    apiDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    apiDesc.Usage = usage;
+
+    if (initialData != nullptr)
+    {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+      D3D11_SUBRESOURCE_DATA subData = { initialData, 0, 0 };
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, &subData, &APIBuffer);
+    }
+    else
+    {
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, 0, &APIBuffer);
+    }
+  }
+  void D3DXIndexBuffer::UpdateFromSystemCopy(const DeviceContext& deviceContext)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, &sysMemCpy[0], 0, 0);
+  }
+  void D3DXIndexBuffer::UpdateFromBuffer(const DeviceContext& deviceContext,const void * buffer)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, buffer, 0, 0);
+  }
+  void D3DXIndexBuffer::release()
+  {
+    APIBuffer->Release();
+    sysMemCpy.clear();
+  }
+}
+
+
+t800::Device*           D3D11Device;	// Device for create resources
+t800::DeviceContext*    D3D11DeviceContext; // Context to set and manipulate the resources
+
+
+
+
 void D3DXDriver::InitDriver(){
+  D3D11Device = new t800::D3DXDevice;
+  D3D11DeviceContext = new t800::D3DXDeviceContext;
+
 	//	Descriptor of the Back Buffer
 	DXGI_MODE_DESC BackBufferDesc;
 	ZeroMemory(&BackBufferDesc, sizeof(DXGI_MODE_DESC));
@@ -59,7 +209,12 @@ void D3DXDriver::InitDriver(){
 #else
 		0,
 #endif
-		NULL, NULL, D3D11_SDK_VERSION, &SwapChainDesc, &DXGISwapchain, &D3D11Device, NULL, &D3D11DeviceContext);
+		NULL, NULL, D3D11_SDK_VERSION, &SwapChainDesc, &DXGISwapchain, 
+    reinterpret_cast<ID3D11Device**>(D3D11Device->GetAPIDevice()), NULL, 
+    reinterpret_cast<ID3D11DeviceContext**>(D3D11DeviceContext->GetAPIContext()));
+
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 
 	// Get the back buffer
 	ComPtr<ID3D11Texture2D> BackBuffer;
@@ -78,7 +233,7 @@ void D3DXDriver::InitDriver(){
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL; // -- > Use it as depth stencil
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	hr = D3D11Device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);	// Output to the depth texture
+	hr = device->CreateTexture2D(&descDepth, NULL, &D3D11DepthTex);	// Output to the depth texture
 
 	// Descriptor to create the Depth View
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
@@ -88,15 +243,15 @@ void D3DXDriver::InitDriver(){
 	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
 	// Using the View we can operate with the depth buffer, note this view is created from the depth texture
-	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
+	hr = device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
 
 
 	//	Now we create the main render target view from the back buffer texture
-	hr = D3D11Device->CreateRenderTargetView(BackBuffer.Get(), NULL, &D3D11RenderTargetView);
+	hr = device->CreateRenderTargetView(BackBuffer.Get(), NULL, &D3D11RenderTargetView);
 
 	// Using the Context now we set the render targets, that would be the Main Render Target View (Back Buffer)
 	// and the Depth Buffer View (Depth)
-	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
+	deviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
 
 
 	// Set the Viewport of the size of the screen
@@ -107,7 +262,7 @@ void D3DXDriver::InitDriver(){
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1;
 
-	D3D11DeviceContext->RSSetViewports(1, &viewport);
+  deviceContext->RSSetViewports(1, &viewport);
 }
 
 void D3DXDriver::CreateSurfaces(){
@@ -136,6 +291,7 @@ void D3DXDriver::SetDimensions(int w, int h){
 }
 
 void D3DXDriver::Clear(){
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	float rgba[4];
 	rgba[0] = 0.5f;
 	rgba[1] = 0.5f;
@@ -143,9 +299,9 @@ void D3DXDriver::Clear(){
 	rgba[3] = 1.0f;
 
 	// Clearing the Main Render Target View
-	D3D11DeviceContext->ClearRenderTargetView(D3D11RenderTargetView.Get(), rgba);
+	deviceContext->ClearRenderTargetView(D3D11RenderTargetView.Get(), rgba);
 	// Clearing the Depth Buffer
-	D3D11DeviceContext->ClearDepthStencilView(D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH , 1.0f, 0);
+  deviceContext->ClearDepthStencilView(D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH , 1.0f, 0);
 }
 
 void D3DXDriver::SwapBuffers(){
@@ -199,6 +355,7 @@ int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h,bool GenMips) {
 }
 
 void D3DXDriver::PushRT(int id) {
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	if (id < 0 || id >= (int)RTs.size()){
 		CurrentRT = -1;
 		return;
@@ -216,7 +373,7 @@ void D3DXDriver::PushRT(int id) {
 	if (pRT->number_RT == 0)
 		RTVA.push_back(0);
 
-	D3D11DeviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
+  deviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
 
 	viewport_RT.TopLeftX = 0;
 	viewport_RT.TopLeftY = 0;
@@ -225,7 +382,7 @@ void D3DXDriver::PushRT(int id) {
 	viewport_RT.MinDepth = 0;
 	viewport_RT.MaxDepth = 1;
 
-	D3D11DeviceContext->RSSetViewports(1, &viewport_RT);
+  deviceContext->RSSetViewports(1, &viewport_RT);
 
 	float rgba[4];
 	rgba[0] = 0.5f;
@@ -234,23 +391,24 @@ void D3DXDriver::PushRT(int id) {
 	rgba[3] = 1.0f;
 
 	for (int i = 0; i < pRT->number_RT; i++) {
-		D3D11DeviceContext->ClearRenderTargetView(pRT->vD3D11RenderTargetView[i].Get(), rgba);
+    deviceContext->ClearRenderTargetView(pRT->vD3D11RenderTargetView[i].Get(), rgba);
 	}
 
-	D3D11DeviceContext->ClearDepthStencilView(pRT->D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+  deviceContext->ClearDepthStencilView(pRT->D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 }
 
 void D3DXDriver::PopRT() {
-	D3D11DeviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+  deviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
 
 
-	D3D11DeviceContext->RSSetViewports(1, &viewport);
+  deviceContext->RSSetViewports(1, &viewport);
 
 	if(CurrentRT>=0){
 		if(RTs[CurrentRT]->GenMips){
 			D3DXTexture* pTex = dynamic_cast<D3DXTexture*>(RTs[CurrentRT]->vColorTextures[0]);
-			D3D11DeviceContext->GenerateMips(pTex->pSRVTex.Get());
+      deviceContext->GenerateMips(pTex->pSRVTex.Get());
 		}
 		
 	}

@@ -49,11 +49,11 @@
     <ClInclude Include="include\video\GLShader.h" />
     <ClInclude Include="include\video\D3DXTexture.h" />
     <ClInclude Include="include\video\GLTexture.h" />
+    <ClInclude Include="T8_descriptors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp" />
     <ClCompile Include="src\core\Win32Framework.cpp" />
-    <ClCompile Include="src\scene\Cube.cpp" />
     <ClCompile Include="src\scene\D3DXQuad.cpp" />
     <ClCompile Include="src\scene\GLMesh.cpp" />
     <ClCompile Include="src\scene\D3DXMesh.cpp" />
@@ -61,7 +61,6 @@
     <ClCompile Include="src\scene\PrimitiveManager.cpp" />
     <ClCompile Include="src\scene\GLQuad.cpp" />
     <ClCompile Include="src\scene\SceneProp.cpp" />
-    <ClCompile Include="src\scene\Triangle.cpp" />
     <ClCompile Include="src\utils\cil.cpp" />
     <ClCompile Include="src\utils\InputManager.cpp" />
     <ClCompile Include="src\utils\Timer.cpp" />

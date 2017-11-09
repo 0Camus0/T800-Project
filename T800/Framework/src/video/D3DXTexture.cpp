@@ -12,10 +12,12 @@
 
 #include <video/D3DXTexture.h>
 
-extern ComPtr<ID3D11Device>            D3D11Device;
-extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
 
 void	D3DXTexture::SetTextureParams(){
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	D3D11_SAMPLER_DESC sdesc;
 
 	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -46,7 +48,7 @@ void	D3DXTexture::SetTextureParams(){
 	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxAnisotropy = 16;
 
-	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
+	device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
 
 }
 
@@ -55,6 +57,8 @@ void	D3DXTexture::GetFormatBpp(unsigned int &props, unsigned int &Format, unsign
 }
 
 void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	D3D11_TEXTURE2D_DESC desc = { 0 };
 	desc.Width = this->x;
 	desc.Height = this->y;
@@ -81,7 +85,7 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	desc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	HRESULT hr;
-	hr = D3D11Device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
+	hr = device->CreateTexture2D(&desc, nullptr, Tex.GetAddressOf());
 
 	if (hr != S_OK) {
 		this->id = -1;
@@ -100,7 +104,7 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 		srvDesc.Texture2D.MipLevels = -1;
 	}
 
-	D3D11Device->CreateShaderResourceView(Tex.Get(), &srvDesc, pSRVTex.GetAddressOf());
+	device->CreateShaderResourceView(Tex.Get(), &srvDesc, pSRVTex.GetAddressOf());
 
 	D3D11_SUBRESOURCE_DATA initData[6];
 	int bufferSize = this->size/6;
@@ -120,13 +124,13 @@ void	D3DXTexture::LoadAPITexture(unsigned char* buffer){
 	int MipMapCount = pDesc.MipLevels;
 	if (cil_props & CIL_CUBE_MAP) {
 		for (int i = 0; i < 6; i++) {
-				D3D11DeviceContext->UpdateSubresource(Tex.Get(), D3D11CalcSubresource(0, i, MipMapCount), 0, initData[i].pSysMem, initData[i].SysMemPitch, 0);
+				deviceContext->UpdateSubresource(Tex.Get(), D3D11CalcSubresource(0, i, MipMapCount), 0, initData[i].pSysMem, initData[i].SysMemPitch, 0);
 		}
 	}else {
-		D3D11DeviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData[0].SysMemPitch, 0);
+    deviceContext->UpdateSubresource(Tex.Get(), 0, 0, buffer, initData[0].SysMemPitch, 0);
 	}
 		
-	D3D11DeviceContext->GenerateMips(pSRVTex.Get());
+  deviceContext->GenerateMips(pSRVTex.Get());
 
 	SetTextureParams();
 	static int texid = 0;

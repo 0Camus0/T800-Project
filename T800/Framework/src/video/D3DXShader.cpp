@@ -1,9 +1,11 @@
 #include <video/D3DXShader.h>
 
-extern ComPtr<ID3D11Device>            D3D11Device;
-extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
 
 bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) {
+  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
+  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	HRESULT hr = S_OK;
 	{
 		VS_blob = nullptr;
@@ -21,7 +23,7 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 			}
 		}
 
-		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		hr = device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
 		if (hr != S_OK) {
 			printf("Error Creating Vertex Shader\n");
 			exit(666);
@@ -43,7 +45,7 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 			}
 		}
 
-		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		hr = device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
 		if (hr != S_OK) {
 			printf("Error Creating Pixel Shader\n");
 			return false;
@@ -110,7 +112,7 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 		VertexDecl.push_back(elementDesc);
 	}
 
-	hr = D3D11Device->CreateInputLayout(&VertexDecl[0], VertexDecl.size(), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+	hr = device->CreateInputLayout(&VertexDecl[0], VertexDecl.size(), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
 	if (hr != S_OK) {
 		printf("Error Creating Input Layout\n");
 		return false;

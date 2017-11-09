@@ -137,6 +137,9 @@
     <ClInclude Include="include\utils\cil.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="T8_descriptors.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
@@ -145,9 +148,6 @@
     <ClCompile Include="src\core\Win32Framework.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\Cube.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene\PrimitiveInstance.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -155,9 +155,6 @@
       <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SceneProp.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene\Triangle.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\InputManager.cpp">

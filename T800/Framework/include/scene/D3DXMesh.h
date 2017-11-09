@@ -29,7 +29,7 @@
 
 
 #include <vector>
-
+#include <memory>
 using namespace xF;
 
 class D3DXMesh : public PrimitiveBase {
@@ -54,7 +54,7 @@ public:
 	struct SubSetInfo {	
 		unsigned int		Sig;
 
-		ComPtr<ID3D11Buffer>		IB;
+		std::shared_ptr<t800::IndexBuffer>  	IB;
 		D3DXTexture*					DiffuseTex;
 		D3DXTexture*					SpecularTex;
 		D3DXTexture*					GlossfTex;
@@ -80,8 +80,8 @@ public:
 		unsigned int			 VertexSize;
 		unsigned int			 NumVertex;
 
-		ComPtr<ID3D11Buffer>		IB;
-		ComPtr<ID3D11Buffer>		VB;
+		std::shared_ptr<t800::IndexBuffer>  	IB;
+    std::shared_ptr<t800::VertexBuffer>  	VB;
 		ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 		D3DXMesh::CBuffer			CnstBuffer;
 

@@ -17,6 +17,38 @@
 #include <Config.h>
 #include <string>
 #include <vector>
+#include "T8_descriptors.h"
+
+namespace t800 {
+  class DeviceContext {
+  public:
+    virtual void** GetAPIContext() const = 0;
+    virtual void release() = 0;
+  };
+  class Device {
+  public:
+    virtual void** GetAPIDevice() const = 0;
+    virtual void release() = 0;
+  };
+  class Buffer {
+  public:
+    virtual void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) = 0;
+    virtual void UpdateFromSystemCopy(const DeviceContext& deviceContext) = 0;
+    virtual void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) = 0;
+    virtual void* GetAPIBuffer() const = 0;
+    virtual void release() = 0;
+
+    std::vector<char> sysMemCpy;
+  };
+  class VertexBuffer : public Buffer {
+  public:
+    virtual void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) = 0;
+  };
+  class IndexBuffer : public Buffer {
+  public:
+    virtual void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) = 0;
+  };
+}
 
 
 enum TEXT_BASIC_FORMAT {
