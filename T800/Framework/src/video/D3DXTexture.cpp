@@ -145,3 +145,13 @@ void	D3DXTexture::LoadAPITextureCompressed(unsigned char* buffer){
 void D3DXTexture::DestroyAPITexture(){
 
 }
+
+void D3DXTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot)
+{
+  reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetShaderResources(slot, 1, pSRVTex.GetAddressOf());
+}
+
+void D3DXTexture::SetSampler(const t800::DeviceContext & deviceContext)
+{
+  reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+}

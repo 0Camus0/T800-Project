@@ -17,6 +17,8 @@
 #include <string.h>
 
 BaseDriver*	g_pBaseDriver = 0;
+t800::Device*           D3D11Device;	// Device for create resources
+t800::DeviceContext*    D3D11DeviceContext; // Context to set and manipulate the resources
 
 #include <utils/Checker.h>
 

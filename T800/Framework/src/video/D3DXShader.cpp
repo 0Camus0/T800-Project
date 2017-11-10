@@ -120,3 +120,10 @@ bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigne
 
 	return true;
 }
+
+void D3DXShader::Set(const t800::DeviceContext & deviceContext)
+{
+  reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->VSSetShader(pVS.Get(), 0, 0);
+  reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetShader(pFS.Get(), 0, 0);
+  reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetInputLayout(Layout.Get());
+}

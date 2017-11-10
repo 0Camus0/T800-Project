@@ -54,12 +54,12 @@ public:
 	struct SubSetInfo {	
 		unsigned int		Sig;
 
-		std::shared_ptr<t800::IndexBuffer>  	IB;
-		D3DXTexture*					DiffuseTex;
-		D3DXTexture*					SpecularTex;
-		D3DXTexture*					GlossfTex;
-		D3DXTexture*					NormalTex;
-		D3DXTexture*					ReflectTex;
+		t800::IndexBuffer*  	IB;
+		Texture*					DiffuseTex;
+		Texture*					SpecularTex;
+		Texture*					GlossfTex;
+		Texture*					NormalTex;
+		Texture*					ReflectTex;
 
 		int					DiffuseId;
 		int					SpecularId;
@@ -80,9 +80,9 @@ public:
 		unsigned int			 VertexSize;
 		unsigned int			 NumVertex;
 
-		std::shared_ptr<t800::IndexBuffer>  	IB;
-    std::shared_ptr<t800::VertexBuffer>  	VB;
-		ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
+		t800::IndexBuffer*  	IB;
+    t800::VertexBuffer*  	VB;
+    t800::ConstantBuffer* CB;
 		D3DXMesh::CBuffer			CnstBuffer;
 
 		std::vector<SubSetInfo>	SubSets;
@@ -95,9 +95,9 @@ public:
 	void Destroy();
 
 	void GatherInfo();
-	int  LoadTex(std::string p, xF::xMaterial *mat,D3DXTexture** tex);
+	int  LoadTex(std::string p, xF::xMaterial *mat,Texture** tex);
 	
-	D3DXTexture*	d3dxEnvMap;
+	Texture*	d3dxEnvMap;
 
 	XMATRIX44	transform;
 	XDataBase	xFile;

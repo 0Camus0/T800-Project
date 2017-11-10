@@ -29,6 +29,7 @@ class D3DXShader : public ShaderBase {
 public:
 
 	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
+  void  Set(const t800::DeviceContext& deviceContext) override;
 	ComPtr<ID3D11VertexShader>  pVS;
 	ComPtr<ID3D11PixelShader>   pFS;
 	ComPtr<ID3DBlob>            VS_blob;

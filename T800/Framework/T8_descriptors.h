@@ -16,6 +16,32 @@ namespace T8_IB_FORMAR {
   };
 }
 
+namespace T8_TOPOLOGY {
+  enum E {
+    POINT_LIST,
+    LINE_LIST,
+    LINE_STRIP,
+    TRIANLE_LIST,
+    TRIANGLE_STRIP
+  };
+}
+
+namespace T8_SHADER_TYPE {
+  enum E {
+    VERTEX,
+    FRAGMENT
+  };
+}
+
+namespace T8_BUFFER_TYPE {
+  enum E {
+    VERTEX,
+    INDEX,
+    CONSTANT
+  };
+}
+
+
 namespace t800 {
   struct BufferDesc {
     int byteWidth;

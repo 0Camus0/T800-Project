@@ -50,17 +50,15 @@ void D3DXMesh::Create(char *filename) {
 
     deviceContext->IASetInputLayout(s->Layout.Get());
 
-		D3D11_BUFFER_DESC bdesc = { 0 };
-		bdesc.Usage = D3D11_USAGE_DEFAULT;
-		bdesc.ByteWidth = sizeof(D3DXMesh::CBuffer);
-		bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-
-
-		hr = device->CreateBuffer(&bdesc, 0, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
-		if (hr != S_OK) {
-			printf("Error Creating Buffer Layout\n");
-			return;
-		}
+    t800::BufferDesc bdesc;
+    bdesc.byteWidth = sizeof(D3DXMesh::CBuffer);
+    bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+    it_MeshInfo->CB = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
+    hr = S_OK;
+    if (hr != S_OK) {
+      printf("Error Creating Constant Buffer\n");
+      return;
+    }
 
 		int NumMaterials = pActual->MaterialList.Materials.size();
 		int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
@@ -142,8 +140,7 @@ void D3DXMesh::Create(char *filename) {
       t800::BufferDesc bdesc;
       bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(USHORT);
       bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-      it_subsetinfo->IB = std::make_shared<t800::D3DXIndexBuffer>();
-      it_subsetinfo->IB->Create(*D3D11Device, bdesc, tmpIndexex);
+      it_subsetinfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, tmpIndexex);
       hr = S_OK; 
 			if (hr != S_OK) {
 				printf("Error Creating Index Buffer\n");
@@ -157,12 +154,10 @@ void D3DXMesh::Create(char *filename) {
 
 		it_MeshInfo->VertexSize = it->VertexSize;
 
-
     t800::BufferDesc buffdesc;
     buffdesc.byteWidth = pActual->NumVertices*it->VertexSize;
     buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-    it_MeshInfo->VB = std::make_shared<t800::D3DXVertexBuffer>();
-    it_MeshInfo->VB->Create(*D3D11Device, buffdesc, &it->pData[0]);
+    it_MeshInfo->VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, buffdesc, &it->pData[0]);
     hr = S_OK;
     if (hr != S_OK) {
       printf("Error Creating Vertex Buffer\n");
@@ -180,8 +175,7 @@ void D3DXMesh::Create(char *filename) {
 
     buffdesc.byteWidth = pActual->Triangles.size() * sizeof(unsigned short);
     buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-    it_MeshInfo->IB = std::make_shared<t800::D3DXIndexBuffer>();
-    it_MeshInfo->IB->Create(*D3D11Device, buffdesc, &pActual->Triangles[0]);
+    it_MeshInfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, buffdesc, &pActual->Triangles[0]);
     hr = S_OK;
     if (hr != S_OK) {
       printf("Error Creating Index Buffer\n");
@@ -275,9 +269,9 @@ void D3DXMesh::GatherInfo() {
 	}
 }
 
-int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, D3DXTexture** tex) {
+int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, Texture** tex) {
 	int id = g_pBaseDriver->CreateTexture(p);
-	*tex = dynamic_cast<D3DXTexture*>(g_pBaseDriver->GetTexture(id));
+	*tex = dynamic_cast<Texture*>(g_pBaseDriver->GetTexture(id));
 	bool tiled = false;
 	for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
 		xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
@@ -346,8 +340,8 @@ void D3DXMesh::Draw(float *t, float *vp) {
 			UINT offset = 0;
 
 			int Sig = -1;
-			D3DXShader *s = 0;
-			D3DXShader *last = (D3DXShader*)32;
+			ShaderBase *s = 0;
+      ShaderBase *last = (ShaderBase*)32;
       it_MeshInfo->VB->Set(*D3D11DeviceContext,stride,offset);
 
 			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
@@ -356,52 +350,44 @@ void D3DXMesh::Draw(float *t, float *vp) {
 
 				unsigned int sig = sub_info->Sig;
 				sig |= gSig;
-				s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
+				s = g_pBaseDriver->GetShaderSig(sig);
 
 				if(s!=last)
 					update=true;
 
 				if(update){
-          deviceContext->VSSetShader(s->pVS.Get(), 0, 0);
-          deviceContext->PSSetShader(s->pFS.Get(), 0, 0);
-          deviceContext->IASetInputLayout(s->Layout.Get());
+          s->Set(*D3D11DeviceContext);
 
-          deviceContext->UpdateSubresource(it_MeshInfo->pd3dConstantBuffer.Get(), 0, 0, &it_MeshInfo->CnstBuffer, 0, 0);
-          deviceContext->VSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
-          deviceContext->PSSetConstantBuffers(0, 1, it_MeshInfo->pd3dConstantBuffer.GetAddressOf());
+          it_MeshInfo->CB->UpdateFromBuffer(*D3D11DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
+          it_MeshInfo->CB->Set(*D3D11DeviceContext);
 				}
 
-        deviceContext->PSSetShaderResources(0, 1, sub_info->DiffuseTex->pSRVTex.GetAddressOf());
-
+        sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0);
 				if (s->Sig&Signature::SPECULAR_MAP){
-          deviceContext->PSSetShaderResources(1, 1, sub_info->SpecularTex->pSRVTex.GetAddressOf());
+          sub_info->SpecularTex->Set(*D3D11DeviceContext, 1);
 				}
 
 				if (s->Sig&Signature::GLOSS_MAP) {;
-        deviceContext->PSSetShaderResources(2, 1, sub_info->GlossfTex->pSRVTex.GetAddressOf());
+        sub_info->GlossfTex->Set(*D3D11DeviceContext, 2);
 				}
 
 				if (s->Sig&Signature::NORMAL_MAP) {
-          deviceContext->PSSetShaderResources(3, 1, sub_info->NormalTex->pSRVTex.GetAddressOf());
+          sub_info->NormalTex->Set(*D3D11DeviceContext,3);
 				}
 
 				if(EnvMap){
-					d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
-          deviceContext->PSSetShaderResources(4, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
+          EnvMap->Set(*D3D11DeviceContext, 4);
 				}
-
-        deviceContext->PSSetSamplers(0, 1, sub_info->DiffuseTex->pSampler.GetAddressOf());
-
+        sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
         sub_info->IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
 
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        deviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+        D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
+        D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
 				last = s;
 				}
 			}
-
 }
 
 void D3DXMesh::Destroy() {
-
+  //release resources
 }

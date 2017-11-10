@@ -25,6 +25,9 @@ ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;  // View into the back bu
 ComPtr<ID3D11DepthStencilView>  D3D11DepthStencilTargetView; // View into the depth buffer
 ComPtr<ID3D11Texture2D>			D3D11DepthTex;	// Actual depth buffer texture
 
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
+
 
 
 namespace t800 {
@@ -36,6 +39,38 @@ namespace t800 {
   {
     APIContext->Release();
   }
+  void D3DXDeviceContext::SetPrimitiveTopology(T8_TOPOLOGY::E topology)
+  {
+    D3D11_PRIMITIVE_TOPOLOGY apitopology;
+    switch (topology)
+    {
+    case T8_TOPOLOGY::POINT_LIST:
+      apitopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+      break;
+    case T8_TOPOLOGY::LINE_LIST:
+      apitopology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+      break;
+    case T8_TOPOLOGY::LINE_STRIP:
+      apitopology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+      break;
+    case T8_TOPOLOGY::TRIANLE_LIST:
+      apitopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+      break;
+    case T8_TOPOLOGY::TRIANGLE_STRIP:
+      apitopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+      break;
+    default:
+      break;
+    }
+    APIContext->IASetPrimitiveTopology(apitopology);
+  }
+
+  void D3DXDeviceContext::DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex)
+  {
+    APIContext->DrawIndexed(vertexCount, startIndex, startVertex);
+  }
+
+
   void ** D3DXDevice::GetAPIDevice() const
   {
     return (void**)&APIDevice;
@@ -44,16 +79,40 @@ namespace t800 {
   {
     APIDevice->Release();
   }
+
+  Buffer * D3DXDevice::CreateBuffer(T8_BUFFER_TYPE::E bufferType,BufferDesc desc, void* initialData)
+  {
+    Buffer* retBuff;
+    switch (bufferType)
+    {
+    case T8_BUFFER_TYPE::VERTEX:
+      retBuff = new D3DXVertexBuffer;
+      break;
+    case T8_BUFFER_TYPE::INDEX:
+      retBuff = new D3DXIndexBuffer;
+      break;
+    case T8_BUFFER_TYPE::CONSTANT:
+      retBuff = new D3DXConstantBuffer;
+      break;
+    default:
+      break;
+    }
+    retBuff->Create(*this,desc,initialData);
+    return retBuff;
+  }
+
+
   void D3DXVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
   {
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetVertexBuffers(0, 1, &APIBuffer, &stride, &offset);
   }
-  void * D3DXVertexBuffer::GetAPIBuffer() const
+  void ** D3DXVertexBuffer::GetAPIBuffer() const
   {
-    return APIBuffer;
+    return (void**)&APIBuffer;
   }
   void D3DXVertexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
   {
+    descriptor = desc;
     D3D11_USAGE usage;
     switch (desc.usage)
     {
@@ -102,7 +161,10 @@ namespace t800 {
   {
     APIBuffer->Release();
     sysMemCpy.clear();
+    delete this;
   }
+
+
   void D3DXIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
   {
     DXGI_FORMAT apiformat;
@@ -112,12 +174,13 @@ namespace t800 {
       apiformat = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetIndexBuffer(APIBuffer, apiformat, offset);
   }
-  void * D3DXIndexBuffer::GetAPIBuffer() const
+  void ** D3DXIndexBuffer::GetAPIBuffer() const
   {
-    return APIBuffer;
+    return (void**)&APIBuffer;
   }
   void D3DXIndexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
   {
+    descriptor = desc;
     D3D11_USAGE usage;
     switch (desc.usage)
     {
@@ -162,14 +225,71 @@ namespace t800 {
   {
     APIBuffer->Release();
     sysMemCpy.clear();
+    delete this;
+  }
+
+
+  void D3DXConstantBuffer::Set(const DeviceContext & deviceContext)
+  {
+    ID3D11DeviceContext* context = reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext());
+    context->VSSetConstantBuffers(0,1,&APIBuffer);
+    context->PSSetConstantBuffers(0, 1, &APIBuffer);
+  }
+  void ** D3DXConstantBuffer::GetAPIBuffer() const
+  {
+    return (void**)&APIBuffer;
+  }
+  void D3DXConstantBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    descriptor = desc;
+    ID3D11Device* apiDevice = reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice());
+    D3D11_USAGE usage;
+    switch (desc.usage)
+    {
+    case T8_BUFFER_USAGE::DEFAULT:
+      usage = D3D11_USAGE_DEFAULT;
+      break;
+    case T8_BUFFER_USAGE::DINAMIC:
+      usage = D3D11_USAGE_DYNAMIC;
+      break;
+    case T8_BUFFER_USAGE::STATIC:
+      usage = D3D11_USAGE_IMMUTABLE;
+      break;
+    default:
+      usage = D3D11_USAGE_DEFAULT;
+      break;
+    }
+    D3D11_BUFFER_DESC apiDesc{ 0 };
+    apiDesc.ByteWidth = desc.byteWidth;
+    apiDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    apiDesc.Usage = usage;
+
+    if (initialData != nullptr)
+    {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+      D3D11_SUBRESOURCE_DATA subData = { initialData, 0, 0 };
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, &subData, &APIBuffer);
+    }
+    else
+    {
+      reinterpret_cast<ID3D11Device*>(*device.GetAPIDevice())->CreateBuffer(&apiDesc, 0, &APIBuffer);
+    }
+  }
+  void D3DXConstantBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, &sysMemCpy[0], 0, 0);
+  }
+  void D3DXConstantBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
+  {
+    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, (char*)buffer, 0, 0);
+  }
+  void D3DXConstantBuffer::release()
+  {
+    APIBuffer->Release();
+    sysMemCpy.clear();
+    delete this;
   }
 }
-
-
-t800::Device*           D3D11Device;	// Device for create resources
-t800::DeviceContext*    D3D11DeviceContext; // Context to set and manipulate the resources
-
-
 
 
 void D3DXDriver::InitDriver(){

@@ -34,6 +34,8 @@ public:
 	void	LoadAPITexture(unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
 	void	DestroyAPITexture();
+  void  Set(const t800::DeviceContext& deviceContext, unsigned int slot) override;
+  void  SetSampler(const t800::DeviceContext& deviceContext) override;
 
 	ComPtr<ID3D11Texture2D>				Tex;
 	ComPtr<ID3D11ShaderResourceView>    pSRVTex;

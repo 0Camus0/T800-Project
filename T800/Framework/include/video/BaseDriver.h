@@ -20,25 +20,33 @@
 #include "T8_descriptors.h"
 
 namespace t800 {
+  class Buffer;
   class DeviceContext {
   public:
     virtual void** GetAPIContext() const = 0;
     virtual void release() = 0;
+    virtual void SetPrimitiveTopology(T8_TOPOLOGY::E topology) = 0;
+    virtual void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) = 0;
   };
   class Device {
   public:
     virtual void** GetAPIDevice() const = 0;
     virtual void release() = 0;
+    virtual Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) = 0;
+    //virtual Shader* CreateShader(T8_SHADER_TYPE::E bufferType) = 0;
   };
+  /* BUFFERS */
   class Buffer {
   public:
-    virtual void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) = 0;
     virtual void UpdateFromSystemCopy(const DeviceContext& deviceContext) = 0;
     virtual void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) = 0;
-    virtual void* GetAPIBuffer() const = 0;
+    virtual void** GetAPIBuffer() const = 0;
     virtual void release() = 0;
+    virtual void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) = 0;
 
+    BufferDesc descriptor;
     std::vector<char> sysMemCpy;
+  protected:
   };
   class VertexBuffer : public Buffer {
   public:
@@ -48,8 +56,13 @@ namespace t800 {
   public:
     virtual void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) = 0;
   };
-}
+  class ConstantBuffer : public Buffer {
+  public:
+    virtual void Set(const DeviceContext& deviceContext) = 0;
+  };
 
+  /* BUFFERS */
+}
 
 enum TEXT_BASIC_FORMAT {
 	CH_ALPHA = 1,
@@ -89,6 +102,8 @@ public:
 
 	virtual void	SetTextureParams() = 0;
 	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
+  virtual void  Set(const t800::DeviceContext& deviceContext, unsigned int slot) = 0;
+  virtual void  SetSampler(const t800::DeviceContext& deviceContext) = 0;
 
 	char			optname[128];
 	unsigned int	size;
@@ -176,6 +191,7 @@ public:
 	ShaderBase() : Sig(0) {	}
 	bool			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
 	virtual bool    CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
+  virtual void  Set(const t800::DeviceContext& deviceContext) = 0;
 
 	unsigned int	Sig;
 };

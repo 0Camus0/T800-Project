@@ -70,7 +70,7 @@ public:
 	virtual ~GLShader() {}
 
 	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
-
+  void  Set(const t800::DeviceContext& deviceContext) override;
 	unsigned int ShaderProg;
 
 	int			 matWorldViewProjUniformLoc;

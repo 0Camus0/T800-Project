@@ -117,3 +117,11 @@ void GLTexture::LoadAPITextureCompressed(unsigned char* buffer) {
 void GLTexture::DestroyAPITexture(){
 	glDeleteTextures(1,&id);
 }
+
+void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot)
+{
+}
+
+void GLTexture::SetSampler(const t800::DeviceContext & deviceContext)
+{
+}

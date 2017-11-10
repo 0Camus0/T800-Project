@@ -58,3 +58,7 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 
 	return true;
 }
+
+void GLShader::Set(const t800::DeviceContext & deviceContext)
+{
+}
