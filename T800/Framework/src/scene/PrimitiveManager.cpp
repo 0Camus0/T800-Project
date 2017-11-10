@@ -15,8 +15,8 @@
 #include <scene/GLQuad.h>
 
 #ifdef USING_D3D11
-#include <scene/D3DXMesh.h>
-#include <scene/D3DXQuad.h>
+#include <scene/windows/D3DXMesh.h>
+#include <scene/windows/D3DXQuad.h>
 #endif
 
 

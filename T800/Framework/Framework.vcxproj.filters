@@ -50,9 +50,6 @@
     <ClInclude Include="include\core\Core.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\Win32Framework.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils\InputManager.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -101,21 +98,6 @@
     <ClInclude Include="include\scene\GLMesh.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\D3DXMesh.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXDriver.h">
-      <Filter>Header Files\video\D3DX</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXShader.h">
-      <Filter>Header Files\video\D3DX</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXRT.h">
-      <Filter>Header Files\video\D3DX</Filter>
-    </ClInclude>
-    <ClInclude Include="include\video\D3DXTexture.h">
-      <Filter>Header Files\video\D3DX</Filter>
-    </ClInclude>
     <ClInclude Include="include\video\GLDriver.h">
       <Filter>Header Files\video\GL</Filter>
     </ClInclude>
@@ -131,21 +113,36 @@
     <ClInclude Include="include\scene\GLQuad.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\D3DXQuad.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils\cil.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="T8_descriptors.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\windows\D3DXMesh.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\windows\D3DXQuad.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\windows\D3DXDriver.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\windows\D3DXRT.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\windows\D3DXShader.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\video\windows\D3DXTexture.h">
+      <Filter>Header Files\video\D3DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\windows\Win32Framework.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Win32Framework.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\PrimitiveInstance.cpp">
@@ -181,21 +178,6 @@
     <ClCompile Include="src\scene\GLMesh.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\D3DXMesh.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXDriver.cpp">
-      <Filter>Source Files\video\D3DX</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXRT.cpp">
-      <Filter>Source Files\video\D3DX</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXShader.cpp">
-      <Filter>Source Files\video\D3DX</Filter>
-    </ClCompile>
-    <ClCompile Include="src\video\D3DXTexture.cpp">
-      <Filter>Source Files\video\D3DX</Filter>
-    </ClCompile>
     <ClCompile Include="src\video\GLDriver.cpp">
       <Filter>Source Files\video\GL</Filter>
     </ClCompile>
@@ -211,11 +193,29 @@
     <ClCompile Include="src\scene\GLQuad.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\D3DXQuad.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\utils\cil.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\windows\Win32Framework.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\windows\D3DXMesh.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\windows\D3DXQuad.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\windows\D3DXDriver.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\windows\D3DXRT.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\windows\D3DXShader.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\video\windows\D3DXTexture.cpp">
+      <Filter>Source Files\video\D3DX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

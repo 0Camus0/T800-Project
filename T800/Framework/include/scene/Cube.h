@@ -31,7 +31,7 @@
 #include <GL/glew.h>
 #include <video/GLTexture.h>
 #elif defined(USING_D3D11)
-#include <video/D3DXTexture.h>
+#include <video/windows/D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
 

@@ -14,7 +14,7 @@
 #ifdef OS_LINUX
     #include <core/LinuxFramework.h>
 #elif defined(OS_WINDOWS)
-	#include <core/Win32Framework.h>
+	#include <core/windows/Win32Framework.h>
 #endif
 
 #include "Application.h"
