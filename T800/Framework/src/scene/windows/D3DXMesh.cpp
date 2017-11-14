@@ -11,11 +11,17 @@
 *********************************************************/
 
 #include <video/BaseDriver.h>
-#include <scene/windows/D3DXMesh.h>
 #include <iostream>
 
+#include <scene/windows/D3DXMesh.h>
+#if defined(USING_OPENGL)
+#include <video/GLShader.h>
+#include <video/GLDriver.h>
+#else
 #include <video/windows/D3DXShader.h>
 #include <video/windows/D3DXDriver.h>
+#endif
+
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
@@ -26,9 +32,6 @@ extern t800::DeviceContext*     D3D11DeviceContext;
 
 
 void D3DXMesh::Create(char *filename) {
-  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
-
 	std::string fname = std::string(filename);
 	if (xFile.LoadXFile(fname)) {
 		cout << " Load " << endl;
@@ -37,8 +40,6 @@ void D3DXMesh::Create(char *filename) {
 		cout << " Failed " << endl;
 	}
 
-	HRESULT hr;
-
 	GatherInfo();
 
 	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
@@ -46,16 +47,15 @@ void D3DXMesh::Create(char *filename) {
 		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 		MeshInfo  *it_MeshInfo = &Info[i];
 
-		D3DXShader *s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig));
+		ShaderBase *s = g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig);
 
-    deviceContext->IASetInputLayout(s->Layout.Get());
+    s->Set(*D3D11DeviceContext);
 
     t800::BufferDesc bdesc;
     bdesc.byteWidth = sizeof(D3DXMesh::CBuffer);
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     it_MeshInfo->CB = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
-    hr = S_OK;
-    if (hr != S_OK) {
+    if (false) {
       printf("Error Creating Constant Buffer\n");
       return;
     }
@@ -138,11 +138,10 @@ void D3DXMesh::Create(char *filename) {
 
 
       t800::BufferDesc bdesc;
-      bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(USHORT);
+      bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(unsigned short);
       bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
       it_subsetinfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, tmpIndexex);
-      hr = S_OK; 
-			if (hr != S_OK) {
+			if (false) {
 				printf("Error Creating Index Buffer\n");
 				return;
 			}
@@ -158,8 +157,7 @@ void D3DXMesh::Create(char *filename) {
     buffdesc.byteWidth = pActual->NumVertices*it->VertexSize;
     buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     it_MeshInfo->VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, buffdesc, &it->pData[0]);
-    hr = S_OK;
-    if (hr != S_OK) {
+    if (false) {
       printf("Error Creating Vertex Buffer\n");
       return;
     }
@@ -176,8 +174,7 @@ void D3DXMesh::Create(char *filename) {
     buffdesc.byteWidth = pActual->Triangles.size() * sizeof(unsigned short);
     buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     it_MeshInfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, buffdesc, &pActual->Triangles[0]);
-    hr = S_OK;
-    if (hr != S_OK) {
+    if (false) {
       printf("Error Creating Index Buffer\n");
       return;
     }
@@ -187,9 +184,14 @@ void D3DXMesh::Create(char *filename) {
 }
 
 void D3DXMesh::GatherInfo() {
+#if defined(USING_OPENGL)
+  char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
+  char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
+#else
+  char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+  char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
+#endif
 
-	char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
-	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
 
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);
@@ -311,81 +313,79 @@ void D3DXMesh::Transform(float *t) {
 }
 
 void D3DXMesh::Draw(float *t, float *vp) {
-  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
 	if (t)
 		transform = t;
 
 	Camera *pActualCamera = pScProp->pCameras[0];
 
-		for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-			MeshInfo  *it_MeshInfo = &Info[i];
-			xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+	for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
+		MeshInfo  *it_MeshInfo = &Info[i];
+		xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
 
-			XMATRIX44 VP = pActualCamera->VP;
-			XMATRIX44 WVP = transform*VP;
-			XMATRIX44 WorldView = transform*pActualCamera->View;
-			XVECTOR3 infoCam = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
+		XMATRIX44 VP = pActualCamera->VP;
+		XMATRIX44 WVP = transform*VP;
+		XMATRIX44 WorldView = transform*pActualCamera->View;
+		XVECTOR3 infoCam = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, 1.0f);
 
-			it_MeshInfo->CnstBuffer.WVP = WVP;
-			it_MeshInfo->CnstBuffer.World = transform;
-			it_MeshInfo->CnstBuffer.WorldView = WorldView;
-			it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
-			it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
-			it_MeshInfo->CnstBuffer.CameraPos = pActualCamera->Eye;
-			it_MeshInfo->CnstBuffer.Ambient = pScProp->AmbientColor;
-			it_MeshInfo->CnstBuffer.CameraInfo = infoCam;
+		it_MeshInfo->CnstBuffer.WVP = WVP;
+		it_MeshInfo->CnstBuffer.World = transform;
+		it_MeshInfo->CnstBuffer.WorldView = WorldView;
+		it_MeshInfo->CnstBuffer.Light0Pos = pScProp->Lights[0].Position;
+		it_MeshInfo->CnstBuffer.Light0Col = pScProp->Lights[0].Color;
+		it_MeshInfo->CnstBuffer.CameraPos = pActualCamera->Eye;
+		it_MeshInfo->CnstBuffer.Ambient = pScProp->AmbientColor;
+		it_MeshInfo->CnstBuffer.CameraInfo = infoCam;
 
-			UINT stride = it_MeshInfo->VertexSize;
-			UINT offset = 0;
+		unsigned int stride = it_MeshInfo->VertexSize;
+    unsigned int offset = 0;
 
-			int Sig = -1;
-			ShaderBase *s = 0;
-      ShaderBase *last = (ShaderBase*)32;
-      it_MeshInfo->VB->Set(*D3D11DeviceContext,stride,offset);
+		int Sig = -1;
+		ShaderBase *s = 0;
+    ShaderBase *last = (ShaderBase*)32;
+    it_MeshInfo->VB->Set(*D3D11DeviceContext,stride,offset);
 
-			for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
-				bool update = false;
-				SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
+		for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
+			bool update = false;
+			SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
 
-				unsigned int sig = sub_info->Sig;
-				sig |= gSig;
-				s = g_pBaseDriver->GetShaderSig(sig);
+			unsigned int sig = sub_info->Sig;
+			sig |= gSig;
+			s = g_pBaseDriver->GetShaderSig(sig);
 
-				if(s!=last)
-					update=true;
+			if(s!=last)
+				update=true;
 
-				if(update){
-          s->Set(*D3D11DeviceContext);
+			if(update){
+        s->Set(*D3D11DeviceContext);
 
-          it_MeshInfo->CB->UpdateFromBuffer(*D3D11DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
-          it_MeshInfo->CB->Set(*D3D11DeviceContext);
-				}
-
-        sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0);
-				if (s->Sig&Signature::SPECULAR_MAP){
-          sub_info->SpecularTex->Set(*D3D11DeviceContext, 1);
-				}
-
-				if (s->Sig&Signature::GLOSS_MAP) {;
-        sub_info->GlossfTex->Set(*D3D11DeviceContext, 2);
-				}
-
-				if (s->Sig&Signature::NORMAL_MAP) {
-          sub_info->NormalTex->Set(*D3D11DeviceContext,3);
-				}
-
-				if(EnvMap){
-          EnvMap->Set(*D3D11DeviceContext, 4);
-				}
-        sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
-        sub_info->IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
-
-        D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
-        D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
-				last = s;
-				}
+        it_MeshInfo->CB->UpdateFromBuffer(*D3D11DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
+        it_MeshInfo->CB->Set(*D3D11DeviceContext);
 			}
+
+      sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0,"DiffuseTex");
+			if (s->Sig&Signature::SPECULAR_MAP){
+        sub_info->SpecularTex->Set(*D3D11DeviceContext,1, "SpecularTex");
+			}
+
+			if (s->Sig&Signature::GLOSS_MAP) {;
+      sub_info->GlossfTex->Set(*D3D11DeviceContext, 2,"GlossfTex");
+			}
+
+			if (s->Sig&Signature::NORMAL_MAP) {
+        sub_info->NormalTex->Set(*D3D11DeviceContext,3,"NormalTex");
+			}
+
+			if(EnvMap){
+        EnvMap->Set(*D3D11DeviceContext, 4,"NormalTex");
+			}
+      sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
+      sub_info->IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
+
+      D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
+      D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+			last = s;
+			}
+		}
 }
 
 void D3DXMesh::Destroy() {

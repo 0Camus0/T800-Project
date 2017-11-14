@@ -66,7 +66,7 @@ bool		Texture::LoadTexture(const char *fn) {
 	memcpy(&optname[0], fn, strlen(fn));
 	optname[strlen(fn)] = '\0';
 
-	LoadAPITexture(buffer);
+	LoadAPITexture(D3D11DeviceContext,buffer);
 	if(found){
 		cil_free_buffer(buffer);
 	}

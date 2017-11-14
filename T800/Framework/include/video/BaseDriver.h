@@ -19,14 +19,24 @@
 #include <vector>
 #include "T8_descriptors.h"
 
+
+class Shader;
 namespace t800 {
   class Buffer;
+  class VertexBuffer;
+  class IndexBuffer;
+  class ConstantBuffer;
   class DeviceContext {
   public:
     virtual void** GetAPIContext() const = 0;
     virtual void release() = 0;
     virtual void SetPrimitiveTopology(T8_TOPOLOGY::E topology) = 0;
     virtual void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) = 0;
+
+    ConstantBuffer* actualConstantBuffer;
+    IndexBuffer* actualIndexBuffer;
+    VertexBuffer* actualVertexBuffer;
+    Shader* actualShaderSet;
   };
   class Device {
   public:
@@ -96,13 +106,13 @@ public:
 	bool			LoadTexture(const char *fn);
 	void			DestroyTex();
 
-	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
+	virtual void	LoadAPITexture(t800::DeviceContext* context,unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
 	virtual void	DestroyAPITexture() = 0;
 
 	virtual void	SetTextureParams() = 0;
 	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
-  virtual void  Set(const t800::DeviceContext& deviceContext, unsigned int slot) = 0;
+  virtual void  Set(const t800::DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) = 0;
   virtual void  SetSampler(const t800::DeviceContext& deviceContext) = 0;
 
 	char			optname[128];
@@ -114,6 +124,7 @@ public:
 	unsigned int	id;
 	unsigned int	bounded;
 	unsigned int	mipmaps;
+  std::string m_shaderTextureName;
 };
 
 struct BaseRT {

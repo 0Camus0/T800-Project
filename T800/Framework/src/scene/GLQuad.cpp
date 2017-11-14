@@ -10,7 +10,7 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video/GLShader.h>
+/*#include <video/GLShader.h>
 #include <scene/GLQuad.h>
 #include <utils/Utils.h>
 
@@ -263,4 +263,4 @@ void GLQuad::Draw(float *t, float *vp){
 
 void GLQuad::Destroy(){
 
-}
+}*/

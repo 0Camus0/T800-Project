@@ -11,13 +11,13 @@
 *********************************************************/
 
 #include <scene/PrimitiveManager.h>
-#include <scene/GLMesh.h>
-#include <scene/GLQuad.h>
+//#include <scene/GLMesh.h>
+//#include <scene/GLQuad.h>
 
-#ifdef USING_D3D11
+//#ifdef USING_D3D11
 #include <scene/windows/D3DXMesh.h>
 #include <scene/windows/D3DXQuad.h>
-#endif
+//#endif
 
 
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
@@ -36,22 +36,22 @@ int	 PrimitiveManager::CreateCube(){
 }
 
 int	 PrimitiveManager::CreateMesh(char *fname) {
-#if defined(USING_GL_COMMON)
-	PrimitiveBase *primitive = new GLMesh();
-#elif defined(USING_D3D11)
+//#if defined(USING_GL_COMMON)
+	//PrimitiveBase *primitive = new GLMesh();
+//#elif defined(USING_D3D11)
 	PrimitiveBase *primitive = new D3DXMesh();
-#endif
+//#endif
 	primitive->Create(fname);
 	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);
 }
 
 int PrimitiveManager::CreateQuad() {
-#if defined(USING_GL_COMMON)
-	PrimitiveBase *primitive = new GLQuad();
-#elif defined(USING_D3D11)
+//#if defined(USING_GL_COMMON)
+	//PrimitiveBase *primitive = new GLQuad();
+//#elif defined(USING_D3D11)
 	PrimitiveBase *primitive = new D3DXQuad();
-#endif
+//#endif
 	primitive->Create();
 	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);

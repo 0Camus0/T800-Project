@@ -1,6 +1,6 @@
 #include <video/GLShader.h>
 #include <utils/Utils.h>
-
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) {
 
 	ShaderProg = glCreateProgram();
@@ -14,51 +14,111 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
 	glLinkProgram(ShaderProg);
 	glUseProgram(ShaderProg);
 
-	vertexAttribLoc = glGetAttribLocation(ShaderProg, "Vertex");
-	normalAttribLoc = glGetAttribLocation(ShaderProg, "Normal");
-	uvAttribLoc = glGetAttribLocation(ShaderProg, "UV");
-	uvSecAttribLoc = glGetAttribLocation(ShaderProg, "UV_Sec");
-	tangentAttribLoc = glGetAttribLocation(ShaderProg, "Tangent");
-	binormalAttribLoc = glGetAttribLocation(ShaderProg, "Binormal");
+  t800::InputElement ie;
+  ie.loc = glGetAttribLocation(ShaderProg, "Vertex");
+  ie.type  = T8_CBUFFER_TYPE::VECTOR4;
+  locs.push_back(ie);
+  ie.loc = glGetAttribLocation(ShaderProg, "Normal");
+  locs.push_back(ie);
+  ie.loc = glGetAttribLocation(ShaderProg, "UV");
+  ie.type = T8_CBUFFER_TYPE::VECTOR2;
+  locs.push_back(ie);
+  ie.loc = glGetAttribLocation(ShaderProg, "UV_Sec");
+  locs.push_back(ie);
+  ie.loc = glGetAttribLocation(ShaderProg, "Tangent");
+  ie.type = T8_CBUFFER_TYPE::VECTOR4;
+  locs.push_back(ie);
+  ie.loc = glGetAttribLocation(ShaderProg, "Binormal");
+  locs.push_back(ie);
 
-	matWorldViewProjUniformLoc = glGetUniformLocation(ShaderProg, "WVP");
-	matWorldUniformLoc = glGetUniformLocation(ShaderProg, "World");
 
-	matWorldViewUniformLoc = glGetUniformLocation(ShaderProg, "WorldView");
-	matWVPInverseUniformLoc = glGetUniformLocation(ShaderProg, "WVPInverse");
-	matWVPLightLoc = glGetUniformLocation(ShaderProg, "WVPLight");
+  ie.type = T8_CBUFFER_TYPE::MATRIX;
+  ie.loc = glGetUniformLocation(ShaderProg, "WVP");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "World");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "WorldView");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "WVPInverse");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "WVPLight");
+  internalUniformsLocs.push_back(ie);
+
+  ie.type = T8_CBUFFER_TYPE::VECTOR4;
+  ie.loc = glGetUniformLocation(ShaderProg, "LightPositions");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "LightColors");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "LightPos");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "LightColor");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "CameraPosition");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "CameraInfo");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "LightCameraPosition");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "LightCameraInfo");
+  internalUniformsLocs.push_back(ie);
+  ie.loc = glGetUniformLocation(ShaderProg, "Ambient");
+  internalUniformsLocs.push_back(ie);
 
 
-	LightPositions_Loc = glGetUniformLocation(ShaderProg, "LightPositions");
-	LightColors_Loc = glGetUniformLocation(ShaderProg, "LightColors");
-	Light0Pos_Loc = glGetUniformLocation(ShaderProg, "LightPos");
-	Light0Color_Loc = glGetUniformLocation(ShaderProg, "LightColor");
-	CameraPos_Loc = glGetUniformLocation(ShaderProg, "CameraPosition");
-	CameraInfo_Loc = glGetUniformLocation(ShaderProg, "CameraInfo");
-	LightCameraPos_Loc = glGetUniformLocation(ShaderProg, "LightCameraPosition");
-	LightCameraInfo_Loc = glGetUniformLocation(ShaderProg, "LightCameraInfo");
-	Ambient_loc = glGetUniformLocation(ShaderProg, "Ambient");
+  //ie.type = T8_CBUFFER_TYPE::TEXTURE;
 
-	DiffuseTex_loc = glGetUniformLocation(ShaderProg, "DiffuseTex");
-	SpecularTex_loc = glGetUniformLocation(ShaderProg, "SpecularTex");
-	GlossTex_loc = glGetUniformLocation(ShaderProg, "GlossTex");
-	NormalTex_loc = glGetUniformLocation(ShaderProg, "NormalTex");
-	ReflectTex_loc = glGetUniformLocation(ShaderProg, "ReflectTex");
+  //ie.loc = glGetUniformLocation(ShaderProg, "DiffuseTex");
+  //internalUniformsLocs.push_back(ie);
+  //ie.loc = glGetUniformLocation(ShaderProg, "SpecularTex");
+  //internalUniformsLocs.push_back(ie);
+  //ie.loc = glGetUniformLocation(ShaderProg, "GlossTex");
+  //internalUniformsLocs.push_back(ie);
+  //ie.loc = glGetUniformLocation(ShaderProg, "NormalTex");
+  //internalUniformsLocs.push_back(ie);
+  //ie.loc = glGetUniformLocation(ShaderProg, "ReflectTex");
+  //internalUniformsLocs.push_back(ie);
 
-	tex0_loc = glGetUniformLocation(ShaderProg, "tex0");
-	tex1_loc = glGetUniformLocation(ShaderProg, "tex1");
-	tex2_loc = glGetUniformLocation(ShaderProg, "tex2");
-	tex3_loc = glGetUniformLocation(ShaderProg, "tex3");
-	tex4_loc = glGetUniformLocation(ShaderProg, "tex4");
-	tex5_loc = glGetUniformLocation(ShaderProg, "tex5");
-	tex6_loc = glGetUniformLocation(ShaderProg, "tex6");
-	tex7_loc = glGetUniformLocation(ShaderProg, "tex7");
+  //locs["tex0"] = glGetUniformLocation(ShaderProg, "tex0");
+  //locs["tex1"] = glGetUniformLocation(ShaderProg, "tex1");
+  //locs["tex2"] = glGetUniformLocation(ShaderProg, "tex2");
+  //locs["tex3"] = glGetUniformLocation(ShaderProg, "tex3");
+  //locs["tex4"] = glGetUniformLocation(ShaderProg, "tex4");
+  //locs["tex5"] = glGetUniformLocation(ShaderProg, "tex5");
+  //locs["tex6"] = glGetUniformLocation(ShaderProg, "tex6");
+  //locs["tex7"] = glGetUniformLocation(ShaderProg, "tex7");
 
-	texEnv_loc = glGetUniformLocation(ShaderProg, "texEnv");
+  //locs["texEnv"] = glGetUniformLocation(ShaderProg, "texEnv");
 
 	return true;
 }
 
 void GLShader::Set(const t800::DeviceContext & deviceContext)
 {
+  const_cast<t800::DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
+  glUseProgram(ShaderProg);
+
+  int offset = 0;
+  for (auto& it : locs)
+  {
+    if (it.loc != -1) {
+      int size = 0;
+      switch (it.type)
+      {
+      case T8_CBUFFER_TYPE::FLOAT:
+        offset += 4;
+        size = 1;
+        break;
+      case T8_CBUFFER_TYPE::VECTOR2:
+        offset += 8;
+        size = 2;
+        break;
+      case T8_CBUFFER_TYPE::VECTOR4:
+        offset += 16;
+        size = 4;
+        break;
+      }
+      glEnableVertexAttribArray(it.loc);
+      glVertexAttribPointer(it.loc, size, GL_FLOAT, GL_FALSE, deviceContext.actualVertexBuffer->descriptor.byteWidth, BUFFER_OFFSET(offset));
+    }
+  }
 }

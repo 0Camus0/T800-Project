@@ -36,6 +36,206 @@
 #include <GL/freeglut.h>
 #endif
 
+extern t800::Device*            D3D11Device;
+extern t800::DeviceContext*     D3D11DeviceContext;
+
+namespace t800 {
+  void ** GLDeviceContext::GetAPIContext() const
+  {
+    return nullptr;
+  }
+  void GLDeviceContext::release()
+  {
+  }
+  void GLDeviceContext::SetPrimitiveTopology(T8_TOPOLOGY::E topology)
+  {
+    switch (topology)
+    {
+    case T8_TOPOLOGY::POINT_LIST:
+      internalTopology = GL_POINTS;
+      break;
+    case T8_TOPOLOGY::LINE_LIST:
+      internalTopology = GL_LINES;
+      break;
+    case T8_TOPOLOGY::LINE_STRIP:
+      internalTopology = GL_LINE_STRIP;
+      break;
+    case T8_TOPOLOGY::TRIANLE_LIST:
+      internalTopology = GL_TRIANGLES;
+      break;
+    case T8_TOPOLOGY::TRIANGLE_STRIP:
+      internalTopology = GL_TRIANGLE_STRIP;
+      break;
+    default:
+      internalTopology = GL_TRIANGLES;
+      break;
+    }
+  }
+  void GLDeviceContext::DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex)
+  {
+    glDrawElements(internalTopology, vertexCount, internalIBFormat, 0);
+  }
+
+
+  void ** GLDevice::GetAPIDevice() const
+  {
+    return nullptr;
+  }
+  void GLDevice::release()
+  {
+  }
+  Buffer * GLDevice::CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void * initialData)
+  {
+    Buffer* retBuff;
+    switch (bufferType)
+    {
+    case T8_BUFFER_TYPE::VERTEX:
+      retBuff = new GLVertexBuffer;
+      break;
+    case T8_BUFFER_TYPE::INDEX:
+      retBuff = new GLIndexBuffer;
+      break;
+    case T8_BUFFER_TYPE::CONSTANT:
+      retBuff = new GLConstantBuffer;
+      break;
+    default:
+      break;
+    }
+    retBuff->Create(*this, desc, initialData);
+    return retBuff;
+  }
+
+
+  void GLVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
+  {
+    const_cast<DeviceContext*>(&deviceContext)->actualVertexBuffer = (VertexBuffer*)this;
+    glBindBuffer(GL_ARRAY_BUFFER, APIID);
+  }
+  void ** GLVertexBuffer::GetAPIBuffer() const
+  {
+    return nullptr;
+  }
+  void GLVertexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
+  {
+  }
+  void GLVertexBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
+  {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
+  }
+  void GLVertexBuffer::release()
+  {
+    sysMemCpy.clear();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    delete this;
+  }
+  void GLVertexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    descriptor = desc;
+    if (initialData) {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+    }
+    glGenBuffers(1, &APIID);
+    glBindBuffer(GL_ARRAY_BUFFER, APIID);
+    glBufferData(GL_ARRAY_BUFFER, desc.byteWidth, initialData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+  }
+
+
+  void GLIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
+  {
+    const_cast<DeviceContext*>(&deviceContext)->actualIndexBuffer = (IndexBuffer*)this;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, APIID);
+  }
+  void ** GLIndexBuffer::GetAPIBuffer() const
+  {
+    return nullptr;
+  }
+  void GLIndexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
+  {
+  }
+  void GLIndexBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
+  {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
+  }
+  void GLIndexBuffer::release()
+  {
+    sysMemCpy.clear();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    delete this;
+  }
+  void GLIndexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    descriptor = desc;
+    if (initialData) {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+    }
+    glGenBuffers(1, &APIID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, APIID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, desc.byteWidth, initialData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  }
+
+
+  void GLConstantBuffer::Set(const DeviceContext & deviceContext)
+  {
+    const_cast<DeviceContext*>(&deviceContext)->actualConstantBuffer = (ConstantBuffer*)this;
+    GLShader* sh = reinterpret_cast<GLShader*>(deviceContext.actualShaderSet);
+    int sysMemCpyOffset = 0;
+
+
+    for (auto &it : sh->internalUniformsLocs) {
+      if (it.loc != -1) {
+        switch (it.type)
+        {
+        case T8_CBUFFER_TYPE::FLOAT:
+          break;
+        case T8_CBUFFER_TYPE::VECTOR2:
+          break;
+        case T8_CBUFFER_TYPE::VECTOR4:
+          glUniform4fv(it.loc, 1, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
+          sysMemCpyOffset += 16;
+          break;
+        case T8_CBUFFER_TYPE::MATRIX:
+          glUniformMatrix4fv(it.loc, 1, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
+          sysMemCpyOffset += 64;
+          break;
+        }
+      }
+    }
+  }
+  void ** GLConstantBuffer::GetAPIBuffer() const
+  {
+    return nullptr;
+  }
+  void GLConstantBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
+  {
+  }
+  void GLConstantBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
+  {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
+  }
+  void GLConstantBuffer::release()
+  {
+    sysMemCpy.clear();
+  }
+  void GLConstantBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
+  {
+    descriptor = desc;
+    if (initialData) {
+      sysMemCpy.assign((char*)initialData, (char*)initialData + desc.byteWidth);
+    }
+  }
+}
+
+
+
+
+
+
+
 #if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
 void EGLError(const char* c_ptr) {
 
@@ -52,6 +252,10 @@ bool OpenNativeDisplay(EGLNativeDisplayType* nativedisp_out)
 }
 #endif
 void	GLDriver::InitDriver() {
+  D3D11Device = new t800::GLDevice;
+  D3D11DeviceContext = new t800::GLDeviceContext;
+
+
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(USING_SDL)
 	EGLint numConfigs;
 

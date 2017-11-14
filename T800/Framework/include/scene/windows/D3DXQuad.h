@@ -16,59 +16,65 @@
 #include <Config.h>
 
 #include <video\BaseDriver.h>
-#include <video\windows/D3DXTexture.h>
 #include <utils\xMaths.h>
 #include <scene\PrimitiveBase.h>
 
+
+#if defined(USING_OPENGL)
+#include <video\GLTexture.h>
+#else
+#include <video\windows/D3DXTexture.h>
+#endif
+
 class D3DXQuad : public PrimitiveBase {
 public:
-	struct Vert {
-		float x, y, z, w;
-		float u, v;
-	};
+  struct Vert {
+    float x, y, z, w;
+    float u, v;
+  };
 
-	struct CBuffer {
-		XMATRIX44 WVP;
-		XMATRIX44 World;
-		XMATRIX44 WorldView;
-		XMATRIX44 WVPInverse;
-		XMATRIX44 WVPLight;
-		XVECTOR3  LightPositions[128];
-		XVECTOR3  LightColors[128];
-		XVECTOR3  CameraPos;
-		XVECTOR3  CameraInfo;		
-		XVECTOR3  LightCameraPos;
-		XVECTOR3  LightCameraInfo;
-	};
+  struct CBuffer {
+    XMATRIX44 WVP;
+    XMATRIX44 World;
+    XMATRIX44 WorldView;
+    XMATRIX44 WVPInverse;
+    XMATRIX44 WVPLight;
+    XVECTOR3  LightPositions[128];
+    XVECTOR3  LightColors[128];
+    XVECTOR3  CameraPos;
+    XVECTOR3  CameraInfo;
+    XVECTOR3  LightCameraPos;
+    XVECTOR3  LightCameraInfo;
+  };
 
-	D3DXQuad() {
-		for (int i = 0; i < 8; i++) {
-			d3dxTextures[i] = 0;
-		}
-		d3dxEnvMap = 0;
-	}
-	void Create();
-	void Create(char *) {}
-	void Transform(float *t);
-	void Draw(float *t, float *vp);
-	void Destroy();
+  D3DXQuad() {
+    for (int i = 0; i < 8; i++) {
+      d3dxTextures[i] = 0;
+    }
+    d3dxEnvMap = 0;
+  }
+  void Create();
+  void Create(char *) {}
+  void Transform(float *t);
+  void Draw(float *t, float *vp);
+  void Destroy();
 
-	unsigned int	SigBase;
+  unsigned int	SigBase;
 
-	ComPtr<ID3D11Buffer>		IB;
-	ComPtr<ID3D11Buffer>		VB;
-	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
-	ComPtr<ID3D11SamplerState>  pSampler;
+  t800::IndexBuffer*		IB;
+  t800::VertexBuffer*		VB;
+  t800::ConstantBuffer*        pd3dConstantBuffer;
+  //ID3D11SamplerState*  pSampler;
 
-	CBuffer			CnstBuffer;
-	Vert			vertices[4];
-	unsigned short	indices[6];
+  CBuffer			CnstBuffer;
+  Vert			vertices[4];
+  unsigned short	indices[6];
 
-	XMATRIX44		transform;
-	
+  XMATRIX44		transform;
 
-	D3DXTexture*	d3dxTextures[8];
-	D3DXTexture*	d3dxEnvMap;
+
+  Texture*	d3dxTextures[8];
+  Texture*	d3dxEnvMap;
 
 };
 

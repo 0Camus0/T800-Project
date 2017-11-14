@@ -53,69 +53,71 @@
 #endif
 #endif
 
+#include <vector>
 
-//namespace t800 {
-//  /* DEVICES */
-//  class GLDeviceContext : public DeviceContext {
-//  public:
-//    void** GetAPIContext() const override;
-//    void release() override;
-//    void SetPrimitiveTopology(T8_TOPOLOGY::E topology) override;
-//    void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) override;
-//  private:
-//    //ID3D11DeviceContext* APIContext;
-//  };
-//  class GLDevice : public Device {
-//  public:
-//    void** GetAPIDevice() const override;
-//    void release() override;
-//    Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
-//  private:
-//    //ID3D11Device* APIDevice;
-//  };
-//
-//  /* BUFFERS */
-//  class GLVertexBuffer : public VertexBuffer {
-//  public:
-//    GLVertexBuffer() = default;
-//    GLVertexBuffer(GLVertexBuffer const& other) = default;
-//    GLVertexBuffer(GLVertexBuffer&& other) = default;
-//
-//    void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) override;
-//    void** GetAPIBuffer() const override;
-//    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
-//    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
-//    void release() override;
-//  private:
-//    friend Device;
-//    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
-//    //ID3D11Buffer* APIBuffer;
-//  };
-//  class GLIndexBuffer : public IndexBuffer {
-//  public:
-//    void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
-//    void** GetAPIBuffer() const override;
-//    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
-//    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
-//    void release() override;
-//  private:
-//    friend Device;
-//    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
-//    //ID3D11Buffer* APIBuffer;
-//  };
-//  class GLConstantBuffer : public ConstantBuffer {
-//  public:
-//    void Set(const DeviceContext& deviceContext) override;
-//    void** GetAPIBuffer() const override;
-//    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
-//    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
-//    void release() override;
-//  private:
-//    friend Device;
-//    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
-//    //ID3D11Buffer* APIBuffer;
-//  };
-//}
+namespace t800 {
+  /* DEVICES */
+  class GLDeviceContext : public DeviceContext {
+  public:
+    void** GetAPIContext() const override;
+    void release() override;
+    void SetPrimitiveTopology(T8_TOPOLOGY::E topology) override;
+    void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) override;
+  private:
+    int internalTopology;
+    int internalIBFormat;
+    unsigned int internalShaderProgram;
+  };
+  class GLDevice : public Device {
+  public:
+    void** GetAPIDevice() const override;
+    void release() override;
+    Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
+  private:
+  };
+
+  /* BUFFERS */
+  class GLVertexBuffer : public VertexBuffer {
+  public:
+    GLVertexBuffer() = default;
+    GLVertexBuffer(GLVertexBuffer const& other) = default;
+    GLVertexBuffer(GLVertexBuffer&& other) = default;
+
+    void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) override;
+    void** GetAPIBuffer() const override;
+    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
+    void release() override;
+  private:
+    friend Device;
+    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
+    unsigned int APIID;
+  };
+  class GLIndexBuffer : public IndexBuffer {
+  public:
+    void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
+    void** GetAPIBuffer() const override;
+    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
+    void release() override;
+  private:
+    friend Device;
+    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
+    unsigned int APIID;
+  };
+  class GLConstantBuffer : public ConstantBuffer {
+  public:
+    void Set(const DeviceContext& deviceContext) override;
+    void** GetAPIBuffer() const override;
+    void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
+    void release() override;
+  private:
+    friend Device;
+    void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
+    unsigned int APIID;
+  };
+}
 
 
 

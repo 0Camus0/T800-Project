@@ -28,6 +28,8 @@
 #include <SDL/SDL.h>
 #endif
 
+#include "video\GLShader.h"
+
 void	GLTexture::SetTextureParams() {
 	unsigned int glTarget;
 
@@ -69,7 +71,7 @@ void GLTexture::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsign
 
 }
 
-void GLTexture::LoadAPITexture(unsigned char* buffer) {
+void GLTexture::LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer) {
 	unsigned int glFormat = 0;
 	unsigned int glChannel = GL_UNSIGNED_BYTE;
 	unsigned int glTarget;
@@ -118,8 +120,14 @@ void GLTexture::DestroyAPITexture(){
 	glDeleteTextures(1,&id);
 }
 
-void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot)
+void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot, std::string name)
 {
+  m_shaderTextureName = name;
+  int slot_active = GL_TEXTURE0 + slot;
+  APITextureLoc = glGetUniformLocation(reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg, m_shaderTextureName.c_str());
+  glActiveTexture(slot_active);
+  glBindTexture(GL_TEXTURE_2D, id);
+  glUniform1i(APITextureLoc, slot);
 }
 
 void GLTexture::SetSampler(const t800::DeviceContext & deviceContext)

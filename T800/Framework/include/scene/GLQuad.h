@@ -13,7 +13,7 @@
 #ifndef T800_QUAD_GL_H
 #define T800_QUAD_GL_H
 
-#include <Config.h>
+/*#include <Config.h>
 #ifdef USING_OPENGL_ES20
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -57,6 +57,6 @@ public:
 	XVECTOR3		LightPositions[128];
 	XVECTOR3		LightColors[128];
 
-};
+};*/
 
 #endif

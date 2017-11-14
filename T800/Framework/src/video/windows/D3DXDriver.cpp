@@ -155,6 +155,8 @@ namespace t800 {
   }
   void D3DXVertexBuffer::UpdateFromBuffer(const DeviceContext& deviceContext,const void * buffer)
   {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, buffer, 0, 0);
   }
   void D3DXVertexBuffer::release()
@@ -219,6 +221,8 @@ namespace t800 {
   }
   void D3DXIndexBuffer::UpdateFromBuffer(const DeviceContext& deviceContext,const void * buffer)
   {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, buffer, 0, 0);
   }
   void D3DXIndexBuffer::release()
@@ -281,6 +285,8 @@ namespace t800 {
   }
   void D3DXConstantBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
   {
+    sysMemCpy.clear();
+    sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->UpdateSubresource(APIBuffer, 0, 0, (char*)buffer, 0, 0);
   }
   void D3DXConstantBuffer::release()

@@ -31,10 +31,10 @@ public:
 	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);
 
-	void	LoadAPITexture(unsigned char* buffer);
+	void	LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
 	void	DestroyAPITexture();
-  void  Set(const t800::DeviceContext& deviceContext, unsigned int slot) override;
+  void  Set(const t800::DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) override;
   void  SetSampler(const t800::DeviceContext& deviceContext) override;
 
 	ComPtr<ID3D11Texture2D>				Tex;

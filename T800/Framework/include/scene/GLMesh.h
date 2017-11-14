@@ -41,7 +41,7 @@
 
 #include <vector>
 
-using namespace xF;
+/*using namespace xF;
 
 
 class GLMesh : public PrimitiveBase {
@@ -99,7 +99,7 @@ public:
 	XMATRIX44	transform;
 	XDataBase	xFile;
 	std::vector<MeshInfo> Info;
-};
+};*/
 
 
 #endif

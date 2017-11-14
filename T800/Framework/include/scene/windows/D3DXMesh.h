@@ -15,8 +15,26 @@
 
 #include <Config.h>
 
+#ifdef USING_OPENGL_ES20
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL_ES30)
+#include <GLES3/gl3.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL_ES31)
+#include <GLES3/gl31.h>
+#include <video/GLTexture.h>
+#elif defined(USING_OPENGL)
+#include <GL/glew.h>
+#include <video/GLTexture.h>
+#else
 #include <video\windows/D3DXTexture.h>
 #include <D3Dcompiler.h>
+#endif
+
+
+
 
 #include <video\BaseDriver.h>
 

@@ -10,244 +10,243 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video/windows/D3DXShader.h>
 #include <scene/windows/D3DXQuad.h>
 #include <utils/Utils.h>
+
+#if defined(USING_OPENGL)
+#include <video/GLShader.h>
+#include <video/GLDriver.h>
+#else
+#include <video/windows/D3DXShader.h>
+#include <video/windows/D3DXDriver.h>
+#endif
 
 extern t800::Device*            D3D11Device;
 extern t800::DeviceContext*     D3D11DeviceContext;
 
 void D3DXQuad::Create() {
-  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
-	SigBase = Signature::HAS_TEXCOORDS0;
-	unsigned int Dest;
-	char *vsSourceP = file2string("Shaders/VS_Quad.hlsl");
-	char *fsSourceP = file2string("Shaders/FS_Quad.hlsl");
+  SigBase = Signature::HAS_TEXCOORDS0;
+  unsigned int Dest;
+#if defined(USING_OPENGL)
+  char *vsSourceP = file2string("Shaders/VS_Quad.glsl");
+  char *fsSourceP = file2string("Shaders/FS_Quad.glsl");
+#else
+  char *vsSourceP = file2string("Shaders/VS_Quad.hlsl");
+  char *fsSourceP = file2string("Shaders/FS_Quad.hlsl");
+#endif
 
-	std::string vstr = std::string(vsSourceP);
-	std::string fstr = std::string(fsSourceP);
 
-	free(vsSourceP);
-	free(fsSourceP);
+  std::string vstr = std::string(vsSourceP);
+  std::string fstr = std::string(fsSourceP);
 
-	int shaderID = g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
+  free(vsSourceP);
+  free(fsSourceP);
 
-	Dest = SigBase | Signature::DEFERRED_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  int shaderID = g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
 
-	Dest = SigBase | Signature::FSQUAD_1_TEX;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::DEFERRED_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::FSQUAD_2_TEX;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::FSQUAD_1_TEX;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::FSQUAD_3_TEX;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::FSQUAD_2_TEX;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::SHADOW_COMP_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::FSQUAD_3_TEX;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::VERTICAL_BLUR_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::SHADOW_COMP_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::HORIZONTAL_BLUR_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::VERTICAL_BLUR_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::ONE_PASS_BLUR;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::HORIZONTAL_BLUR_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::BRIGHT_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+  Dest = SigBase | Signature::ONE_PASS_BLUR;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	Dest = SigBase | Signature::HDR_COMP_PASS;
-	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
-	
-	vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
-	vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
-	vertices[2] = {  1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
-	vertices[3] = {  1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
+  Dest = SigBase | Signature::BRIGHT_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	indices[0] = 2;
-	indices[1] = 1;
-	indices[2] = 0;
-	indices[3] = 3;
-	indices[4] = 2;
-	indices[5] = 0;
+  Dest = SigBase | Signature::HDR_COMP_PASS;
+  g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	D3DXShader* s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderIdx(shaderID));
+  vertices[0] = { -1.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f };
+  vertices[1] = { -1.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
+  vertices[2] = { 1.0f, -1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
+  vertices[3] = { 1.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f };
 
-	D3D11_BUFFER_DESC bdesc = { 0 };
-	bdesc.Usage = D3D11_USAGE_DEFAULT;
-	bdesc.ByteWidth = sizeof(CBuffer);
-	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  indices[0] = 2;
+  indices[1] = 1;
+  indices[2] = 0;
+  indices[3] = 3;
+  indices[4] = 2;
+  indices[5] = 0;
 
-	HRESULT hr = device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
-	if (hr != S_OK) {
-		printf("Error Creating Constant Buffer\n");
-		return;
-	}
+  ShaderBase* s = g_pBaseDriver->GetShaderIdx(shaderID);
 
-	bdesc = { 0 };
-	bdesc.ByteWidth = sizeof(Vert) * 4;
-	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
+  t800::BufferDesc bdesc;
+  bdesc.byteWidth = sizeof(CBuffer);
+  bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+  pd3dConstantBuffer = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
+  if (false) {
+    printf("Error Creating Constant Buffer\n");
+    return;
+  }
 
-	hr = device->CreateBuffer(&bdesc, &subData, &VB);
-	if (hr != S_OK) {
-		printf("Error Creating Vertex Buffer\n");
-		return;
-	}
+  bdesc.byteWidth = sizeof(Vert) * 4;
+  bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+  VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, bdesc, vertices);
+  if (false) {
+    printf("Error Creating Vertex Buffer\n");
+    return;
+  }
 
-	bdesc = { 0 };
-	bdesc.ByteWidth = 6 * sizeof(USHORT);
-	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	subData = { indices, 0, 0 };
+  bdesc.byteWidth = 6 * sizeof(unsigned short);
+  bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
+  IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, indices);
+  if (false) {
+    printf("Error Creating Index Buffer\n");
+    return;
+  }
 
-	hr = device->CreateBuffer(&bdesc, &subData, &IB);
-	if (hr != S_OK) {
-		printf("Error Creating Index Buffer\n");
-		return;
-	}
+  /*D3D11_SAMPLER_DESC sdesc;
+  sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+  sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+  sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+  sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+  sdesc.MinLOD = 0;
+  sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+  sdesc.MipLODBias = 0.0f;
+  sdesc.MaxAnisotropy = 1;
+  sdesc.BorderColor[0] = sdesc.BorderColor[1] = sdesc.BorderColor[2] = sdesc.BorderColor[3] = 0;
+  reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice())->CreateSamplerState(&sdesc, &pSampler);*/
 
-	D3D11_SAMPLER_DESC sdesc;
-	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sdesc.MinLOD = 0;
-	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
-	sdesc.MipLODBias = 0.0f;
-	sdesc.MaxAnisotropy = 1;
-	sdesc.BorderColor[0] = sdesc.BorderColor[1] = sdesc.BorderColor[2] = sdesc.BorderColor[3] = 0;
-	device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
-
-	XMatIdentity(transform);
+  XMatIdentity(transform);
 }
 
 void D3DXQuad::Transform(float *t) {
-	transform = t;
+  transform = t;
 }
 
 void D3DXQuad::Draw(float *t, float *vp) {
 
-	if (t)
-		transform = t;
-  ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-  ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
-	unsigned int sig = SigBase;
-	sig |= gSig;
-	D3DXShader * s = dynamic_cast<D3DXShader*>(g_pBaseDriver->GetShaderSig(sig));
-	UINT offset = 0;
-	UINT stride = sizeof(Vert);
+  if (t)
+    transform = t;
+  unsigned int sig = SigBase;
+  sig |= gSig;
+  ShaderBase * s = g_pBaseDriver->GetShaderSig(sig);
+  unsigned int offset = 0;
+  unsigned int stride = sizeof(Vert);
 
-	for (int i = 0; i < 8; i++) {
-		d3dxTextures[i] = dynamic_cast<D3DXTexture*>(Textures[i]);
-	}
+  for (int i = 0; i < 8; i++) {
+    d3dxTextures[i] = dynamic_cast<Texture*>(Textures[i]);
+  }
 
-	d3dxEnvMap = dynamic_cast<D3DXTexture*>(EnvMap);
+  d3dxEnvMap = dynamic_cast<Texture*>(EnvMap);
 
-	Camera *pActualCamera = pScProp->pCameras[0];
-	XMATRIX44 VP = pActualCamera->VP;
-	XMATRIX44 WV = pActualCamera->View;
-	VP.Inverse(&CnstBuffer.WVPInverse);
-	CnstBuffer.WVP = transform;
-	CnstBuffer.World = transform;
-	CnstBuffer.WorldView = WV;
-	CnstBuffer.CameraPos = pActualCamera->Eye;
+  Camera *pActualCamera = pScProp->pCameras[0];
+  XMATRIX44 VP = pActualCamera->VP;
+  XMATRIX44 WV = pActualCamera->View;
+  VP.Inverse(&CnstBuffer.WVPInverse);
+  CnstBuffer.WVP = transform;
+  CnstBuffer.World = transform;
+  CnstBuffer.WorldView = WV;
+  CnstBuffer.CameraPos = pActualCamera->Eye;
 
-	if (pScProp->pLightCameras.size() > 0) {
-		CnstBuffer.WVPLight = pScProp->pLightCameras[0]->VP;
-		CnstBuffer.LightCameraPos = pScProp->pLightCameras[0]->Eye;
-		CnstBuffer.LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
-	}
+  if (pScProp->pLightCameras.size() > 0) {
+    CnstBuffer.WVPLight = pScProp->pLightCameras[0]->VP;
+    CnstBuffer.LightCameraPos = pScProp->pLightCameras[0]->Eye;
+    CnstBuffer.LightCameraInfo = XVECTOR3(pScProp->pLightCameras[0]->NPlane, pScProp->pLightCameras[0]->FPlane, pScProp->pLightCameras[0]->Fov, 1.0f);
+  }
 
-	if (sig&Signature::DEFERRED_PASS) {
-		unsigned int numLights = pScProp->ActiveLights;
-		if (numLights >= pScProp->Lights.size())
-			numLights = pScProp->Lights.size();
+  if (sig&Signature::DEFERRED_PASS) {
+    unsigned int numLights = pScProp->ActiveLights;
+    if (numLights >= pScProp->Lights.size())
+      numLights = pScProp->Lights.size();
 
-		CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
+    CnstBuffer.CameraInfo = XVECTOR3(pActualCamera->NPlane, pActualCamera->FPlane, pActualCamera->Fov, float(numLights));
 
-		for (unsigned int i = 0; i < numLights; i++) {
-			CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
-			CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
-		}
-	}else if (sig&Signature::ONE_PASS_BLUR) {
-		CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
-		CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
-		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
-		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
-		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
-			CnstBuffer.LightPositions[i] = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i];
-		}	
-	}else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-		CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
-		CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
-		CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
-		CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
-		for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
-			CnstBuffer.LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x , 6.0f);
-		}
-	}else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS || sig&Signature::FSQUAD_3_TEX){
-		D3D11_TEXTURE2D_DESC pDesc;
-		d3dxTextures[0]->Tex->GetDesc(&pDesc);
-		CnstBuffer.CameraPos.w = (float)pDesc.MipLevels;
-		CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
-		CnstBuffer.LightPositions[0].y = pScProp->Exposure;
-	}
+    for (unsigned int i = 0; i < numLights; i++) {
+      CnstBuffer.LightPositions[i] = pScProp->Lights[i].Position;
+      CnstBuffer.LightColors[i] = pScProp->Lights[i].Color;
+    }
+  }
+  else if (sig&Signature::ONE_PASS_BLUR) {
+    CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+    CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
+    CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
+    CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
+    for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+      CnstBuffer.LightPositions[i] = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i];
+    }
+  }
+  else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
+    CnstBuffer.LightPositions[0].x = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].x;
+    CnstBuffer.LightPositions[0].y = pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[0].y;
+    CnstBuffer.LightPositions[0].z = (float)Textures[0]->x;
+    CnstBuffer.LightPositions[0].w = (float)Textures[0]->y;
+    for (unsigned int i = 1; i < pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel.size(); i++) {
+      CnstBuffer.LightPositions[i].x = roundTo(pScProp->pGaussKernels[pScProp->ActiveGaussKernel]->vGaussKernel[i].x, 6.0f);
+    }
+  }
+  else if (sig&Signature::HDR_COMP_PASS || sig&Signature::BRIGHT_PASS || sig&Signature::FSQUAD_3_TEX) {
+    //D3D11_TEXTURE2D_DESC pDesc;
+    //reinterpret_cast<D3DXTexture*>(d3dxTextures[0])->Tex->GetDesc(&pDesc);
+    CnstBuffer.CameraPos.w = 10.0f;//(float)pDesc.MipLevels;
+    CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
+    CnstBuffer.LightPositions[0].y = pScProp->Exposure;
+  }
 
-	deviceContext->VSSetShader(s->pVS.Get(), 0, 0);
-  deviceContext->PSSetShader(s->pFS.Get(), 0, 0);
-  deviceContext->IASetInputLayout(s->Layout.Get());
+  s->Set(*D3D11DeviceContext);
 
-  deviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
-  deviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-  deviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+  pd3dConstantBuffer->UpdateFromBuffer(*D3D11DeviceContext, &CnstBuffer);
+  pd3dConstantBuffer->Set(*D3D11DeviceContext);
 
-  deviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
-  deviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+  IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
+  VB->Set(*D3D11DeviceContext, stride, offset);
 
-	if (sig&Signature::DEFERRED_PASS) {
-		deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
-		deviceContext->PSSetShaderResources(6, 1, d3dxEnvMap->pSRVTex.GetAddressOf());
-	}
-	else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-	}
-	else if (sig&Signature::FSQUAD_2_TEX) {
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-	}
-	else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {			
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-    deviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
-	}
-	else if (sig&Signature::SHADOW_COMP_PASS) {
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-    deviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
-	}
-	else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-	}
-	else {
-    deviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-	}
+  if (sig&Signature::DEFERRED_PASS) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+    d3dxTextures[2]->Set(*D3D11DeviceContext, 2, "tex2");
+    d3dxTextures[3]->Set(*D3D11DeviceContext, 3, "tex3");
+    d3dxTextures[4]->Set(*D3D11DeviceContext, 4, "tex4");
+    d3dxTextures[5]->Set(*D3D11DeviceContext, 5, "tex5");
+    d3dxEnvMap->Set(*D3D11DeviceContext, 6, "texEnv");
+  }
+  else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+  }
+  else if (sig&Signature::FSQUAD_2_TEX) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+  }
+  else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+    d3dxTextures[2]->Set(*D3D11DeviceContext, 2, "tex2");
+  }
+  else if (sig&Signature::SHADOW_COMP_PASS) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+  }
+  else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+  }
+  else {
+    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+  }
+  //reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext())->PSSetSamplers(0, 1, &pSampler);
 
-	
-
-  deviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
-  deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-  deviceContext->DrawIndexed(6, 0, 0);
+  D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
+  D3D11DeviceContext->DrawIndexed(6, 0, 0);
 }
 
-void D3DXQuad::Destroy(){
+void D3DXQuad::Destroy() {
 }
