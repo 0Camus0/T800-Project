@@ -1,4 +1,3 @@
-
 uniform mediump sampler2D DiffuseTex;
 
 #ifdef SPECULAR_MAP

@@ -109,6 +109,7 @@ namespace t800 {
   void GLVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
   {
     const_cast<DeviceContext*>(&deviceContext)->actualVertexBuffer = (VertexBuffer*)this;
+    reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalStride = stride;
     glBindBuffer(GL_ARRAY_BUFFER, APIID);
   }
   void ** GLVertexBuffer::GetAPIBuffer() const
@@ -144,6 +145,17 @@ namespace t800 {
 
   void GLIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
   {
+    switch (format)
+    {
+    case T8_IB_FORMAR::R16:
+      reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalIBFormat = GL_UNSIGNED_SHORT;
+      break;
+    case T8_IB_FORMAR::R32:
+      reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalIBFormat = GL_UNSIGNED_INT;
+      break;
+    default:
+      break;
+    }
     const_cast<DeviceContext*>(&deviceContext)->actualIndexBuffer = (IndexBuffer*)this;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, APIID);
   }
@@ -194,12 +206,12 @@ namespace t800 {
         case T8_CBUFFER_TYPE::VECTOR2:
           break;
         case T8_CBUFFER_TYPE::VECTOR4:
-          glUniform4fv(it.loc, 1, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
-          sysMemCpyOffset += 16;
+          glUniform4fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
+          sysMemCpyOffset += 16 * it.num;
           break;
         case T8_CBUFFER_TYPE::MATRIX:
-          glUniformMatrix4fv(it.loc, 1, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
-          sysMemCpyOffset += 64;
+          glUniformMatrix4fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
+          sysMemCpyOffset += 64 * it.num;
           break;
         }
       }

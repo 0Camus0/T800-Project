@@ -14,7 +14,7 @@
 #include <iostream>
 
 #include <scene/windows/D3DXMesh.h>
-#if defined(USING_OPENGL)
+#if defined(USING_GL_COMMON)
 #include <video/GLShader.h>
 #include <video/GLDriver.h>
 #else
@@ -49,7 +49,7 @@ void D3DXMesh::Create(char *filename) {
 
 		ShaderBase *s = g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig);
 
-    s->Set(*D3D11DeviceContext);
+    //s->Set(*D3D11DeviceContext);
 
     t800::BufferDesc bdesc;
     bdesc.byteWidth = sizeof(D3DXMesh::CBuffer);
@@ -184,7 +184,7 @@ void D3DXMesh::Create(char *filename) {
 }
 
 void D3DXMesh::GatherInfo() {
-#if defined(USING_OPENGL)
+#if defined(USING_GL_COMMON)
   char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
   char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
 #else
@@ -273,7 +273,7 @@ void D3DXMesh::GatherInfo() {
 
 int	 D3DXMesh::LoadTex(std::string p, xF::xMaterial *mat, Texture** tex) {
 	int id = g_pBaseDriver->CreateTexture(p);
-	*tex = dynamic_cast<Texture*>(g_pBaseDriver->GetTexture(id));
+	*tex = g_pBaseDriver->GetTexture(id);
 	bool tiled = false;
 	for (unsigned int m = 0; m < mat->EffectInstance.pDefaults.size(); m++) {
 		xEffectDefault *mDef_2 = &mat->EffectInstance.pDefaults[m];
@@ -347,6 +347,7 @@ void D3DXMesh::Draw(float *t, float *vp) {
 		for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
 			bool update = false;
 			SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
+      sub_info->IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
 
 			unsigned int sig = sub_info->Sig;
 			sig |= gSig;
@@ -362,24 +363,24 @@ void D3DXMesh::Draw(float *t, float *vp) {
         it_MeshInfo->CB->Set(*D3D11DeviceContext);
 			}
 
-      sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0,"DiffuseTex");
+      sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0,"DiffuseTex"); //No obtiene el loc
 			if (s->Sig&Signature::SPECULAR_MAP){
         sub_info->SpecularTex->Set(*D3D11DeviceContext,1, "SpecularTex");
 			}
 
 			if (s->Sig&Signature::GLOSS_MAP) {;
-      sub_info->GlossfTex->Set(*D3D11DeviceContext, 2,"GlossfTex");
+      sub_info->GlossfTex->Set(*D3D11DeviceContext, 2,"GlossTex");
 			}
 
 			if (s->Sig&Signature::NORMAL_MAP) {
-        sub_info->NormalTex->Set(*D3D11DeviceContext,3,"NormalTex");
+        sub_info->NormalTex->Set(*D3D11DeviceContext,3,"NormalTex"); 
 			}
 
 			if(EnvMap){
-        EnvMap->Set(*D3D11DeviceContext, 4,"NormalTex");
+        EnvMap->Set(*D3D11DeviceContext, 4,"texEnv");
 			}
       sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
-      sub_info->IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
+
 
       D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
       D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);

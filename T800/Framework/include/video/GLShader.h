@@ -76,6 +76,7 @@ public:
 
   std::vector<t800::InputElement> locs;
   std::vector<t800::InputElement> internalUniformsLocs;
+  int vertexWidth;
 
 	//int			 matWorldViewProjUniformLoc;
 	//int			 matWorldUniformLoc;

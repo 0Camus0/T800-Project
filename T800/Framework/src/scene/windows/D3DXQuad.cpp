@@ -13,7 +13,7 @@
 #include <scene/windows/D3DXQuad.h>
 #include <utils/Utils.h>
 
-#if defined(USING_OPENGL)
+#if defined(USING_GL_COMMON)
 #include <video/GLShader.h>
 #include <video/GLDriver.h>
 #else
@@ -27,7 +27,7 @@ extern t800::DeviceContext*     D3D11DeviceContext;
 void D3DXQuad::Create() {
   SigBase = Signature::HAS_TEXCOORDS0;
   unsigned int Dest;
-#if defined(USING_OPENGL)
+#if defined(USING_GL_COMMON)
   char *vsSourceP = file2string("Shaders/VS_Quad.glsl");
   char *fsSourceP = file2string("Shaders/FS_Quad.glsl");
 #else
@@ -202,14 +202,15 @@ void D3DXQuad::Draw(float *t, float *vp) {
     CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
     CnstBuffer.LightPositions[0].y = pScProp->Exposure;
   }
-
+  IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
+  VB->Set(*D3D11DeviceContext, stride, offset);
   s->Set(*D3D11DeviceContext);
 
   pd3dConstantBuffer->UpdateFromBuffer(*D3D11DeviceContext, &CnstBuffer);
   pd3dConstantBuffer->Set(*D3D11DeviceContext);
 
-  IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
-  VB->Set(*D3D11DeviceContext, stride, offset);
+  //IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
+  //VB->Set(*D3D11DeviceContext, stride, offset);
 
   if (sig&Signature::DEFERRED_PASS) {
     d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");

@@ -325,24 +325,24 @@ void App::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 
 
-	pFramework->pVideoDriver->PushRT(DepthPass);
+	//pFramework->pVideoDriver->PushRT(DepthPass);
 	SceneProp.pCameras[0] = &LightCam;
-	for (int i = 0; i < 6; i++) {
-		Pigs[i].SetSignature(Signature::SHADOW_MAP_PASS);
-		Pigs[i].Draw();
-		Pigs[i].SetSignature(Signature::FORWARD_PASS);
-	}
-	pFramework->pVideoDriver->PopRT();
+	//for (int i = 0; i < 6; i++) {
+		//Pigs[i].SetSignature(Signature::SHADOW_MAP_PASS);
+	//	Pigs[i].Draw();
+		//Pigs[i].SetSignature(Signature::FORWARD_PASS);
+	//}
+	//pFramework->pVideoDriver->PopRT();
 
 	SceneProp.pCameras[0] = &Cam;
 
-	pFramework->pVideoDriver->PushRT(GBufferPass);
+	//pFramework->pVideoDriver->PushRT(GBufferPass);
 	for (int i = 0; i < 6; i++) {
-		Pigs[i].SetSignature(Signature::GBUFF_PASS);
+		//Pigs[i].SetSignature(Signature::GBUFF_PASS);
 		Pigs[i].Draw();
-		Pigs[i].SetSignature(Signature::FORWARD_PASS);
+		//Pigs[i].SetSignature(Signature::FORWARD_PASS);
 	}
-	pFramework->pVideoDriver->PopRT();
+	/*pFramework->pVideoDriver->PopRT();
 
 
 	pFramework->pVideoDriver->PushRT(ShadowAccumPass);
@@ -457,7 +457,7 @@ void App::OnDraw() {
 	Quads[7].SetSignature(Signature::HDR_COMP_PASS);
 	Quads[7].Draw();
 #endif
-
+*/
 	pFramework->pVideoDriver->SwapBuffers();
 
 	FirstFrame = false;

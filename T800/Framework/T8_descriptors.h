@@ -183,8 +183,10 @@ namespace t800 {
     std::string name;
     T8_CBUFFER_TYPE::E type;
     int loc;
+    int num;
     InputElement() {
       loc = -1;
+      num = 1;
     }
   };
 }

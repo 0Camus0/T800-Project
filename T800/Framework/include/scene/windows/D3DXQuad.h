@@ -20,7 +20,7 @@
 #include <scene\PrimitiveBase.h>
 
 
-#if defined(USING_OPENGL)
+#if defined(USING_GL_COMMON)
 #include <video\GLTexture.h>
 #else
 #include <video\windows/D3DXTexture.h>

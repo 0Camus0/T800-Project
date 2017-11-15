@@ -63,10 +63,11 @@ namespace t800 {
     void release() override;
     void SetPrimitiveTopology(T8_TOPOLOGY::E topology) override;
     void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) override;
-  private:
-    int internalTopology;
     int internalIBFormat;
+    int internalTopology;
+    int internalStride;
     unsigned int internalShaderProgram;
+  private:
   };
   class GLDevice : public Device {
   public:

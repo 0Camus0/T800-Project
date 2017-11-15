@@ -62,7 +62,7 @@ void	GLTexture::SetTextureParams() {
 
 	int Max = 1;
 	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-	glTexParameteri(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+	glTexParameteri(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max); //ERR
 
 	glBindTexture(glTarget, 0);
 }
@@ -116,7 +116,7 @@ void GLTexture::LoadAPITextureCompressed(unsigned char* buffer) {
 
 }
 
-void GLTexture::DestroyAPITexture(){
+void GLTexture::DestroyAPITexture() {
 	glDeleteTextures(1,&id);
 }
 
@@ -124,10 +124,13 @@ void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot
 {
   m_shaderTextureName = name;
   int slot_active = GL_TEXTURE0 + slot;
+  int deb = reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg;
   APITextureLoc = glGetUniformLocation(reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg, m_shaderTextureName.c_str());
-  glActiveTexture(slot_active);
-  glBindTexture(GL_TEXTURE_2D, id);
-  glUniform1i(APITextureLoc, slot);
+  if (APITextureLoc  != -1) {
+    glActiveTexture(slot_active);
+    glBindTexture(GL_TEXTURE_2D, id);
+    glUniform1i(APITextureLoc, slot);
+  }
 }
 
 void GLTexture::SetSampler(const t800::DeviceContext & deviceContext)
