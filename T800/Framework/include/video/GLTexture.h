@@ -19,8 +19,8 @@
 
 class GLTexture : public Texture {
 public:
-	GLTexture() {}
-    virtual ~GLTexture() {}
+  GLTexture();
+  virtual ~GLTexture() {}
 	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
@@ -32,6 +32,7 @@ public:
   void  SetSampler(const t800::DeviceContext& deviceContext) override;
 private:
   int APITextureLoc;
+  unsigned int glTarget;
 };
 
 #endif

@@ -144,12 +144,6 @@ void D3DXQuad::Draw(float *t, float *vp) {
   unsigned int offset = 0;
   unsigned int stride = sizeof(Vert);
 
-  for (int i = 0; i < 8; i++) {
-    d3dxTextures[i] = dynamic_cast<Texture*>(Textures[i]);
-  }
-
-  d3dxEnvMap = dynamic_cast<Texture*>(EnvMap);
-
   Camera *pActualCamera = pScProp->pCameras[0];
   XMATRIX44 VP = pActualCamera->VP;
   XMATRIX44 WV = pActualCamera->View;
@@ -202,46 +196,43 @@ void D3DXQuad::Draw(float *t, float *vp) {
     CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
     CnstBuffer.LightPositions[0].y = pScProp->Exposure;
   }
-  IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
   VB->Set(*D3D11DeviceContext, stride, offset);
+  IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
   s->Set(*D3D11DeviceContext);
 
   pd3dConstantBuffer->UpdateFromBuffer(*D3D11DeviceContext, &CnstBuffer);
   pd3dConstantBuffer->Set(*D3D11DeviceContext);
 
-  //IB->Set(*D3D11DeviceContext,0,T8_IB_FORMAR::R16);
-  //VB->Set(*D3D11DeviceContext, stride, offset);
-
   if (sig&Signature::DEFERRED_PASS) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
-    d3dxTextures[2]->Set(*D3D11DeviceContext, 2, "tex2");
-    d3dxTextures[3]->Set(*D3D11DeviceContext, 3, "tex3");
-    d3dxTextures[4]->Set(*D3D11DeviceContext, 4, "tex4");
-    d3dxTextures[5]->Set(*D3D11DeviceContext, 5, "tex5");
-    d3dxEnvMap->Set(*D3D11DeviceContext, 6, "texEnv");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+    Textures[2]->Set(*D3D11DeviceContext, 2, "tex2");
+    Textures[3]->Set(*D3D11DeviceContext, 3, "tex3");
+    Textures[4]->Set(*D3D11DeviceContext, 4, "tex4");
+    Textures[5]->Set(*D3D11DeviceContext, 5, "tex5");
+    EnvMap->Set(*D3D11DeviceContext, 6, "texEnv");
   }
   else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
   }
   else if (sig&Signature::FSQUAD_2_TEX) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
   }
   else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
-    d3dxTextures[2]->Set(*D3D11DeviceContext, 2, "tex2");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[1]->Set(*D3D11DeviceContext, 1, "tex1"); //ERR
+    Textures[2]->Set(*D3D11DeviceContext, 2, "tex2"); //ERR
   }
   else if (sig&Signature::SHADOW_COMP_PASS) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-    d3dxTextures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
   }
   else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
   }
   else {
-    d3dxTextures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+    Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
   }
   //reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext())->PSSetSamplers(0, 1, &pSampler);
 
@@ -251,3 +242,5 @@ void D3DXQuad::Draw(float *t, float *vp) {
 
 void D3DXQuad::Destroy() {
 }
+
+

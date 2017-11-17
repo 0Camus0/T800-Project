@@ -363,12 +363,12 @@ void D3DXMesh::Draw(float *t, float *vp) {
         it_MeshInfo->CB->Set(*D3D11DeviceContext);
 			}
 
-      sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0,"DiffuseTex"); //No obtiene el loc
+      sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0,"DiffuseTex");
 			if (s->Sig&Signature::SPECULAR_MAP){
         sub_info->SpecularTex->Set(*D3D11DeviceContext,1, "SpecularTex");
 			}
 
-			if (s->Sig&Signature::GLOSS_MAP) {;
+			if (s->Sig&Signature::GLOSS_MAP) {
       sub_info->GlossfTex->Set(*D3D11DeviceContext, 2,"GlossTex");
 			}
 
@@ -381,7 +381,6 @@ void D3DXMesh::Draw(float *t, float *vp) {
 			}
       sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
 
-
       D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
       D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
 			last = s;
@@ -392,3 +391,4 @@ void D3DXMesh::Draw(float *t, float *vp) {
 void D3DXMesh::Destroy() {
   //release resources
 }
+

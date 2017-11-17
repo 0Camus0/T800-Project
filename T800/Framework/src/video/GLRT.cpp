@@ -37,12 +37,21 @@ bool GLRT::LoadAPIRT(){
 			bysize = GL_UNSIGNED_BYTE;
 		}break;
 		case RGBA16F: {
-			cfmt = GL_RGB16F;
+#if (DRIVER_SELECTED == OGLES20)
+      cfmt = GL_RGB16F_EXT;
+#else
+      cfmt = GL_RGB16F;
+#endif
+
 			cinternal = GL_RGBA;
 			bysize = GL_FLOAT;
 		}break;
 		case RGBA32F: {
-			cfmt = GL_RGB32F;
+#if (DRIVER_SELECTED == OGLES20)
+      cfmt = GL_RGB32F_EXT;
+#else
+			cfmt = GL_RGB32F; 
+#endif
 			cinternal = GL_RGBA;
 			bysize = GL_FLOAT;
 		}break;
@@ -92,7 +101,7 @@ bool GLRT::LoadAPIRT(){
 		glTexImage2D(GL_TEXTURE_2D, 0, cffmt, w, h, 0, cinternal, cbysize, 0);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

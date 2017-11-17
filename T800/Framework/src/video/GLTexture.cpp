@@ -30,11 +30,13 @@
 
 #include "video\GLShader.h"
 
-void	GLTexture::SetTextureParams() {
-	unsigned int glTarget;
+GLTexture::GLTexture() : glTarget(GL_TEXTURE_2D) 
+{
+}
 
-	if (cil_props & CIL_CUBE_MAP)
-		glTarget = GL_TEXTURE_CUBE_MAP;
+void	GLTexture::SetTextureParams() {
+  if (cil_props & CIL_CUBE_MAP)
+    glTarget = GL_TEXTURE_CUBE_MAP;
 	else
 		glTarget = GL_TEXTURE_2D;
 
@@ -56,13 +58,13 @@ void	GLTexture::SetTextureParams() {
 		glWrap = GL_REPEAT;
 
 	glTexParameteri(glTarget, GL_TEXTURE_MIN_FILTER, glFiltering);
-	glTexParameteri(glTarget, GL_TEXTURE_MAG_FILTER, glFiltering);
+	glTexParameteri(glTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(glTarget, GL_TEXTURE_WRAP_S, glWrap);
 	glTexParameteri(glTarget, GL_TEXTURE_WRAP_T, glWrap);
 
 	int Max = 1;
 	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-	glTexParameteri(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max); //ERR
+	glTexParameteri(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max); 
 
 	glBindTexture(glTarget, 0);
 }
@@ -74,7 +76,6 @@ void GLTexture::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsign
 void GLTexture::LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer) {
 	unsigned int glFormat = 0;
 	unsigned int glChannel = GL_UNSIGNED_BYTE;
-	unsigned int glTarget;
 	
 	if (cil_props & CIL_CUBE_MAP)
 		glTarget = GL_TEXTURE_CUBE_MAP;
@@ -128,7 +129,7 @@ void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot
   APITextureLoc = glGetUniformLocation(reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg, m_shaderTextureName.c_str());
   if (APITextureLoc  != -1) {
     glActiveTexture(slot_active);
-    glBindTexture(GL_TEXTURE_2D, id);
+    glBindTexture(glTarget, id);
     glUniform1i(APITextureLoc, slot);
   }
 }

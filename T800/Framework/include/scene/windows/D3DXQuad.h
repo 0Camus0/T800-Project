@@ -48,10 +48,6 @@ public:
   };
 
   D3DXQuad() {
-    for (int i = 0; i < 8; i++) {
-      d3dxTextures[i] = 0;
-    }
-    d3dxEnvMap = 0;
   }
   void Create();
   void Create(char *) {}
@@ -72,10 +68,8 @@ public:
 
   XMATRIX44		transform;
 
-
-  Texture*	d3dxTextures[8];
-  Texture*	d3dxEnvMap;
-
 };
 
 #endif
+
+

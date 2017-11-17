@@ -267,7 +267,6 @@ void	GLDriver::InitDriver() {
   D3D11Device = new t800::GLDevice;
   D3D11DeviceContext = new t800::GLDeviceContext;
 
-
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(USING_SDL)
 	EGLint numConfigs;
 

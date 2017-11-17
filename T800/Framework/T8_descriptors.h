@@ -184,9 +184,11 @@ namespace t800 {
     T8_CBUFFER_TYPE::E type;
     int loc;
     int num;
+    int bufferBytePosition;
     InputElement() {
       loc = -1;
       num = 1;
+      bufferBytePosition = 0;
     }
   };
 }

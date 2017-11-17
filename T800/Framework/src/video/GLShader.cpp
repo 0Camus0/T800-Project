@@ -32,7 +32,7 @@ bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned 
   ie.loc = glGetAttribLocation(ShaderProg, "UV_Sec");
   locs.push_back(ie);
 
-
+  //ie.position con parser
   ie.type = T8_CBUFFER_TYPE::MATRIX;
   ie.loc = glGetUniformLocation(ShaderProg, "WVP");
   internalUniformsLocs.push_back(ie);
