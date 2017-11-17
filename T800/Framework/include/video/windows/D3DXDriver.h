@@ -28,7 +28,7 @@ using namespace Microsoft::WRL;
 
 namespace t800 {
   /* DEVICES */
-  class D3DXDeviceContext : public DeviceContext{
+  class D3DXDeviceContext : public DeviceContext {
   public:
     void** GetAPIContext() const override;
     void release() override;
@@ -37,7 +37,7 @@ namespace t800 {
   private:
     ID3D11DeviceContext* APIContext;
   };
-  class D3DXDevice : public Device{
+  class D3DXDevice : public Device {
   public:
     void** GetAPIDevice() const override;
     void release() override;
@@ -56,7 +56,7 @@ namespace t800 {
     void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) override;
     void** GetAPIBuffer() const override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
-    void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;
   private:
     friend Device;
@@ -68,7 +68,7 @@ namespace t800 {
     void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
     void** GetAPIBuffer() const override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
-    void UpdateFromBuffer(const DeviceContext& deviceContext,const void* buffer) override;
+    void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;
   private:
     friend Device;
@@ -87,46 +87,46 @@ namespace t800 {
     void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
     ID3D11Buffer* APIBuffer;
   };
+
+
+
+  class D3DXDriver : public BaseDriver {
+  public:
+    D3DXDriver() {  }
+    void	InitDriver();
+    void	CreateSurfaces();
+    void	DestroySurfaces();
+    void	Update();
+    void	DestroyDriver();
+    void	SetWindow(void *window);
+    void	SetDimensions(int, int);
+
+    int 	 CreateTexture(std::string);
+    Texture* GetTexture(int id);
+    void	 DestroyTexture();
+
+    int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool GenMips = false);
+    void	 PushRT(int id);
+    void	 PopRT();
+    void     DestroyRT(int id);
+    void	 DestroyRTs();
+    Texture* GetRTTexture(int id, int index);
+
+    int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+    ShaderBase*	GetShaderSig(unsigned int sig);
+    ShaderBase*	GetShaderIdx(int Id);
+    void		DestroyShaders();
+
+    void	Clear();
+    void	SwapBuffers();
+
+    int		Width;
+    int		Height;
+    HWND	hwnd;
+
+    D3D11_VIEWPORT viewport;
+    D3D11_VIEWPORT viewport_RT;
+  };
 }
-
-
-
-class D3DXDriver : public BaseDriver {
-public:
-	D3DXDriver() {  }
-	void	InitDriver();
-	void	CreateSurfaces();
-	void	DestroySurfaces();
-	void	Update();
-	void	DestroyDriver();
-	void	SetWindow(void *window);
-	void	SetDimensions(int, int);
-
-	int 	 CreateTexture(std::string);
-	Texture* GetTexture(int id);
-	void	 DestroyTexture();
-
-	int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool GenMips=false);
-	void	 PushRT(int id);
-	void	 PopRT();
-	void     DestroyRT(int id);
-	void	 DestroyRTs();
-	Texture* GetRTTexture(int id, int index);
-
-	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
-	ShaderBase*	GetShaderSig(unsigned int sig);
-	ShaderBase*	GetShaderIdx(int Id);
-	void		DestroyShaders();
-
-	void	Clear();
-	void	SwapBuffers();
-
-	int		Width;
-	int		Height;
-	HWND	hwnd;
-
-	D3D11_VIEWPORT viewport;
-	D3D11_VIEWPORT viewport_RT;
-};
 
 #endif

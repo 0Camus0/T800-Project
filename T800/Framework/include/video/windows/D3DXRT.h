@@ -26,17 +26,18 @@
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
+namespace t800 {
+  class D3DXRT : public BaseRT {
+  public:
+    bool			LoadAPIRT();
+    void			DestroyAPIRT();
 
-class D3DXRT : public BaseRT {
-	public:
-		bool			LoadAPIRT();
-		void			DestroyAPIRT();
-
-		std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
-		std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;		
-		ComPtr<ID3D11Texture2D>							D3D11DepthTex;
-		ComPtr<ID3D11DepthStencilView>					D3D11DepthStencilTargetView;
-};
+    std::vector<ComPtr<ID3D11RenderTargetView>>		vD3D11RenderTargetView;
+    std::vector<ComPtr<ID3D11Texture2D>>			vD3D11ColorTex;
+    ComPtr<ID3D11Texture2D>							D3D11DepthTex;
+    ComPtr<ID3D11DepthStencilView>					D3D11DepthStencilTargetView;
+  };
+}
 
 
 #endif

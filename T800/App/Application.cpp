@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-
+using namespace t800;
 extern std::vector<std::string> g_args;
 
 

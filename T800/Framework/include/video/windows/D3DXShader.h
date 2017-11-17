@@ -24,18 +24,19 @@
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
+namespace t800 {
+  class D3DXShader : public ShaderBase {
+  public:
 
-class D3DXShader : public ShaderBase {
-public:
-
-	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
-  void  Set(const t800::DeviceContext& deviceContext) override;
-	ComPtr<ID3D11VertexShader>  pVS;
-	ComPtr<ID3D11PixelShader>   pFS;
-	ComPtr<ID3DBlob>            VS_blob;
-	ComPtr<ID3DBlob>            FS_blob;
-	ComPtr<ID3D11InputLayout>   Layout;
-	std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
-};
+    bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
+    void  Set(const t800::DeviceContext& deviceContext) override;
+    ComPtr<ID3D11VertexShader>  pVS;
+    ComPtr<ID3D11PixelShader>   pFS;
+    ComPtr<ID3DBlob>            VS_blob;
+    ComPtr<ID3DBlob>            FS_blob;
+    ComPtr<ID3D11InputLayout>   Layout;
+    std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
+  };
+}
 
 #endif

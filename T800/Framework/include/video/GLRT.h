@@ -34,18 +34,19 @@
 #endif
 #endif
 
-
-class GLRT : public BaseRT {
-public:
+namespace t800 {
+  class GLRT : public BaseRT {
+  public:
 
     virtual ~GLRT() {}
-	bool	LoadAPIRT();
-	void	DestroyAPIRT();
+    bool	LoadAPIRT();
+    void	DestroyAPIRT();
 
-	std::vector<GLuint>		vFrameBuffers;
-	std::vector<GLuint>		vGLColorTex;
-	GLuint					DepthTexture;
-};
+    std::vector<GLuint>		vFrameBuffers;
+    std::vector<GLuint>		vGLColorTex;
+    GLuint					DepthTexture;
+  };
+}
 
 
 #endif

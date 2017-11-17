@@ -26,8 +26,8 @@
 
 std::vector<std::string> g_args;
 
-AppBase		  *pApp = 0;
-RootFramework *pFrameWork = 0;
+t800::AppBase		  *pApp = 0;
+t800::RootFramework *pFrameWork = 0;
 
 int main(int arg,char ** args){
 
@@ -41,7 +41,7 @@ int main(int arg,char ** args){
     pFrameWork->InitGlobalVars();
 	pFrameWork->OnCreateApplication();
 #elif defined(OS_WINDOWS)
-	pFrameWork = new Win32Framework((AppBase*)pApp);
+	pFrameWork = new t800::Win32Framework((t800::AppBase*)pApp);
 	pFrameWork->InitGlobalVars();
 	pFrameWork->OnCreateApplication();
 	pFrameWork->UpdateApplication();

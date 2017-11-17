@@ -25,50 +25,51 @@
 #else
 #include <video\windows/D3DXTexture.h>
 #endif
+namespace t800 {
+  class D3DXQuad : public PrimitiveBase {
+  public:
+    struct Vert {
+      float x, y, z, w;
+      float u, v;
+    };
 
-class D3DXQuad : public PrimitiveBase {
-public:
-  struct Vert {
-    float x, y, z, w;
-    float u, v;
+    struct CBuffer {
+      XMATRIX44 WVP;
+      XMATRIX44 World;
+      XMATRIX44 WorldView;
+      XMATRIX44 WVPInverse;
+      XMATRIX44 WVPLight;
+      XVECTOR3  LightPositions[128];
+      XVECTOR3  LightColors[128];
+      XVECTOR3  CameraPos;
+      XVECTOR3  CameraInfo;
+      XVECTOR3  LightCameraPos;
+      XVECTOR3  LightCameraInfo;
+    };
+
+    D3DXQuad() {
+    }
+    void Create();
+    void Create(char *) {}
+    void Transform(float *t);
+    void Draw(float *t, float *vp);
+    void Destroy();
+
+    unsigned int	SigBase;
+
+    t800::IndexBuffer*		IB;
+    t800::VertexBuffer*		VB;
+    t800::ConstantBuffer*        pd3dConstantBuffer;
+    //ID3D11SamplerState*  pSampler;
+
+    CBuffer			CnstBuffer;
+    Vert			vertices[4];
+    unsigned short	indices[6];
+
+    XMATRIX44		transform;
+
   };
-
-  struct CBuffer {
-    XMATRIX44 WVP;
-    XMATRIX44 World;
-    XMATRIX44 WorldView;
-    XMATRIX44 WVPInverse;
-    XMATRIX44 WVPLight;
-    XVECTOR3  LightPositions[128];
-    XVECTOR3  LightColors[128];
-    XVECTOR3  CameraPos;
-    XVECTOR3  CameraInfo;
-    XVECTOR3  LightCameraPos;
-    XVECTOR3  LightCameraInfo;
-  };
-
-  D3DXQuad() {
-  }
-  void Create();
-  void Create(char *) {}
-  void Transform(float *t);
-  void Draw(float *t, float *vp);
-  void Destroy();
-
-  unsigned int	SigBase;
-
-  t800::IndexBuffer*		IB;
-  t800::VertexBuffer*		VB;
-  t800::ConstantBuffer*        pd3dConstantBuffer;
-  //ID3D11SamplerState*  pSampler;
-
-  CBuffer			CnstBuffer;
-  Vert			vertices[4];
-  unsigned short	indices[6];
-
-  XMATRIX44		transform;
-
-};
+}
 
 #endif
 

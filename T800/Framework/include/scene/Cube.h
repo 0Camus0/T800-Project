@@ -38,69 +38,70 @@
 #include <utils/xMaths.h>
 #include <scene/PrimitiveBase.h>
 
+namespace t800 {
+  struct CVertex {
 
-struct CVertex {
-
-	float x, y, z,w;
-	float nx,ny,nz,nw;
-	float s,t;
-};
+    float x, y, z, w;
+    float nx, ny, nz, nw;
+    float s, t;
+  };
 
 
 
-class Cube : public PrimitiveBase {
-public:
-	Cube()
+  class Cube : public PrimitiveBase {
+  public:
+    Cube()
 #ifdef USING_GL_COMMON
-	: shaderID(0)
+      : shaderID(0)
 #endif
-	 {}
+    {}
 
 #ifdef USING_D3D11
-	struct CBuffer {
-		XMATRIX44 WVP;
-		XMATRIX44 World;
-	};
+    struct CBuffer {
+      XMATRIX44 WVP;
+      XMATRIX44 World;
+    };
 #endif
 
-	void Create();
-	void Create(char *) {}
-	void Transform(float *t);
-	void Draw(float *t,float *vp);
-	void Destroy();
+    void Create();
+    void Create(char *) {}
+    void Transform(float *t);
+    void Draw(float *t, float *vp);
+    void Destroy();
 
 #ifdef USING_GL_COMMON
-	GLuint	shaderID;
-	GLint	vertexAttribLoc;
-	GLint	normalAttribLoc;
-	GLint	uvAttribLoc;
-	GLint	diffuseLoc;
+    GLuint	shaderID;
+    GLint	vertexAttribLoc;
+    GLint	normalAttribLoc;
+    GLint	uvAttribLoc;
+    GLint	diffuseLoc;
 
 
-	GLint  matWorldViewProjUniformLoc;
-	GLint  matWorldUniformLoc;
+    GLint  matWorldViewProjUniformLoc;
+    GLint  matWorldUniformLoc;
 
-	GLuint			VB;
-	GLuint			IB;
+    GLuint			VB;
+    GLuint			IB;
 #elif defined(USING_D3D11)
-	ComPtr<ID3D11Buffer>		IB;
-	ComPtr<ID3D11Buffer>		VB;
-	ComPtr<ID3D11VertexShader>  pVS;
-	ComPtr<ID3D11PixelShader>   pFS;
-	ComPtr<ID3DBlob>            VS_blob;
-	ComPtr<ID3DBlob>            FS_blob;
-	ComPtr<ID3D11InputLayout>   Layout;
-	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
+    ComPtr<ID3D11Buffer>		IB;
+    ComPtr<ID3D11Buffer>		VB;
+    ComPtr<ID3D11VertexShader>  pVS;
+    ComPtr<ID3D11PixelShader>   pFS;
+    ComPtr<ID3DBlob>            VS_blob;
+    ComPtr<ID3DBlob>            FS_blob;
+    ComPtr<ID3D11InputLayout>   Layout;
+    ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 
-	Cube::CBuffer	CnstBuffer;
+    Cube::CBuffer	CnstBuffer;
 #endif
 
-	int		TexId;
-	CVertex			vertices[24];
-	unsigned short	indices[36];
-	XMATRIX44	transform;
-	Texture		*tex;
-};
+    int		TexId;
+    CVertex			vertices[24];
+    unsigned short	indices[36];
+    XMATRIX44	transform;
+    Texture		*tex;
+  };
+}
 
 
 #endif

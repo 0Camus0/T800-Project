@@ -118,57 +118,56 @@ namespace t800 {
     void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) override;
     unsigned int APIID;
   };
-}
 
 
 
-class GLDriver : public BaseDriver {
-public:
-	GLDriver() {  }
-	void	InitDriver();
-	void	CreateSurfaces();
-	void	DestroySurfaces();
-	void	Update();
-	void	DestroyDriver();
-	void	SetWindow(void *window) ;
-	void	SetDimensions(int, int);
+  class GLDriver : public BaseDriver {
+  public:
+    GLDriver() {  }
+    void	InitDriver();
+    void	CreateSurfaces();
+    void	DestroySurfaces();
+    void	Update();
+    void	DestroyDriver();
+    void	SetWindow(void *window);
+    void	SetDimensions(int, int);
 
-	int 	 CreateTexture(std::string path);
-	Texture* GetTexture(int id);
-	void	 DestroyTexture();
+    int 	 CreateTexture(std::string path);
+    Texture* GetTexture(int id);
+    void	 DestroyTexture();
 
-	int 	CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
-	void	PushRT(int id);
-	void	PopRT();
-	void	DestroyRT(int id);
-	void	DestroyRTs();
-	Texture* GetRTTexture(int id, int index);
+    int 	CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
+    void	PushRT(int id);
+    void	PopRT();
+    void	DestroyRT(int id);
+    void	DestroyRTs();
+    Texture* GetRTTexture(int id, int index);
 
-	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
-	ShaderBase*	GetShaderSig(unsigned int sig);
-	ShaderBase*	GetShaderIdx(int Id);
-	void		DestroyShaders();
+    int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+    ShaderBase*	GetShaderSig(unsigned int sig);
+    ShaderBase*	GetShaderIdx(int Id);
+    void		DestroyShaders();
 
-	void	Clear();
-	void	SwapBuffers();
-	bool	CheckExtension(std::string s);
+    void	Clear();
+    void	SwapBuffers();
+    bool	CheckExtension(std::string s);
 #if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-	EGLDisplay			eglDisplay;
-	EGLConfig			eglConfig;
-	EGLSurface			eglSurface;
-	EGLContext			eglContext;
+    EGLDisplay			eglDisplay;
+    EGLConfig			eglConfig;
+    EGLSurface			eglSurface;
+    EGLContext			eglContext;
 
-	EGLNativeWindowType	eglWindow;
+    EGLNativeWindowType	eglWindow;
 #endif
-	GLint				CurrentFBO;
+    GLint				CurrentFBO;
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-	GLenum				DrawBuffers[16];
+    GLenum				DrawBuffers[16];
 #endif
 
-	int	width, height;
-	std::vector<std::string>	ExtensionsTok;
-	std::string					Extensions;
+    int	width, height;
+    std::vector<std::string>	ExtensionsTok;
+    std::string					Extensions;
 
-};
-
+  };
+}
 #endif

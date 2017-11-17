@@ -34,94 +34,23 @@
 #include <utils/Utils.h>
 #include <vector>
 
-class GLShader : public ShaderBase {
-public:
-	GLShader() {
-		//matWorldViewProjUniformLoc = -1;
-		//matWorldUniformLoc = -1;
+namespace t800 {
+  class GLShader : public ShaderBase {
+  public:
+	  GLShader() {}
 
-		//vertexAttribLoc = -1;
-		//normalAttribLoc = -1;
-		//tangentAttribLoc = -1;
-		//binormalAttribLoc = -1;
-		//uvAttribLoc = -1;
-		//uvSecAttribLoc = -1;
+	  virtual ~GLShader() {}
 
-		//Light0Pos_Loc = -1;
-		//Light0Color_Loc = -1;
-		//CameraPos_Loc = -1;
-		//Ambient_loc = -1;
-		//DiffuseTex_loc = -1;
-		//SpecularTex_loc = -1;
-		//GlossTex_loc = -1;
-		//NormalTex_loc = -1;
-		//ReflectTex_loc = -1;
-
-		//tex0_loc = -1;
-		//tex1_loc = -1;
-		//tex2_loc = -1;
-		//tex3_loc = -1;
-		//tex4_loc = -1;
-		//tex5_loc = -1;
-		//tex6_loc = -1;
-		//tex7_loc = -1;
-	}
-
-	virtual ~GLShader() {}
-
-	bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
-  void  Set(const t800::DeviceContext& deviceContext) override;
-	unsigned int ShaderProg;
+	  bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
+    void  Set(const t800::DeviceContext& deviceContext) override;
+	  unsigned int ShaderProg;
 
 
-  std::vector<t800::InputElement> locs;
-  std::vector<t800::InputElement> internalUniformsLocs;
-  int vertexWidth;
-
-	//int			 matWorldViewProjUniformLoc;
-	//int			 matWorldUniformLoc;
-	//int			 matWorldViewUniformLoc;
-	//int			 matWVPInverseUniformLoc;
-	//int		     matWVPLightLoc;
-
-	//int			 vertexAttribLoc;
-	//int			 normalAttribLoc;
-	//int			 tangentAttribLoc;
-	//int			 binormalAttribLoc;
-	//int			 uvAttribLoc;
-	//int			 uvSecAttribLoc;
-
-	//int			Light0Pos_Loc;
-	//int			Light0Color_Loc;
-
-	//int			LightPositions_Loc;
-	//int			LightColors_Loc;
-
-	//int			CameraPos_Loc;
-	//int			CameraInfo_Loc;
-
-	//int			LightCameraPos_Loc;
-	//int			LightCameraInfo_Loc;
-
-	//int			Ambient_loc;
-
-	//int			DiffuseTex_loc;
-	//int			SpecularTex_loc;
-	//int			GlossTex_loc;
-	//int			NormalTex_loc;
-	//int			ReflectTex_loc;
-
-	//int			tex0_loc;
-	//int			tex1_loc;
-	//int			tex2_loc;
-	//int			tex3_loc;
-	//int			tex4_loc;
-	//int			tex5_loc;
-	//int			tex6_loc;
-	//int			tex7_loc;
-
-	//int			texEnv_loc;
-};
+    std::vector<t800::InputElement> locs;
+    std::vector<t800::InputElement> internalUniformsLocs;
+    int vertexWidth;
+  };
+}
 
 
 #endif

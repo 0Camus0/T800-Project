@@ -19,26 +19,27 @@
 #include <utils/xMaths.h>
 #include <scene/PrimitiveBase.h>
 #include <scene/SceneProp.h>
+namespace t800 {
+  class PrimitiveManager {
+  public:
+    void SetVP(XMATRIX44 *vp) {
+      pVP = vp;
+    }
+    int  CreateTriangle();
+    int	 CreateCube();
+    int	 CreateMesh(char *fname);
+    int  CreateQuad();
 
-class PrimitiveManager {
-public:
-	void SetVP(XMATRIX44 *vp) {
-		pVP = vp;
-	}
-	int  CreateTriangle();
-	int	 CreateCube();
-	int	 CreateMesh(char *fname);
-	int  CreateQuad();
+    void SetSceneProps(SceneProps *p);
 
-	void SetSceneProps(SceneProps *p);
+    void DrawPrimitives();
+    void DestroyPrimitives();
+    PrimitiveBase*	GetPrimitive(unsigned int);
 
-	void DrawPrimitives();
-	void DestroyPrimitives();
-	PrimitiveBase*	GetPrimitive(unsigned int);
+    std::vector<PrimitiveBase*> primitives;
 
-	std::vector<PrimitiveBase*> primitives;
-
-	XMATRIX44 *pVP;
-};
+    XMATRIX44 *pVP;
+  };
+}
 
 #endif

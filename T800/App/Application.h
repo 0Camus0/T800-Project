@@ -21,7 +21,6 @@
 #include <utils/Timer.h>
 
 
-
 enum {
 	DRAW_CUBE_SPINNING = 0,
 	DRAW_CUBE_BIG,
@@ -45,7 +44,7 @@ enum {
 	CHANGE_MAX_NUM_OPTIONS
 };
 
-class App : public AppBase {
+class App : public t800::AppBase {
 public:
 	App() : AppBase() {}
 	void InitVars();
@@ -66,13 +65,13 @@ public:
 	void ChangeSettingsOnMinus();
 	void printCurrSelection();
 
-	PrimitiveManager PrimitiveMgr;
-	PrimitiveInst	Cubes[10];
-	PrimitiveInst	Triangles[10];
-	PrimitiveInst   Pigs[10];
-	PrimitiveInst	QuadInst;
+	t800::PrimitiveManager PrimitiveMgr;
+	t800::PrimitiveInst	Cubes[10];
+	t800::PrimitiveInst	Triangles[10];
+	t800::PrimitiveInst   Pigs[10];
+	t800::PrimitiveInst	QuadInst;
 
-	PrimitiveInst	Quads[10];
+  t800::PrimitiveInst	Quads[10];
 
 	Camera			Cam;
 	Camera			LightCam;

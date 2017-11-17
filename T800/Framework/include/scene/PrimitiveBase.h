@@ -20,40 +20,42 @@
 
 #include <vector>
 
+namespace t800 {
 #ifndef BUFFER_OFFSET
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #endif
 
-class PrimitiveBase {
-public:
-	PrimitiveBase() : pScProp(0) , gSig(0) {
-		for(int i=0;i<8;i++){
-			Textures[i]=0;
-		}
-		EnvMap = 0;
-	}
-	virtual ~PrimitiveBase(){}
-	virtual void Create() = 0;
-	virtual void Create(char *) = 0;
-	virtual void Transform(float *t) = 0;
-	virtual void Draw(float *t,float *vp) = 0;
-	virtual void Destroy() = 0;
+  class PrimitiveBase {
+  public:
+    PrimitiveBase() : pScProp(0), gSig(0) {
+      for (int i = 0; i < 8; i++) {
+        Textures[i] = 0;
+      }
+      EnvMap = 0;
+    }
+    virtual ~PrimitiveBase() {}
+    virtual void Create() = 0;
+    virtual void Create(char *) = 0;
+    virtual void Transform(float *t) = 0;
+    virtual void Draw(float *t, float *vp) = 0;
+    virtual void Destroy() = 0;
 
-	void SetGlobalSignature(unsigned int f){ gSig = f; }
-	void SetTexture(Texture* tex,int index){
-		Textures[index] = tex;
-	}
+    void SetGlobalSignature(unsigned int f) { gSig = f; }
+    void SetTexture(Texture* tex, int index) {
+      Textures[index] = tex;
+    }
 
-	void SetEnvironmentMap(Texture* tex) {
-		EnvMap = tex;
-	}
+    void SetEnvironmentMap(Texture* tex) {
+      EnvMap = tex;
+    }
 
-	void SetSceneProps(SceneProps *p) { pScProp = p; }
-	SceneProps				*pScProp;
-	Texture*				 Textures[8];
-	Texture*			     EnvMap;
-	unsigned int gSig;
-};
+    void SetSceneProps(SceneProps *p) { pScProp = p; }
+    SceneProps				*pScProp;
+    Texture*				 Textures[8];
+    Texture*			     EnvMap;
+    unsigned int gSig;
+  };
+}
 
 
 #endif

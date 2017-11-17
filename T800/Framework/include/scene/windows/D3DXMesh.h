@@ -49,79 +49,79 @@
 #include <vector>
 #include <memory>
 using namespace xF;
+namespace t800 {
+  class D3DXMesh : public PrimitiveBase {
+  public:
+    D3DXMesh() {
+      d3dxEnvMap = 0;
+      EnvMap = 0;
+    }
 
-class D3DXMesh : public PrimitiveBase {
-public:
-	D3DXMesh()  {
-		d3dxEnvMap = 0;
-		EnvMap = 0;
-	}
-
-	struct CBuffer {
-		XMATRIX44 WVP;
-		XMATRIX44 World;
-		XMATRIX44 WorldView;
-		XVECTOR3  Light0Pos;
-		XVECTOR3  Light0Col;
-		XVECTOR3  CameraPos;
-		XVECTOR3  CameraInfo;
-		XVECTOR3  Ambient;
-	};
-
-
-	struct SubSetInfo {	
-		unsigned int		Sig;
-
-		t800::IndexBuffer*  	IB;
-		Texture*					DiffuseTex;
-		Texture*					SpecularTex;
-		Texture*					GlossfTex;
-		Texture*					NormalTex;
-		Texture*					ReflectTex;
-
-		int					DiffuseId;
-		int					SpecularId;
-		int					GlossfId;
-		int					NormalId;
-		int					ReflectId;
-
-		unsigned int		VertexStart;
-		unsigned int		NumVertex;
-		unsigned int		TriStart;
-		unsigned int		NumTris;
-		unsigned int		VertexSize;
-		bool				bAlignedVertex;
-	};
+    struct CBuffer {
+      XMATRIX44 WVP;
+      XMATRIX44 World;
+      XMATRIX44 WorldView;
+      XVECTOR3  Light0Pos;
+      XVECTOR3  Light0Col;
+      XVECTOR3  CameraPos;
+      XVECTOR3  CameraInfo;
+      XVECTOR3  Ambient;
+    };
 
 
-	struct MeshInfo {
-		unsigned int			 VertexSize;
-		unsigned int			 NumVertex;
+    struct SubSetInfo {
+      unsigned int		Sig;
 
-		t800::IndexBuffer*  	IB;
-    t800::VertexBuffer*  	VB;
-    t800::ConstantBuffer* CB;
-		D3DXMesh::CBuffer			CnstBuffer;
+      t800::IndexBuffer*  	IB;
+      Texture*					DiffuseTex;
+      Texture*					SpecularTex;
+      Texture*					GlossfTex;
+      Texture*					NormalTex;
+      Texture*					ReflectTex;
 
-		std::vector<SubSetInfo>	SubSets;
-	};
+      int					DiffuseId;
+      int					SpecularId;
+      int					GlossfId;
+      int					NormalId;
+      int					ReflectId;
 
-	void Create() {}
-	void Create(char *);
-	void Transform(float *t);
-	void Draw(float *t, float *vp);
-	void Destroy();
+      unsigned int		VertexStart;
+      unsigned int		NumVertex;
+      unsigned int		TriStart;
+      unsigned int		NumTris;
+      unsigned int		VertexSize;
+      bool				bAlignedVertex;
+    };
 
-	void GatherInfo();
-	int  LoadTex(std::string p, xF::xMaterial *mat,Texture** tex);
-	
-	Texture*	d3dxEnvMap;
 
-	XMATRIX44	transform;
-	XDataBase	xFile;
-	std::vector<MeshInfo> Info;
-};
+    struct MeshInfo {
+      unsigned int			 VertexSize;
+      unsigned int			 NumVertex;
 
+      t800::IndexBuffer*  	IB;
+      t800::VertexBuffer*  	VB;
+      t800::ConstantBuffer* CB;
+      D3DXMesh::CBuffer			CnstBuffer;
+
+      std::vector<SubSetInfo>	SubSets;
+    };
+
+    void Create() {}
+    void Create(char *);
+    void Transform(float *t);
+    void Draw(float *t, float *vp);
+    void Destroy();
+
+    void GatherInfo();
+    int  LoadTex(std::string p, xF::xMaterial *mat, Texture** tex);
+
+    Texture*	d3dxEnvMap;
+
+    XMATRIX44	transform;
+    XDataBase	xFile;
+    std::vector<MeshInfo> Info;
+  };
+}
 
 #endif
 
