@@ -31,6 +31,12 @@ t800::AppBase		  *pApp = 0;
 t800::RootFramework *pFrameWork = 0;
 
 int main(int arg,char ** args){
+  t800::ApplicationDesc desc;
+  desc.api = GRAPHICS_API::D3D11;
+  desc.height = 720;
+  desc.width = 1280;
+  desc.videoMode = T8_VIDEO_MODE::WINDOWED;
+  desc.title = "T800 Project";
 
     for(int i=0;i<arg;i++){
         g_args.push_back( std::string( args[i] ) );
@@ -44,7 +50,7 @@ int main(int arg,char ** args){
 #elif defined(OS_WINDOWS)
 	pFrameWork = new t800::Win32Framework((t800::AppBase*)pApp);
 	pFrameWork->InitGlobalVars();
-	pFrameWork->OnCreateApplication(GRAPHICS_API::D3D11);
+	pFrameWork->OnCreateApplication(desc);
 	pFrameWork->UpdateApplication();
 	pFrameWork->OnDestroyApplication();
 #endif

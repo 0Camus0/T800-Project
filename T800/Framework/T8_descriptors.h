@@ -181,11 +181,33 @@ namespace GRAPHICS_API {
   };
 }
 
+namespace T8_VIDEO_MODE {
+  enum E {
+    FULLSCREEN,
+    WINDOWED
+  };
+}
+
 
 namespace t800 {
   struct BufferDesc {
     int byteWidth;
     T8_BUFFER_USAGE::E usage;
+  };
+
+  struct ApplicationDesc {
+    GRAPHICS_API::E api;
+    T8_VIDEO_MODE::E videoMode;
+    unsigned int width;
+    unsigned int height;
+    std::string title;
+    ApplicationDesc() {
+      api = GRAPHICS_API::D3D11;
+      width = 1280;
+      height = 720;
+      title = "My New Project";
+      videoMode = T8_VIDEO_MODE::WINDOWED;
+    }
   };
 
   struct InputElement {

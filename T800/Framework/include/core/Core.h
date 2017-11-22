@@ -47,7 +47,7 @@ namespace t800 {
   public:
     RootFramework(AppBase *pApp) : pBaseApp(pApp) {}
     virtual void InitGlobalVars() = 0;
-    virtual void OnCreateApplication(GRAPHICS_API::E api) = 0;
+    virtual void OnCreateApplication(ApplicationDesc desc) = 0;
     virtual void OnDestroyApplication() = 0;
     virtual void OnInterruptApplication() = 0;
     virtual void OnResumeApplication() = 0;

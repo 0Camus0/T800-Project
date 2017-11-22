@@ -27,7 +27,7 @@ namespace t800 {
       pBaseApp->SetParentFramework(this);
     }
     void InitGlobalVars();
-    void OnCreateApplication(GRAPHICS_API::E api);
+    void OnCreateApplication(ApplicationDesc desc);
     void OnDestroyApplication();
     void OnInterruptApplication();
     void OnResumeApplication();
@@ -40,6 +40,7 @@ namespace t800 {
     bool	m_alive;
   private:
     bool m_inited;
+    ApplicationDesc aplicationDescriptor;
   };
 }
 
