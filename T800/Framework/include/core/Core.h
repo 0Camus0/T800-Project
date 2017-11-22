@@ -17,6 +17,7 @@
 
 #include <video/BaseDriver.h>
 #include <utils/InputManager.h>
+#include <utils\ResourceManager.h>
 namespace t800 {
   class RootFramework;
   class AppBase {
@@ -24,6 +25,7 @@ namespace t800 {
     AppBase() : bInited(false), bPaused(false), pFramework(0) {}
     virtual void InitVars() = 0;
     virtual void CreateAssets() = 0;
+    virtual void LoadAssets() = 0;
     virtual void DestroyAssets() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnDraw() = 0;
@@ -38,19 +40,21 @@ namespace t800 {
     bool			bPaused;
     RootFramework	*pFramework;
     InputManager	IManager;
+    ResourceManager resourceManager;
   };
 
   class RootFramework {
   public:
     RootFramework(AppBase *pApp) : pBaseApp(pApp) {}
     virtual void InitGlobalVars() = 0;
-    virtual void OnCreateApplication() = 0;
+    virtual void OnCreateApplication(GRAPHICS_API::E api) = 0;
     virtual void OnDestroyApplication() = 0;
     virtual void OnInterruptApplication() = 0;
     virtual void OnResumeApplication() = 0;
     virtual void UpdateApplication() = 0;
     virtual void ProcessInput() = 0;
     virtual void ResetApplication() = 0;
+    virtual void ChangeAPI(GRAPHICS_API::E api) = 0;
 
     BaseDriver		*pVideoDriver;
     AppBase			*pBaseApp;

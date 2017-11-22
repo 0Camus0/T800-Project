@@ -11,13 +11,9 @@
 *********************************************************/
 
 #include <scene/PrimitiveManager.h>
-//#include <scene/GLMesh.h>
-//#include <scene/GLQuad.h>
 
-//#ifdef USING_D3D11
-#include <scene/windows/D3DXMesh.h>
-#include <scene/windows/D3DXQuad.h>
-//#endif
+#include <scene/Mesh.h>
+#include <scene/Quad.h>
 
 namespace t800 {
   PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
@@ -36,22 +32,15 @@ namespace t800 {
   }
 
   int	 PrimitiveManager::CreateMesh(char *fname) {
-    //#if defined(USING_GL_COMMON)
-      //PrimitiveBase *primitive = new GLMesh();
-    //#elif defined(USING_D3D11)
     PrimitiveBase *primitive = new D3DXMesh();
-    //#endif
-    primitive->Create(fname);
+    primitive->Load(fname);
+    primitive->Create();
     primitives.push_back(primitive);
     return (int)(primitives.size() - 1);
   }
 
   int PrimitiveManager::CreateQuad() {
-    //#if defined(USING_GL_COMMON)
-      //PrimitiveBase *primitive = new GLQuad();
-    //#elif defined(USING_D3D11)
     PrimitiveBase *primitive = new D3DXQuad();
-    //#endif
     primitive->Create();
     primitives.push_back(primitive);
     return (int)(primitives.size() - 1);

@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#include <T8_descriptors.h>
 
 std::vector<std::string> g_args;
 
@@ -43,7 +44,7 @@ int main(int arg,char ** args){
 #elif defined(OS_WINDOWS)
 	pFrameWork = new t800::Win32Framework((t800::AppBase*)pApp);
 	pFrameWork->InitGlobalVars();
-	pFrameWork->OnCreateApplication();
+	pFrameWork->OnCreateApplication(GRAPHICS_API::D3D11);
 	pFrameWork->UpdateApplication();
 	pFrameWork->OnDestroyApplication();
 #endif

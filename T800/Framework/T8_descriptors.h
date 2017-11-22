@@ -171,6 +171,15 @@ namespace T8_FORMAT {
     FORMAT_B4G4R4A4_UNORM = 115
   };
 }
+namespace GRAPHICS_API {
+  enum E {
+    OPENGL,
+    D3D11,
+    GLES20,
+    GLES30,
+    GLES31
+  };
+}
 
 
 namespace t800 {

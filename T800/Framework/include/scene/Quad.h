@@ -20,9 +20,8 @@
 #include <scene\PrimitiveBase.h>
 
 
-#if defined(USING_GL_COMMON)
 #include <video\GLTexture.h>
-#else
+#if defined(OS_WINDOWS)
 #include <video\windows/D3DXTexture.h>
 #endif
 namespace t800 {
@@ -49,17 +48,17 @@ namespace t800 {
 
     D3DXQuad() {
     }
+    void Load(char *) {};
     void Create();
-    void Create(char *) {}
     void Transform(float *t);
     void Draw(float *t, float *vp);
     void Destroy();
 
     unsigned int	SigBase;
 
-    t800::IndexBuffer*		IB;
-    t800::VertexBuffer*		VB;
-    t800::ConstantBuffer*        pd3dConstantBuffer;
+    IndexBuffer*		IB;
+    VertexBuffer*		VB;
+    ConstantBuffer* pd3dConstantBuffer;
     //ID3D11SamplerState*  pSampler;
 
     CBuffer			CnstBuffer;

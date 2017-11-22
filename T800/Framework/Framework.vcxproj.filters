@@ -65,9 +65,6 @@
     <ClInclude Include="include\utils\xMaths.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\Cube.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\scene\PrimitiveBase.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
@@ -78,9 +75,6 @@
       <Filter>Header Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\SceneProp.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\Triangle.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="include\video\BaseDriver.h">
@@ -95,9 +89,6 @@
     <ClInclude Include="include\utils\Camera.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\GLMesh.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\video\GLDriver.h">
       <Filter>Header Files\video\GL</Filter>
     </ClInclude>
@@ -110,20 +101,11 @@
     <ClInclude Include="include\video\GLTexture.h">
       <Filter>Header Files\video\GL</Filter>
     </ClInclude>
-    <ClInclude Include="include\scene\GLQuad.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils\cil.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="T8_descriptors.h">
       <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\windows\D3DXMesh.h">
-      <Filter>Header Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\scene\windows\D3DXQuad.h">
-      <Filter>Header Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="include\video\windows\D3DXDriver.h">
       <Filter>Header Files\video\D3DX</Filter>
@@ -139,6 +121,15 @@
     </ClInclude>
     <ClInclude Include="include\core\windows\Win32Framework.h">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\Mesh.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\Quad.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\ResourceManager.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,9 +166,6 @@
     <ClCompile Include="src\video\BaseDriver.cpp">
       <Filter>Source Files\video</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\GLMesh.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\video\GLDriver.cpp">
       <Filter>Source Files\video\GL</Filter>
     </ClCompile>
@@ -190,20 +178,11 @@
     <ClCompile Include="src\video\GLTexture.cpp">
       <Filter>Source Files\video\GL</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\GLQuad.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\utils\cil.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="src\core\windows\Win32Framework.cpp">
       <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene\windows\D3DXMesh.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene\windows\D3DXQuad.cpp">
-      <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\video\windows\D3DXDriver.cpp">
       <Filter>Source Files\video\D3DX</Filter>
@@ -216,6 +195,15 @@
     </ClCompile>
     <ClCompile Include="src\video\windows\D3DXTexture.cpp">
       <Filter>Source Files\video\D3DX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\Mesh.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\Quad.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\ResourceManager.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -22,6 +22,7 @@ namespace xF {
 	class XDataBase
 	{
 	public:
+    XDataBase(XDataBase&& other) = default;
 		XDataBase() {}
 		~XDataBase() {
 			for (unsigned int i = 0; i < XMeshDataBase.size(); i++) {
@@ -35,6 +36,7 @@ namespace xF {
 
 		std::vector<xMeshContainer*>	XMeshDataBase;
 		std::vector<xFinalGeometry>		MeshInfo;
+    std::string m_name;
 
 	private:
 		void			CreateSubSets();

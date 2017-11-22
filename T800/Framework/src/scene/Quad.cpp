@@ -10,13 +10,12 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <scene/windows/D3DXQuad.h>
+#include <scene/Quad.h>
 #include <utils/Utils.h>
 
-#if defined(USING_GL_COMMON)
 #include <video/GLShader.h>
 #include <video/GLDriver.h>
-#else
+#if defined(OS_WINDOWS)
 #include <video/windows/D3DXShader.h>
 #include <video/windows/D3DXDriver.h>
 #endif
@@ -27,13 +26,17 @@ namespace t800 {
   void D3DXQuad::Create() {
     SigBase = Signature::HAS_TEXCOORDS0;
     unsigned int Dest;
-#if defined(USING_GL_COMMON)
-    char *vsSourceP = file2string("Shaders/VS_Quad.glsl");
-    char *fsSourceP = file2string("Shaders/FS_Quad.glsl");
-#else
-    char *vsSourceP = file2string("Shaders/VS_Quad.hlsl");
-    char *fsSourceP = file2string("Shaders/FS_Quad.hlsl");
-#endif
+
+    char *vsSourceP;
+    char *fsSourceP;
+    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
+    vsSourceP = file2string("Shaders/VS_Quad.glsl");
+    fsSourceP = file2string("Shaders/FS_Quad.glsl");
+  }
+    else {
+    vsSourceP = file2string("Shaders/VS_Quad.hlsl");
+    fsSourceP = file2string("Shaders/FS_Quad.hlsl");
+    }
 
 
     std::string vstr = std::string(vsSourceP);
@@ -93,27 +96,15 @@ namespace t800 {
     bdesc.byteWidth = sizeof(CBuffer);
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     pd3dConstantBuffer = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
-    if (false) {
-      printf("Error Creating Constant Buffer\n");
-      return;
-    }
 
     bdesc.byteWidth = sizeof(Vert) * 4;
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, bdesc, vertices);
-    if (false) {
-      printf("Error Creating Vertex Buffer\n");
-      return;
-    }
 
 
     bdesc.byteWidth = 6 * sizeof(unsigned short);
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
     IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, indices);
-    if (false) {
-      printf("Error Creating Index Buffer\n");
-      return;
-    }
 
     /*D3D11_SAMPLER_DESC sdesc;
     sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -221,8 +212,8 @@ namespace t800 {
     }
     else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
       Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1"); //ERR
-      Textures[2]->Set(*D3D11DeviceContext, 2, "tex2"); //ERR
+      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1"); 
+      Textures[2]->Set(*D3D11DeviceContext, 2, "tex2"); 
     }
     else if (sig&Signature::SHADOW_COMP_PASS) {
       Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
@@ -241,6 +232,9 @@ namespace t800 {
   }
 
   void D3DXQuad::Destroy() {
+    IB->release();
+    VB->release();
+    pd3dConstantBuffer->release();
   }
 }
 

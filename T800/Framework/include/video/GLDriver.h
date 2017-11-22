@@ -123,7 +123,7 @@ namespace t800 {
 
   class GLDriver : public BaseDriver {
   public:
-    GLDriver() {  }
+    GLDriver() { m_currentAPI = GRAPHICS_API::OPENGL; }
     void	InitDriver();
     void	CreateSurfaces();
     void	DestroySurfaces();

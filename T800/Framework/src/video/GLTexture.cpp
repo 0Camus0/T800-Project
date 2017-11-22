@@ -75,7 +75,7 @@ namespace t800 {
 
   }
 
-  void GLTexture::LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer) {
+  void GLTexture::LoadAPITexture(DeviceContext* context, unsigned char* buffer) {
     unsigned int glFormat = 0;
     unsigned int glChannel = GL_UNSIGNED_BYTE;
 
@@ -124,7 +124,7 @@ namespace t800 {
     glDeleteTextures(1, &id);
   }
 
-  void GLTexture::Set(const t800::DeviceContext & deviceContext, unsigned int slot, std::string name)
+  void GLTexture::Set(const DeviceContext & deviceContext, unsigned int slot, std::string name)
   {
     m_shaderTextureName = name;
     int slot_active = GL_TEXTURE0 + slot;
@@ -137,7 +137,7 @@ namespace t800 {
     }
   }
 
-  void GLTexture::SetSampler(const t800::DeviceContext & deviceContext)
+  void GLTexture::SetSampler(const DeviceContext & deviceContext)
   {
   }
 }

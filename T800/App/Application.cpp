@@ -13,7 +13,6 @@
 #include "Application.h"
 #include <video/BaseDriver.h>
 #include <utils/InputManager.h>
-#include <scene/Cube.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,6 +111,10 @@ void App::InitVars() {
 	FirstFrame = true;
 }
 
+void App::LoadAssets()
+{
+}
+
 void App::CreateAssets() {
 
 	EnvMapTexIndex = g_pBaseDriver->CreateTexture(string("CubeMap_Mountains.dds"));
@@ -155,7 +158,7 @@ void App::CreateAssets() {
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));//
+  PrimitiveMgr.GetPrimitive(QuadIndex)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
 	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
 	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
@@ -726,6 +729,14 @@ void App::OnInput() {
 	if (IManager.PressedKey(T800K_d)) {
 		ActiveCam->StrafeRight(DtSecs);
 	}
+
+  if (IManager.PressedOnceKey(T800K_1)) {
+    pFramework->ChangeAPI(GRAPHICS_API::D3D11);
+  }
+
+  if (IManager.PressedOnceKey(T800K_2)) {
+    pFramework->ChangeAPI(GRAPHICS_API::OPENGL);
+  }
 
 	float yaw = 0.005f*static_cast<float>(IManager.xDelta);
 	ActiveCam->MoveYaw(yaw);

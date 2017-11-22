@@ -383,6 +383,8 @@ namespace t800 {
   }
 
   void	GLDriver::DestroyDriver() {
+    D3D11Device->release();
+    D3D11DeviceContext->release();
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
     eglDestroySurface(eglDisplay, eglSurface);
     eglDestroyContext(eglDisplay, eglContext);

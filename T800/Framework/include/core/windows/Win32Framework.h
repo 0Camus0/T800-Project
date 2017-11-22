@@ -23,20 +23,23 @@
 namespace t800 {
   class Win32Framework : public RootFramework {
   public:
-    Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) {
+    Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true), m_inited(false) {
       pBaseApp->SetParentFramework(this);
     }
     void InitGlobalVars();
-    void OnCreateApplication();
+    void OnCreateApplication(GRAPHICS_API::E api);
     void OnDestroyApplication();
     void OnInterruptApplication();
     void OnResumeApplication();
     void UpdateApplication();
     void ProcessInput();
     void ResetApplication();
+    void ChangeAPI(GRAPHICS_API::E api);
     ~Win32Framework() {	}
 
     bool	m_alive;
+  private:
+    bool m_inited;
   };
 }
 

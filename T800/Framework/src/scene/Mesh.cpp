@@ -13,52 +13,40 @@
 #include <video/BaseDriver.h>
 #include <iostream>
 
-#include <scene/windows/D3DXMesh.h>
-#if defined(USING_GL_COMMON)
+#include <scene/Mesh.h>
 #include <video/GLShader.h>
 #include <video/GLDriver.h>
-#else
+
+#if defined(OS_WINDOWS)
 #include <video/windows/D3DXShader.h>
 #include <video/windows/D3DXDriver.h>
 #endif
-
+#include "core\Core.h"
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
-
+extern t800::AppBase		  *pApp;
 namespace t800 {
   extern Device*            D3D11Device;
   extern DeviceContext*     D3D11DeviceContext;
 
+  
+  void D3DXMesh::Load(char *filename)
+  {
+    xFile = pApp->resourceManager.Load(filename);
+  }
 
-  void D3DXMesh::Create(char *filename) {
-    std::string fname = std::string(filename);
-    if (xFile.LoadXFile(fname)) {
-      cout << " Load " << endl;
-    }
-    else {
-      cout << " Failed " << endl;
-    }
-
+  void D3DXMesh::Create() {
     GatherInfo();
-
-    for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-      xFinalGeometry *it = &xFile.MeshInfo[i];
-      xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+    for (std::size_t i = 0; i < xFile->MeshInfo.size(); i++) {
+      xFinalGeometry *it = &xFile->MeshInfo[i];
+      xMeshGeometry *pActual = &xFile->XMeshDataBase[0]->Geometry[i];
       MeshInfo  *it_MeshInfo = &Info[i];
-
-      ShaderBase *s = g_pBaseDriver->GetShaderSig(it_MeshInfo->SubSets[0].Sig);
-
-      //s->Set(*D3D11DeviceContext);
 
       t800::BufferDesc bdesc;
       bdesc.byteWidth = sizeof(D3DXMesh::CBuffer);
       bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
       it_MeshInfo->CB = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
-      if (false) {
-        printf("Error Creating Constant Buffer\n");
-        return;
-      }
 
       int NumMaterials = pActual->MaterialList.Materials.size();
       int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
@@ -141,10 +129,6 @@ namespace t800 {
         bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(unsigned short);
         bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
         it_subsetinfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, tmpIndexex);
-        if (false) {
-          printf("Error Creating Index Buffer\n");
-          return;
-        }
 
         delete[] tmpIndexex;
       }
@@ -157,10 +141,6 @@ namespace t800 {
       buffdesc.byteWidth = pActual->NumVertices*it->VertexSize;
       buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
       it_MeshInfo->VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, buffdesc, &it->pData[0]);
-      if (false) {
-        printf("Error Creating Vertex Buffer\n");
-        return;
-      }
 
 #if CHANGE_TO_RH
       for (std::size_t a = 0; a < pActual->Triangles.size(); a += 3) {
@@ -174,24 +154,23 @@ namespace t800 {
       buffdesc.byteWidth = pActual->Triangles.size() * sizeof(unsigned short);
       buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
       it_MeshInfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, buffdesc, &pActual->Triangles[0]);
-      if (false) {
-        printf("Error Creating Index Buffer\n");
-        return;
-      }
     }
 
     XMatIdentity(transform);
   }
 
   void D3DXMesh::GatherInfo() {
-#if defined(USING_GL_COMMON)
-    char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
-    char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
-#else
-    char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
-    char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
-#endif
 
+    char *vsSourceP;
+    char *fsSourceP;
+    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
+      vsSourceP = file2string("Shaders/VS_Mesh.glsl");
+      fsSourceP = file2string("Shaders/FS_Mesh.glsl");
+    }
+    else {
+      vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+      fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
+    }
 
     std::string vstr = std::string(vsSourceP);
     std::string fstr = std::string(fsSourceP);
@@ -199,9 +178,9 @@ namespace t800 {
     free(vsSourceP);
     free(fsSourceP);
 
-    for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
-      xFinalGeometry *it = &xFile.MeshInfo[i];
-      xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+    for (std::size_t i = 0; i < xFile->MeshInfo.size(); i++) {
+      xFinalGeometry *it = &xFile->MeshInfo[i];
+      xMeshGeometry *pActual = &xFile->XMeshDataBase[0]->Geometry[i];
       int Sig = 0;
 
       if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL)
@@ -319,9 +298,9 @@ namespace t800 {
 
     Camera *pActualCamera = pScProp->pCameras[0];
 
-    for (std::size_t i = 0; i < xFile.MeshInfo.size(); i++) {
+    for (std::size_t i = 0; i < xFile->MeshInfo.size(); i++) {
       MeshInfo  *it_MeshInfo = &Info[i];
-      xMeshGeometry *pActual = &xFile.XMeshDataBase[0]->Geometry[i];
+      xMeshGeometry *pActual = &xFile->XMeshDataBase[0]->Geometry[i];
 
       XMATRIX44 VP = pActualCamera->VP;
       XMATRIX44 WVP = transform*VP;
@@ -391,6 +370,14 @@ namespace t800 {
 
   void D3DXMesh::Destroy() {
     //release resources
+    for (auto &mIt : Info) {
+      for (auto &sIt : mIt.SubSets) {
+        sIt.IB->release();
+      }
+      mIt.CB->release();
+      mIt.IB->release();
+      mIt.VB->release();
+    }
   }
 }
 

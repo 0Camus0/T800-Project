@@ -134,6 +134,7 @@ namespace xF {
 #endif
 
 	bool	XDataBase::LoadXFile(const std::string	&FileName) {
+    m_name = FileName;
 #if PROFILE_LOAD_X_FILE
 		PROFILING_SCOPE("LoadXFile")
 #endif

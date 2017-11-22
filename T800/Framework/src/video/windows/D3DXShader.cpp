@@ -123,7 +123,7 @@ namespace t800 {
     return true;
   }
 
-  void D3DXShader::Set(const t800::DeviceContext & deviceContext)
+  void D3DXShader::Set(const DeviceContext & deviceContext)
   {
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->VSSetShader(pVS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetShader(pFS.Get(), 0, 0);

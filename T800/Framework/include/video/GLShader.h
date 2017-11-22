@@ -42,12 +42,12 @@ namespace t800 {
 	  virtual ~GLShader() {}
 
 	  bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
-    void  Set(const t800::DeviceContext& deviceContext) override;
+    void  Set(const DeviceContext& deviceContext) override;
 	  unsigned int ShaderProg;
 
 
-    std::vector<t800::InputElement> locs;
-    std::vector<t800::InputElement> internalUniformsLocs;
+    std::vector<InputElement> locs;
+    std::vector<InputElement> internalUniformsLocs;
     int vertexWidth;
   };
 }

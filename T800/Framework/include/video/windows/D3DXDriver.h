@@ -92,7 +92,7 @@ namespace t800 {
 
   class D3DXDriver : public BaseDriver {
   public:
-    D3DXDriver() {  }
+    D3DXDriver() { m_currentAPI = GRAPHICS_API::D3D11; }
     void	InitDriver();
     void	CreateSurfaces();
     void	DestroySurfaces();

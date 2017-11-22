@@ -72,10 +72,10 @@ namespace t800 {
     return true;
   }
 
-  void GLShader::Set(const t800::DeviceContext & deviceContext)
+  void GLShader::Set(const DeviceContext & deviceContext)
   {
-    const_cast<t800::DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
-    int stride = reinterpret_cast<const t800::GLDeviceContext*>(&deviceContext)->internalStride;
+    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
+    int stride = reinterpret_cast<const GLDeviceContext*>(&deviceContext)->internalStride;
     glUseProgram(ShaderProg);
 
     int offset = 0;

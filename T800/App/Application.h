@@ -48,6 +48,7 @@ class App : public t800::AppBase {
 public:
 	App() : AppBase() {}
 	void InitVars();
+  void LoadAssets();
 	void CreateAssets();
 	void DestroyAssets();
 

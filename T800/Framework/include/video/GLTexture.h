@@ -24,12 +24,12 @@ namespace t800 {
     void	SetTextureParams();
     void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
-    void	LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer);
+    void	LoadAPITexture(DeviceContext* context, unsigned char* buffer);
     void	LoadAPITextureCompressed(unsigned char* buffer);
     void	DestroyAPITexture();
 
-    void  Set(const t800::DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) override;
-    void  SetSampler(const t800::DeviceContext& deviceContext) override;
+    void  Set(const DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) override;
+    void  SetSampler(const DeviceContext& deviceContext) override;
   private:
     int APITextureLoc;
     unsigned int glTarget;

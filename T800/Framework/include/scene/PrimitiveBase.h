@@ -34,8 +34,8 @@ namespace t800 {
       EnvMap = 0;
     }
     virtual ~PrimitiveBase() {}
+    virtual void Load(char *) = 0;
     virtual void Create() = 0;
-    virtual void Create(char *) = 0;
     virtual void Transform(float *t) = 0;
     virtual void Draw(float *t, float *vp) = 0;
     virtual void Destroy() = 0;

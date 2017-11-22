@@ -26,6 +26,7 @@ namespace t800 {
   class VertexBuffer;
   class IndexBuffer;
   class ConstantBuffer;
+
   class DeviceContext {
   public:
     virtual void** GetAPIContext() const = 0;
@@ -105,14 +106,14 @@ namespace t800 {
     bool			LoadTexture(const char *fn);
     void			DestroyTex();
 
-    virtual void	LoadAPITexture(t800::DeviceContext* context, unsigned char* buffer) = 0;
+    virtual void	LoadAPITexture(DeviceContext* context, unsigned char* buffer) = 0;
     virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
     virtual void	DestroyAPITexture() = 0;
 
     virtual void	SetTextureParams() = 0;
     virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
-    virtual void  Set(const t800::DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) = 0;
-    virtual void  SetSampler(const t800::DeviceContext& deviceContext) = 0;
+    virtual void  Set(const DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) = 0;
+    virtual void  SetSampler(const DeviceContext& deviceContext) = 0;
 
     char			optname[128];
     unsigned int	size;
@@ -250,6 +251,7 @@ namespace t800 {
     std::vector<BaseRT*>		RTs;
     std::vector<Texture*>		Textures;
     int							CurrentRT;
+    GRAPHICS_API::E m_currentAPI;
   };
 
 

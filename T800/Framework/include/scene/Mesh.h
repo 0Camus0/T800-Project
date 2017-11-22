@@ -28,7 +28,9 @@
 #elif defined(USING_OPENGL)
 #include <GL/glew.h>
 #include <video/GLTexture.h>
-#else
+#endif
+
+#if defined(OS_WINDOWS)
 #include <video\windows/D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
@@ -106,8 +108,8 @@ namespace t800 {
       std::vector<SubSetInfo>	SubSets;
     };
 
-    void Create() {}
-    void Create(char *);
+    void Load(char *);
+    void Create();
     void Transform(float *t);
     void Draw(float *t, float *vp);
     void Destroy();
@@ -118,7 +120,7 @@ namespace t800 {
     Texture*	d3dxEnvMap;
 
     XMATRIX44	transform;
-    XDataBase	xFile;
+    XDataBase*	xFile;
     std::vector<MeshInfo> Info;
   };
 }

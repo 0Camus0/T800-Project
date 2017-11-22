@@ -401,7 +401,8 @@ namespace t800 {
   }
 
   void D3DXDriver::DestroyDriver() {
-
+    D3D11Device->release();
+    D3D11DeviceContext->release();
   }
 
   void D3DXDriver::SetWindow(void *window) {
