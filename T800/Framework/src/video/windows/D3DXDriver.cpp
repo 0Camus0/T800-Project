@@ -26,8 +26,8 @@ namespace t800 {
   ComPtr<ID3D11DepthStencilView>  D3D11DepthStencilTargetView; // View into the depth buffer
   ComPtr<ID3D11Texture2D>			D3D11DepthTex;	// Actual depth buffer texture
 
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
   void ** D3DXDeviceContext::GetAPIContext() const
   {
     return (void**)&APIContext;
@@ -296,8 +296,8 @@ namespace t800 {
 
 
   void D3DXDriver::InitDriver() {
-    D3D11Device = new t800::D3DXDevice;
-    D3D11DeviceContext = new t800::D3DXDeviceContext;
+    T8Device = new t800::D3DXDevice;
+    T8DeviceContext = new t800::D3DXDeviceContext;
 
     //	Descriptor of the Back Buffer
     DXGI_MODE_DESC BackBufferDesc;
@@ -333,11 +333,11 @@ namespace t800 {
       0,
 #endif
       NULL, NULL, D3D11_SDK_VERSION, &SwapChainDesc, &DXGISwapchain,
-      reinterpret_cast<ID3D11Device**>(D3D11Device->GetAPIDevice()), NULL,
-      reinterpret_cast<ID3D11DeviceContext**>(D3D11DeviceContext->GetAPIContext()));
+      reinterpret_cast<ID3D11Device**>(T8Device->GetAPIDevice()), NULL,
+      reinterpret_cast<ID3D11DeviceContext**>(T8DeviceContext->GetAPIContext()));
 
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
 
     // Get the back buffer
     ComPtr<ID3D11Texture2D> BackBuffer;
@@ -401,8 +401,8 @@ namespace t800 {
   }
 
   void D3DXDriver::DestroyDriver() {
-    D3D11Device->release();
-    D3D11DeviceContext->release();
+    T8Device->release();
+    T8DeviceContext->release();
   }
 
   void D3DXDriver::SetWindow(void *window) {
@@ -415,7 +415,7 @@ namespace t800 {
   }
 
   void D3DXDriver::Clear() {
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     float rgba[4];
     rgba[0] = 0.5f;
     rgba[1] = 0.5f;
@@ -479,7 +479,7 @@ namespace t800 {
   }
 
   void D3DXDriver::PushRT(int id) {
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     if (id < 0 || id >= (int)RTs.size()) {
       CurrentRT = -1;
       return;
@@ -523,7 +523,7 @@ namespace t800 {
   }
 
   void D3DXDriver::PopRT() {
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     deviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
 
 

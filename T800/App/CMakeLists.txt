@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 project (App)
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../Bin)
 file(GLOB SOURCES *.cpp)
 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../Librerias/freeglut-linux/lib 

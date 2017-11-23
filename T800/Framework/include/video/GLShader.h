@@ -33,6 +33,7 @@
 
 #include <utils/Utils.h>
 #include <vector>
+#include <GLSLParser.h>
 
 namespace t800 {
   class GLShader : public ShaderBase {
@@ -49,6 +50,8 @@ namespace t800 {
     std::vector<InputElement> locs;
     std::vector<InputElement> internalUniformsLocs;
     int vertexWidth;
+
+    GLSL_Parser m_parser;
   };
 }
 

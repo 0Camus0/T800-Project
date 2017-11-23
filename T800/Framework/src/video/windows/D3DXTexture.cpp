@@ -13,12 +13,12 @@
 #include <video/windows/D3DXTexture.h>
 
 namespace t800 {
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
 
   void	D3DXTexture::SetTextureParams() {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     D3D11_SAMPLER_DESC sdesc;
 
     sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -58,8 +58,8 @@ namespace t800 {
   }
 
   void	D3DXTexture::LoadAPITexture(DeviceContext* context, unsigned char* buffer) {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     D3D11_TEXTURE2D_DESC desc = { 0 };
     desc.Width = this->x;
     desc.Height = this->y;

@@ -20,8 +20,8 @@
 #include <video/windows/D3DXDriver.h>
 #endif
 namespace t800 {
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
 
   void D3DXQuad::Create() {
     SigBase = Signature::HAS_TEXCOORDS0;
@@ -95,16 +95,16 @@ namespace t800 {
     t800::BufferDesc bdesc;
     bdesc.byteWidth = sizeof(CBuffer);
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-    pd3dConstantBuffer = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
+    pd3dConstantBuffer = (t800::ConstantBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
 
     bdesc.byteWidth = sizeof(Vert) * 4;
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-    VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, bdesc, vertices);
+    VB = (t800::VertexBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, bdesc, vertices);
 
 
     bdesc.byteWidth = 6 * sizeof(unsigned short);
     bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-    IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, indices);
+    IB = (t800::IndexBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, indices);
 
     /*D3D11_SAMPLER_DESC sdesc;
     sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -187,48 +187,48 @@ namespace t800 {
       CnstBuffer.LightPositions[0].x = pScProp->BloomFactor;
       CnstBuffer.LightPositions[0].y = pScProp->Exposure;
     }
-    VB->Set(*D3D11DeviceContext, stride, offset);
-    IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
-    s->Set(*D3D11DeviceContext);
+    VB->Set(*T8DeviceContext, stride, offset);
+    IB->Set(*T8DeviceContext, 0, T8_IB_FORMAR::R16);
+    s->Set(*T8DeviceContext);
 
-    pd3dConstantBuffer->UpdateFromBuffer(*D3D11DeviceContext, &CnstBuffer);
-    pd3dConstantBuffer->Set(*D3D11DeviceContext);
+    pd3dConstantBuffer->UpdateFromBuffer(*T8DeviceContext, &CnstBuffer);
+    pd3dConstantBuffer->Set(*T8DeviceContext);
 
     if (sig&Signature::DEFERRED_PASS) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
-      Textures[2]->Set(*D3D11DeviceContext, 2, "tex2");
-      Textures[3]->Set(*D3D11DeviceContext, 3, "tex3");
-      Textures[4]->Set(*D3D11DeviceContext, 4, "tex4");
-      Textures[5]->Set(*D3D11DeviceContext, 5, "tex5");
-      EnvMap->Set(*D3D11DeviceContext, 6, "texEnv");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
+      Textures[1]->Set(*T8DeviceContext, 1, "tex1");
+      Textures[2]->Set(*T8DeviceContext, 2, "tex2");
+      Textures[3]->Set(*T8DeviceContext, 3, "tex3");
+      Textures[4]->Set(*T8DeviceContext, 4, "tex4");
+      Textures[5]->Set(*T8DeviceContext, 5, "tex5");
+      EnvMap->Set(*T8DeviceContext, 6, "texEnv");
     }
     else if (sig&Signature::FSQUAD_1_TEX || sig&Signature::BRIGHT_PASS) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
     }
     else if (sig&Signature::FSQUAD_2_TEX) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
+      Textures[1]->Set(*T8DeviceContext, 1, "tex1");
     }
     else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1"); 
-      Textures[2]->Set(*D3D11DeviceContext, 2, "tex2"); 
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
+      Textures[1]->Set(*T8DeviceContext, 1, "tex1");
+      Textures[2]->Set(*T8DeviceContext, 2, "tex2");
     }
     else if (sig&Signature::SHADOW_COMP_PASS) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
-      Textures[1]->Set(*D3D11DeviceContext, 1, "tex1");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
+      Textures[1]->Set(*T8DeviceContext, 1, "tex1");
     }
     else if (sig&Signature::VERTICAL_BLUR_PASS || sig&Signature::HORIZONTAL_BLUR_PASS) {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
     }
     else {
-      Textures[0]->Set(*D3D11DeviceContext, 0, "tex0");
+      Textures[0]->Set(*T8DeviceContext, 0, "tex0");
     }
     //reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext())->PSSetSamplers(0, 1, &pSampler);
 
-    D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
-    D3D11DeviceContext->DrawIndexed(6, 0, 0);
+    T8DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
+    T8DeviceContext->DrawIndexed(6, 0, 0);
   }
 
   void D3DXQuad::Destroy() {

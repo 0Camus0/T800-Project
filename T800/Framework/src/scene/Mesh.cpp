@@ -27,8 +27,8 @@
 #define DEBUG_MODEL 0
 extern t800::AppBase		  *pApp;
 namespace t800 {
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
 
   
   void D3DXMesh::Load(char *filename)
@@ -46,7 +46,7 @@ namespace t800 {
       t800::BufferDesc bdesc;
       bdesc.byteWidth = sizeof(D3DXMesh::CBuffer);
       bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-      it_MeshInfo->CB = (t800::ConstantBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
+      it_MeshInfo->CB = (t800::ConstantBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::CONSTANT, bdesc);
 
       int NumMaterials = pActual->MaterialList.Materials.size();
       int NumFaceIndices = pActual->MaterialList.FaceIndices.size();
@@ -128,7 +128,7 @@ namespace t800 {
         t800::BufferDesc bdesc;
         bdesc.byteWidth = it_subsetinfo->NumTris * 3 * sizeof(unsigned short);
         bdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-        it_subsetinfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, tmpIndexex);
+        it_subsetinfo->IB = (t800::IndexBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, bdesc, tmpIndexex);
 
         delete[] tmpIndexex;
       }
@@ -140,7 +140,7 @@ namespace t800 {
       t800::BufferDesc buffdesc;
       buffdesc.byteWidth = pActual->NumVertices*it->VertexSize;
       buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-      it_MeshInfo->VB = (t800::VertexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, buffdesc, &it->pData[0]);
+      it_MeshInfo->VB = (t800::VertexBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::VERTEX, buffdesc, &it->pData[0]);
 
 #if CHANGE_TO_RH
       for (std::size_t a = 0; a < pActual->Triangles.size(); a += 3) {
@@ -153,7 +153,7 @@ namespace t800 {
 
       buffdesc.byteWidth = pActual->Triangles.size() * sizeof(unsigned short);
       buffdesc.usage = T8_BUFFER_USAGE::DEFAULT;
-      it_MeshInfo->IB = (t800::IndexBuffer*)D3D11Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, buffdesc, &pActual->Triangles[0]);
+      it_MeshInfo->IB = (t800::IndexBuffer*)T8Device->CreateBuffer(T8_BUFFER_TYPE::INDEX, buffdesc, &pActual->Triangles[0]);
     }
 
     XMatIdentity(transform);
@@ -322,12 +322,12 @@ namespace t800 {
       int Sig = -1;
       ShaderBase *s = 0;
       ShaderBase *last = (ShaderBase*)32;
-      it_MeshInfo->VB->Set(*D3D11DeviceContext, stride, offset);
+      it_MeshInfo->VB->Set(*T8DeviceContext, stride, offset);
 
       for (std::size_t k = 0; k < it_MeshInfo->SubSets.size(); k++) {
         bool update = false;
         SubSetInfo *sub_info = &it_MeshInfo->SubSets[k];
-        sub_info->IB->Set(*D3D11DeviceContext, 0, T8_IB_FORMAR::R16);
+        sub_info->IB->Set(*T8DeviceContext, 0, T8_IB_FORMAR::R16);
 
         unsigned int sig = sub_info->Sig;
         sig |= gSig;
@@ -337,32 +337,32 @@ namespace t800 {
           update = true;
 
         if (update) {
-          s->Set(*D3D11DeviceContext);
+          s->Set(*T8DeviceContext);
 
-          it_MeshInfo->CB->UpdateFromBuffer(*D3D11DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
-          it_MeshInfo->CB->Set(*D3D11DeviceContext);
+          it_MeshInfo->CB->UpdateFromBuffer(*T8DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
+          it_MeshInfo->CB->Set(*T8DeviceContext);
         }
 
-        sub_info->DiffuseTex->Set(*D3D11DeviceContext, 0, "DiffuseTex");
+        sub_info->DiffuseTex->Set(*T8DeviceContext, 0, "DiffuseTex");
         if (s->Sig&Signature::SPECULAR_MAP) {
-          sub_info->SpecularTex->Set(*D3D11DeviceContext, 1, "SpecularTex");
+          sub_info->SpecularTex->Set(*T8DeviceContext, 1, "SpecularTex");
         }
 
         if (s->Sig&Signature::GLOSS_MAP) {
-          sub_info->GlossfTex->Set(*D3D11DeviceContext, 2, "GlossTex");
+          sub_info->GlossfTex->Set(*T8DeviceContext, 2, "GlossTex");
         }
 
         if (s->Sig&Signature::NORMAL_MAP) {
-          sub_info->NormalTex->Set(*D3D11DeviceContext, 3, "NormalTex");
+          sub_info->NormalTex->Set(*T8DeviceContext, 3, "NormalTex");
         }
 
         if (EnvMap) {
-          EnvMap->Set(*D3D11DeviceContext, 4, "texEnv");
+          EnvMap->Set(*T8DeviceContext, 4, "texEnv");
         }
-        sub_info->DiffuseTex->SetSampler(*D3D11DeviceContext);
+        sub_info->DiffuseTex->SetSampler(*T8DeviceContext);
 
-        D3D11DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
-        D3D11DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
+        T8DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
+        T8DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
         last = s;
       }
     }

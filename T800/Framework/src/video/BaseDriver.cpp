@@ -18,8 +18,8 @@
 
 namespace t800 {
   BaseDriver*	g_pBaseDriver = 0;
-  Device*           D3D11Device;	// Device for create resources
-  DeviceContext*    D3D11DeviceContext; // Context to set and manipulate the resources
+  Device*           T8Device;	// Device for create resources
+  DeviceContext*    T8DeviceContext; // Context to set and manipulate the resources
 
 #include <utils/Checker.h>
 
@@ -68,7 +68,7 @@ namespace t800 {
     memcpy(&optname[0], fn, strlen(fn));
     optname[strlen(fn)] = '\0';
 
-    LoadAPITexture(D3D11DeviceContext, buffer);
+    LoadAPITexture(T8DeviceContext, buffer);
     if (found) {
       cil_free_buffer(buffer);
     }

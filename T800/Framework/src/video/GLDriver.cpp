@@ -37,8 +37,8 @@
 #endif
 
 namespace t800 {
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
   void ** GLDeviceContext::GetAPIContext() const
   {
     return nullptr;
@@ -263,8 +263,8 @@ namespace t800 {
   }
 #endif
   void	GLDriver::InitDriver() {
-    D3D11Device = new t800::GLDevice;
-    D3D11DeviceContext = new t800::GLDeviceContext;
+    T8Device = new t800::GLDevice;
+    T8DeviceContext = new t800::GLDeviceContext;
 
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(USING_SDL)
     EGLint numConfigs;
@@ -383,8 +383,8 @@ namespace t800 {
   }
 
   void	GLDriver::DestroyDriver() {
-    D3D11Device->release();
-    D3D11DeviceContext->release();
+    T8Device->release();
+    T8DeviceContext->release();
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
     eglDestroySurface(eglDisplay, eglSurface);
     eglDestroyContext(eglDisplay, eglContext);

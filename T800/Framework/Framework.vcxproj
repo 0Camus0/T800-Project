@@ -86,14 +86,14 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -126,7 +126,24 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(SolutionDir)Intermediate\$(Projectname)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)d</TargetName>
+    <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(SolutionDir)Intermediate\$(Projectname)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(SolutionDir)Intermediate\$(Projectname)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)d</TargetName>
+    <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(SolutionDir)Intermediate\$(Projectname)\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
@@ -134,7 +151,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\stb\include;$(SolutionDir)Librerias\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GLSLParser/Include;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\stb\include;$(SolutionDir)Librerias\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -164,7 +181,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\stb\include;$(SolutionDir)Librerias\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GLSLParser/Include;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\stb\include;$(SolutionDir)Librerias\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

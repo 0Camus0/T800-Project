@@ -14,12 +14,12 @@
 #include <iostream>
 
 namespace t800 {
-  extern Device*            D3D11Device;
-  extern DeviceContext*     D3D11DeviceContext;
+  extern Device*            T8Device;
+  extern DeviceContext*     T8DeviceContext;
 
   bool D3DXRT::LoadAPIRT() {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*D3D11Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*D3D11DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
     DXGI_FORMAT cfmt;
     DXGI_FORMAT depthFormat, depthShaderViewFormat, depthResourceViewFormat;
 

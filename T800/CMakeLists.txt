@@ -3,5 +3,6 @@ project (T800)
 set(CMAKE_CXX_STANDARD 11)
 include(GNUInstallDirs)
 
+add_subdirectory(GLSLParser)
 add_subdirectory(Framework)
 add_subdirectory(App)

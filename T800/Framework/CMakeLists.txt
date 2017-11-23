@@ -10,7 +10,7 @@ ${PROJECT_SOURCE_DIR}/../Librerias/OGLES2/pvr/include
 ${PROJECT_SOURCE_DIR}/../Librerias/SDL-1.2.14/include 
 ${PROJECT_SOURCE_DIR}/../Librerias/stb/include )
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../lib)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../Lib)
 file(GLOB SOURCES src/video/*.cpp 
 src/utils/*.cpp 
 src/scene/*.cpp 
@@ -18,6 +18,9 @@ src/core/*.cpp)
 
 add_library(T800Framework ${SOURCES})
 target_include_directories(T800Framework PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/include)
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/include
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/../GLSLParser/Include)
+
+target_link_libraries(T800Framework GLSLParser)
 
 install(TARGETS T800Framework DESTINATION Lib)

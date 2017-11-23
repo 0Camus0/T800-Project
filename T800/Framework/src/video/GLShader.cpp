@@ -2,6 +2,7 @@
 #include <utils/Utils.h>
 #include "video\GLDriver.h"
 
+
 namespace t800 {
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
   bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) {
@@ -16,6 +17,8 @@ namespace t800 {
 
     glLinkProgram(ShaderProg);
     glUseProgram(ShaderProg);
+
+    m_parser.ParseFromMemory(src_vs, src_fs);
 
     t800::InputElement ie;
     vertexWidth = 0;
