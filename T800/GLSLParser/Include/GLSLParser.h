@@ -12,6 +12,7 @@ struct GLSL_Var_{
 	hyperspace::shader::datatype_	type;
 	hyperspace::shader::stage_		stage;
 	std::string						name;
+  int numItems;
 };
 
 class GLSL_Parser{
@@ -32,6 +33,7 @@ private:
 	void ProcessToken(std::size_t &pos, std::vector<std::string> &v);
 	void DetermineSemantic(GLSL_Var_ &var, std::string &str);
 	void DetermineType(GLSL_Var_ &var, std::string &str);
+  void DetermineArrayNum(GLSL_Var_ &var, std::string &str);
 	std::string					buffer_vertex;
 	std::string					buffer_fragment;
 	hyperspace::shader::stage_  current_stage;

@@ -1,6 +1,6 @@
 #ifndef T800_DESCRIPTORS_H
 #define T800_DESCRIPTORS_H
-
+#include <ShaderBase.h>
 namespace T8_BUFFER_USAGE{
   enum E {
     DEFAULT,
@@ -212,14 +212,16 @@ namespace t800 {
 
   struct InputElement {
     std::string name;
-    T8_CBUFFER_TYPE::E type;
+    hyperspace::shader::datatype_ type;
     int loc;
     int num;
+    int size;
     int bufferBytePosition;
     InputElement() {
       loc = -1;
       num = 1;
       bufferBytePosition = 0;
+      size = 0;
     }
   };
 }

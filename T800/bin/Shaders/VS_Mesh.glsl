@@ -87,7 +87,6 @@ uniform highp vec4 CameraInfo;
 uniform highp vec4 Ambient;
 
 void main(){
-lowp vec4 x = LightPos * LightColor * CameraPosition * CameraInfo * Ambient; //Borrar despues
 #ifdef SHADOW_MAP_PASS
 		Pos = WVP*Vertex;
 		gl_Position = Pos;

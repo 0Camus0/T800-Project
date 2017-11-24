@@ -19,58 +19,115 @@ namespace t800 {
     glUseProgram(ShaderProg);
 
     m_parser.ParseFromMemory(src_vs, src_fs);
+    int vertexDeclPos = 0;
+    for (auto &it : m_parser.attributes)
+    {
+      int size = 0;
+      t800::InputElement ie;
+      switch (it.type)
+      {
+      case hyperspace::shader::datatype_::INT_:
+        size = 4;
+        break;
+      case hyperspace::shader::datatype_::BOOLEAN_:
+        size = 4;
+        break;
+      case hyperspace::shader::datatype_::FLOAT_:
+        size = 4;
+        break;
+      case hyperspace::shader::datatype_::MAT2_:
+        size = 16;
+        break;
+      case hyperspace::shader::datatype_::MAT3_:
+        size = 36;
+        break;
+      case hyperspace::shader::datatype_::MAT4_:
+        size = 64;
+        break;
+      case hyperspace::shader::datatype_::VECTOR2_:
+        size = 8;
+        break;
+      case hyperspace::shader::datatype_::VECTOR3_:
+        size = 12;
+        break;
+      case hyperspace::shader::datatype_::VECTOR4_:
+        size = 16;
+        break;
+      default:
+        break;
+      }
+      ie.num = it.numItems;
+      ie.name = it.name;
+      ie.loc = glGetAttribLocation(ShaderProg, ie.name.c_str());
+      ie.type = it.type;
+      ie.bufferBytePosition = vertexDeclPos;
+      ie.size = size/4;
+      if (ie.loc != -1)
+      {
+        locs.push_back(ie);
+      }
+      vertexDeclPos += size;
+    }
 
-    t800::InputElement ie;
-    vertexWidth = 0;
-    ie.loc = glGetAttribLocation(ShaderProg, "Vertex");
-    ie.type = T8_CBUFFER_TYPE::VECTOR4;
-    locs.push_back(ie);
-    ie.loc = glGetAttribLocation(ShaderProg, "Normal");
-    locs.push_back(ie);
-    ie.loc = glGetAttribLocation(ShaderProg, "Tangent");
-    locs.push_back(ie);
-    ie.loc = glGetAttribLocation(ShaderProg, "Binormal");
-    locs.push_back(ie);
-    ie.type = T8_CBUFFER_TYPE::VECTOR2;
-    ie.loc = glGetAttribLocation(ShaderProg, "UV");
-    locs.push_back(ie);
-    ie.loc = glGetAttribLocation(ShaderProg, "UV_Sec");
-    locs.push_back(ie);
-
-    //ie.position con parser
-    ie.type = T8_CBUFFER_TYPE::MATRIX;
-    ie.loc = glGetUniformLocation(ShaderProg, "WVP");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "World");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "WorldView");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "WVPInverse");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "WVPLight");
-    internalUniformsLocs.push_back(ie);
-
-    ie.type = T8_CBUFFER_TYPE::VECTOR4;
-    ie.loc = glGetUniformLocation(ShaderProg, "LightPositions");
-    ie.num = 128;
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "LightColors");
-    internalUniformsLocs.push_back(ie);
-    ie.num = 1;
-    ie.loc = glGetUniformLocation(ShaderProg, "LightPos");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "LightColor");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "CameraPosition");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "CameraInfo");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "LightCameraPosition");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "LightCameraInfo");
-    internalUniformsLocs.push_back(ie);
-    ie.loc = glGetUniformLocation(ShaderProg, "Ambient");
-    internalUniformsLocs.push_back(ie);
+    int uniformPos = 0;
+    for (auto &it : m_parser.uniforms)
+    {
+      bool process = true;
+      for (auto &other : internalUniformsLocs) {
+        if (other.name == it.name) {
+          process = false;
+          continue;
+        }
+      }
+      if (process) {
+        int size = 0;
+        t800::InputElement ie;
+        switch (it.type)
+        {
+        case hyperspace::shader::datatype_::INT_:
+          size = 4;
+          break;
+        case hyperspace::shader::datatype_::BOOLEAN_:
+          size = 4;
+          break;
+        case hyperspace::shader::datatype_::FLOAT_:
+          size = 4;
+          break;
+        case hyperspace::shader::datatype_::MAT2_:
+          size = 16;
+          break;
+        case hyperspace::shader::datatype_::MAT3_:
+          size = 36;
+          break;
+        case hyperspace::shader::datatype_::MAT4_:
+          size = 64;
+          break;
+        case hyperspace::shader::datatype_::VECTOR2_:
+          size = 8;
+          break;
+        case hyperspace::shader::datatype_::VECTOR3_:
+          size = 12;
+          break;
+        case hyperspace::shader::datatype_::VECTOR4_:
+          size = 16;
+          break;
+        default:
+          continue;
+          break;
+        }
+        ie.num = it.numItems;
+        ie.name = it.name;
+        ie.loc = glGetUniformLocation(ShaderProg, ie.name.c_str());
+        ie.type = it.type;
+        ie.bufferBytePosition = uniformPos;
+        ie.size = size * ie.num;
+        if (ie.loc != -1)
+        {
+          internalUniformsLocs.push_back(ie);
+        }
+        uniformPos += ie.size;
+      }
+    }
 
     return true;
   }
@@ -81,31 +138,10 @@ namespace t800 {
     int stride = reinterpret_cast<const GLDeviceContext*>(&deviceContext)->internalStride;
     glUseProgram(ShaderProg);
 
-    int offset = 0;
     for (auto& it : locs)
     {
-      if (it.loc != -1) {
-        int size = 0;
-        int offsetInc = 0;
-        switch (it.type)
-        {
-        case T8_CBUFFER_TYPE::FLOAT:
-          offsetInc = 4;
-          size = 1;
-          break;
-        case T8_CBUFFER_TYPE::VECTOR2:
-          offsetInc = 8;
-          size = 2;
-          break;
-        case T8_CBUFFER_TYPE::VECTOR4:
-          offsetInc = 16;
-          size = 4;
-          break;
-        }
-        glEnableVertexAttribArray(it.loc);
-        glVertexAttribPointer(it.loc, size, GL_FLOAT, GL_FALSE, stride, BUFFER_OFFSET(offset));
-        offset += offsetInc;
-      }
+      glEnableVertexAttribArray(it.loc);
+      glVertexAttribPointer(it.loc, it.size, GL_FLOAT, GL_FALSE, stride, BUFFER_OFFSET(it.bufferBytePosition));
     }
   }
 }

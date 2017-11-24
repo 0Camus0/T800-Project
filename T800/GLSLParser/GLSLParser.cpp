@@ -81,6 +81,7 @@ void GLSL_Parser::ProcessToken(std::size_t &pos, std::vector<std::string> &v) {
 	GLSL_Var_ var_;
 	var_.name = v[token_pos].substr(0, v[token_pos].size() - 1);
 	var_.stage = current_stage;
+  DetermineArrayNum(var_, v[token_pos]);
 	DetermineSemantic(var_, v[pos]);
 	DetermineType(var_, v[token_pos - 1]);
 	
@@ -145,4 +146,18 @@ void GLSL_Parser::DetermineType(GLSL_Var_ &var, std::string &str) {
 	}else {
 		var.type = hyperspace::shader::datatype_::UNKNOWN_TYPE;
 	}
+}
+
+void GLSL_Parser::DetermineArrayNum(GLSL_Var_ & var, std::string & str)
+{
+  int arrPos = str.find("[");
+  if (arrPos != std::string::npos) {
+    int arrFPos = str.find("]");
+    std::string numStr = str.substr(arrPos+1,arrFPos);
+    var.numItems = atoi(numStr.c_str());
+    var.name = str.substr(0, arrPos);
+  }
+  else {
+    var.numItems = 1;
+  }
 }

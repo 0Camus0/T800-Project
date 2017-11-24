@@ -29,9 +29,6 @@ uniform highp vec4 LightCameraPosition;
 uniform highp vec4 LightCameraInfo;
 
 void main(){
-lowp vec4 T_T = LightPositions[0] + LightColors[0] + CameraPosition + CameraInfo + LightCameraPosition + LightCameraInfo; //Borrar despues
-lowp mat4 DX = WVP * World * WorldView * WVPInverse * WVPLight; //Borrar despues
-
 	vecUVCoords = UV;	
 	Pos = WVP*Vertex;
 #ifdef NON_LINEAR_DEPTH

@@ -193,26 +193,32 @@ namespace t800 {
   {
     const_cast<DeviceContext*>(&deviceContext)->actualConstantBuffer = (ConstantBuffer*)this;
     GLShader* sh = reinterpret_cast<GLShader*>(deviceContext.actualShaderSet);
-    int sysMemCpyOffset = 0;
-
 
     for (auto &it : sh->internalUniformsLocs) {
-      if (it.loc != -1) {
-        switch (it.type)
-        {
-        case T8_CBUFFER_TYPE::FLOAT:
-          break;
-        case T8_CBUFFER_TYPE::VECTOR2:
-          break;
-        case T8_CBUFFER_TYPE::VECTOR4:
-          glUniform4fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
-          sysMemCpyOffset += 16 * it.num;
-          break;
-        case T8_CBUFFER_TYPE::MATRIX:
-          glUniformMatrix4fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[sysMemCpyOffset]));
-          sysMemCpyOffset += 64 * it.num;
-          break;
-        }
+      switch (it.type)
+      {
+      case hyperspace::shader::datatype_::INT_:
+        break;
+      case hyperspace::shader::datatype_::BOOLEAN_:
+        break;
+      case hyperspace::shader::datatype_::FLOAT_:
+        break;
+      case hyperspace::shader::datatype_::MAT2_:
+        break;
+      case hyperspace::shader::datatype_::MAT3_:
+        break;
+      case hyperspace::shader::datatype_::MAT4_:
+        glUniformMatrix4fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
+        break;
+      case hyperspace::shader::datatype_::VECTOR2_:
+        break;
+      case hyperspace::shader::datatype_::VECTOR3_:
+        break;
+      case hyperspace::shader::datatype_::VECTOR4_:
+        glUniform4fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
+        break;
+      default:
+        break;
       }
     }
   }
