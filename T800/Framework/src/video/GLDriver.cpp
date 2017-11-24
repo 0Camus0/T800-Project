@@ -49,6 +49,7 @@ namespace t800 {
   }
   void GLDeviceContext::release()
   {
+    delete this;
   }
   void GLDeviceContext::SetPrimitiveTopology(T8_TOPOLOGY::E topology)
   {
@@ -88,6 +89,7 @@ namespace t800 {
   }
   void GLDevice::release()
   {
+    delete this;
   }
   Buffer * GLDevice::CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void * initialData)
   {
@@ -129,11 +131,14 @@ namespace t800 {
   }
   void GLVertexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
   {
+    glBindBuffer(GL_ARRAY_BUFFER, APIID);
+    glBufferData(GL_ARRAY_BUFFER, descriptor.byteWidth, &sysMemCpy[0], GL_STATIC_DRAW);
   }
   void GLVertexBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
   {
     sysMemCpy.clear();
     sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
+    UpdateFromSystemCopy(deviceContext);
   }
   void GLVertexBuffer::release()
   {
@@ -182,11 +187,14 @@ namespace t800 {
   }
   void GLIndexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
   {
+    glBindBuffer(GL_ARRAY_BUFFER, APIID);
+    glBufferData(GL_ARRAY_BUFFER, descriptor.byteWidth, &sysMemCpy[0], GL_STATIC_DRAW);
   }
   void GLIndexBuffer::UpdateFromBuffer(const DeviceContext & deviceContext, const void * buffer)
   {
     sysMemCpy.clear();
     sysMemCpy.assign((char*)buffer, (char*)buffer + descriptor.byteWidth);
+    UpdateFromSystemCopy(deviceContext);
   }
   void GLIndexBuffer::release()
   {
@@ -226,21 +234,28 @@ namespace t800 {
       switch (it.type)
       {
       case hyperspace::shader::datatype_::INT_:
+        glUniform1i(it.loc, *reinterpret_cast<GLint*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::BOOLEAN_:
+        glUniform1i(it.loc, *reinterpret_cast<GLint*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::FLOAT_:
+        glUniform1f(it.loc, *reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::MAT2_:
+        glUniformMatrix2fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::MAT3_:
+        glUniformMatrix3fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::MAT4_:
         glUniformMatrix4fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::VECTOR2_:
+        glUniform2fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::VECTOR3_:
+        glUniform3fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       case hyperspace::shader::datatype_::VECTOR4_:
         glUniform4fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
