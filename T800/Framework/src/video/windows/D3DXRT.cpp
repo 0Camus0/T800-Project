@@ -18,8 +18,8 @@ namespace t800 {
   extern DeviceContext*     T8DeviceContext;
 
   bool D3DXRT::LoadAPIRT() {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(T8Device->GetAPIObject());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     DXGI_FORMAT cfmt;
     DXGI_FORMAT depthFormat, depthShaderViewFormat, depthResourceViewFormat;
 

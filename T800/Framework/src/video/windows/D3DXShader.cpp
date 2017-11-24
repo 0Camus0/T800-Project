@@ -6,8 +6,8 @@ namespace t800 {
   extern DeviceContext*     T8DeviceContext;
 
   bool D3DXShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(T8Device->GetAPIObject());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     HRESULT hr = S_OK;
     {
       VS_blob = nullptr;
@@ -125,8 +125,8 @@ namespace t800 {
 
   void D3DXShader::Set(const DeviceContext & deviceContext)
   {
-    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->VSSetShader(pVS.Get(), 0, 0);
-    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetShader(pFS.Get(), 0, 0);
-    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->IASetInputLayout(Layout.Get());
+    reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->VSSetShader(pVS.Get(), 0, 0);
+    reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetShader(pFS.Get(), 0, 0);
+    reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->IASetInputLayout(Layout.Get());
   }
 }

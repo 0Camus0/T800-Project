@@ -39,7 +39,11 @@
 namespace t800 {
   extern Device*            T8Device;
   extern DeviceContext*     T8DeviceContext;
-  void ** GLDeviceContext::GetAPIContext() const
+  void * GLDeviceContext::GetAPIObject() const
+  {
+    return nullptr;
+  }
+  void ** GLDeviceContext::GetAPIObjectReference() const
   {
     return nullptr;
   }
@@ -74,9 +78,11 @@ namespace t800 {
   {
     glDrawElements(internalTopology, vertexCount, internalIBFormat, 0);
   }
-
-
-  void ** GLDevice::GetAPIDevice() const
+  void * GLDevice::GetAPIObject() const
+  {
+    return nullptr;
+  }
+  void ** GLDevice::GetAPIObjectReference() const
   {
     return nullptr;
   }
@@ -105,15 +111,21 @@ namespace t800 {
   }
 
 
+  void * GLVertexBuffer::GetAPIObject() const
+  {
+    return nullptr;
+  }
+
+  void ** GLVertexBuffer::GetAPIObjectReference() const
+  {
+    return nullptr;
+  }
+
   void GLVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
   {
     const_cast<DeviceContext*>(&deviceContext)->actualVertexBuffer = (VertexBuffer*)this;
     reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalStride = stride;
     glBindBuffer(GL_ARRAY_BUFFER, APIID);
-  }
-  void ** GLVertexBuffer::GetAPIBuffer() const
-  {
-    return nullptr;
   }
   void GLVertexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
   {
@@ -142,6 +154,16 @@ namespace t800 {
   }
 
 
+  void * GLIndexBuffer::GetAPIObject() const
+  {
+    return nullptr;
+  }
+
+  void ** GLIndexBuffer::GetAPIObjectReference() const
+  {
+    return nullptr;
+  }
+
   void GLIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
   {
     switch (format)
@@ -157,10 +179,6 @@ namespace t800 {
     }
     const_cast<DeviceContext*>(&deviceContext)->actualIndexBuffer = (IndexBuffer*)this;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, APIID);
-  }
-  void ** GLIndexBuffer::GetAPIBuffer() const
-  {
-    return nullptr;
   }
   void GLIndexBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
   {
@@ -188,6 +206,16 @@ namespace t800 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
+
+  void * GLConstantBuffer::GetAPIObject() const
+  {
+    return nullptr;
+  }
+
+  void ** GLConstantBuffer::GetAPIObjectReference() const
+  {
+    return nullptr;
+  }
 
   void GLConstantBuffer::Set(const DeviceContext & deviceContext)
   {
@@ -221,10 +249,6 @@ namespace t800 {
         break;
       }
     }
-  }
-  void ** GLConstantBuffer::GetAPIBuffer() const
-  {
-    return nullptr;
   }
   void GLConstantBuffer::UpdateFromSystemCopy(const DeviceContext & deviceContext)
   {

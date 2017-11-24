@@ -30,7 +30,9 @@ namespace t800 {
   /* DEVICES */
   class D3DXDeviceContext : public DeviceContext {
   public:
-    void** GetAPIContext() const override;
+    void* GetAPIObject() const override;
+    void** GetAPIObjectReference() const override;
+
     void release() override;
     void SetPrimitiveTopology(T8_TOPOLOGY::E topology) override;
     void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) override;
@@ -39,7 +41,9 @@ namespace t800 {
   };
   class D3DXDevice : public Device {
   public:
-    void** GetAPIDevice() const override;
+    void* GetAPIObject() const override;
+    void** GetAPIObjectReference() const override;
+
     void release() override;
     Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
   private:
@@ -49,12 +53,14 @@ namespace t800 {
   /* BUFFERS */
   class D3DXVertexBuffer : public VertexBuffer {
   public:
+    void* GetAPIObject() const override;
+    void** GetAPIObjectReference() const override;
+
     D3DXVertexBuffer() = default;
     D3DXVertexBuffer(D3DXVertexBuffer const& other) = default;
     D3DXVertexBuffer(D3DXVertexBuffer&& other) = default;
 
     void Set(const DeviceContext& deviceContext, const unsigned stride, const unsigned offset) override;
-    void** GetAPIBuffer() const override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
     void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;
@@ -65,8 +71,10 @@ namespace t800 {
   };
   class D3DXIndexBuffer : public IndexBuffer {
   public:
+    void* GetAPIObject() const override;
+    void** GetAPIObjectReference() const override;
+
     void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
-    void** GetAPIBuffer() const override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
     void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;
@@ -77,8 +85,10 @@ namespace t800 {
   };
   class D3DXConstantBuffer : public ConstantBuffer {
   public:
+    void* GetAPIObject() const override;
+    void** GetAPIObjectReference() const override;
+
     void Set(const DeviceContext& deviceContext) override;
-    void** GetAPIBuffer() const override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
     void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;

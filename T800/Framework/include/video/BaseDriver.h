@@ -29,7 +29,9 @@ namespace t800 {
 
   class DeviceContext {
   public:
-    virtual void** GetAPIContext() const = 0;
+    virtual void* GetAPIObject() const = 0;
+    virtual void** GetAPIObjectReference() const = 0;
+
     virtual void release() = 0;
     virtual void SetPrimitiveTopology(T8_TOPOLOGY::E topology) = 0;
     virtual void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) = 0;
@@ -41,7 +43,9 @@ namespace t800 {
   };
   class Device {
   public:
-    virtual void** GetAPIDevice() const = 0;
+    virtual void* GetAPIObject() const = 0;
+    virtual void** GetAPIObjectReference() const = 0;
+
     virtual void release() = 0;
     virtual Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) = 0;
     //virtual Shader* CreateShader(T8_SHADER_TYPE::E bufferType) = 0;
@@ -49,9 +53,11 @@ namespace t800 {
   /* BUFFERS */
   class Buffer {
   public:
+    virtual void* GetAPIObject() const = 0;
+    virtual void** GetAPIObjectReference() const = 0;
+
     virtual void UpdateFromSystemCopy(const DeviceContext& deviceContext) = 0;
     virtual void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) = 0;
-    virtual void** GetAPIBuffer() const = 0;
     virtual void release() = 0;
     virtual void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) = 0;
 

@@ -17,8 +17,8 @@ namespace t800 {
   extern DeviceContext*     T8DeviceContext;
 
   void	D3DXTexture::SetTextureParams() {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(T8Device->GetAPIObject());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     D3D11_SAMPLER_DESC sdesc;
 
     sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -58,8 +58,8 @@ namespace t800 {
   }
 
   void	D3DXTexture::LoadAPITexture(DeviceContext* context, unsigned char* buffer) {
-    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(*T8Device->GetAPIDevice());
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(*T8DeviceContext->GetAPIContext());
+    ID3D11Device* device = reinterpret_cast<ID3D11Device*>(T8Device->GetAPIObject());
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     D3D11_TEXTURE2D_DESC desc = { 0 };
     desc.Width = this->x;
     desc.Height = this->y;
@@ -151,11 +151,11 @@ namespace t800 {
 
   void D3DXTexture::Set(const DeviceContext & deviceContext, unsigned int slot, std::string shaderTextureName)
   {
-    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetShaderResources(slot, 1, pSRVTex.GetAddressOf());
+    reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetShaderResources(slot, 1, pSRVTex.GetAddressOf());
   }
 
   void D3DXTexture::SetSampler(const DeviceContext & deviceContext)
   {
-    reinterpret_cast<ID3D11DeviceContext*>(*deviceContext.GetAPIContext())->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+    reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetSamplers(0, 1, pSampler.GetAddressOf());
   }
 }
