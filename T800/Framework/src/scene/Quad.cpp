@@ -30,12 +30,12 @@ namespace t800 {
     char *vsSourceP;
     char *fsSourceP;
     if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
-    vsSourceP = file2string("Shaders/VS_Quad.glsl");
-    fsSourceP = file2string("Shaders/FS_Quad.glsl");
-  }
+      vsSourceP = file2string("Shaders/VS_Quad.glsl");
+      fsSourceP = file2string("Shaders/FS_Quad.glsl");
+    }
     else {
-    vsSourceP = file2string("Shaders/VS_Quad.hlsl");
-    fsSourceP = file2string("Shaders/FS_Quad.hlsl");
+      vsSourceP = file2string("Shaders/VS_Quad.hlsl");
+      fsSourceP = file2string("Shaders/FS_Quad.hlsl");
     }
 
 

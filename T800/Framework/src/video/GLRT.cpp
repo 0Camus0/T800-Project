@@ -37,7 +37,7 @@ namespace t800 {
       bysize = GL_UNSIGNED_BYTE;
     }break;
     case RGBA16F: {
-#if (DRIVER_SELECTED == OGLES20)
+#if (GL_DRIVER_SELECTED == OGLES20)
       cfmt = GL_RGB16F_EXT;
 #else
       cfmt = GL_RGB16F;
@@ -47,7 +47,7 @@ namespace t800 {
       bysize = GL_FLOAT;
     }break;
     case RGBA32F: {
-#if (DRIVER_SELECTED == OGLES20)
+#if (GL_DRIVER_SELECTED == OGLES20)
       cfmt = GL_RGB32F_EXT;
 #else
       cfmt = GL_RGB32F;

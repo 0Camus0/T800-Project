@@ -390,7 +390,7 @@ void main(){
 	#ifdef ES_30
 		colorOut = texture(tex0,coords);
 	#else
-		gl_FragColor = textureLod(tex0,coords,9);
+		gl_FragColor = textureLod(tex0,coords,0);
 	#endif
 }
 #elif defined(FSQUAD_1_TEX)

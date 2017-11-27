@@ -48,7 +48,8 @@ namespace t800 {
 
     virtual void release() = 0;
     virtual Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) = 0;
-    //virtual Shader* CreateShader(T8_SHADER_TYPE::E bufferType) = 0;
+    //virtual Shader* CreateShader(T8_SHADER_TYPE::E shaderType) = 0;
+    //virtual Texture* CreateTexture(desc) = 0;
   };
   /* BUFFERS */
   class Buffer {
@@ -79,18 +80,6 @@ namespace t800 {
   };
 
   /* BUFFERS */
-
-  enum TEXT_BASIC_FORMAT {
-    CH_ALPHA = 1,
-    CH_RGB = 2,
-    CH_RGBA = 4
-  };
-
-  enum TEXT_BASIC_PARAMS {
-    TILED = 1,
-    CLAMP_TO_EDGE = 2,
-    MIPMAPS = 4
-  };
 
   class Texture {
   public:
@@ -172,35 +161,33 @@ namespace t800 {
     Texture*										pDepthTexture;
   };
 
-  enum Signature {
-    FORWARD_PASS = 0,
-    // MAPS
-    DIFFUSE_MAP = 1,
-    SPECULAR_MAP = 2,
-    GLOSS_MAP = 4,
-    NORMAL_MAP = 8,
-    REFLECT_MAP = 16,
-    // ATTRIBUTES
-    HAS_NORMALS = 32,
-    HAS_TANGENTS = 64,
-    HAS_BINORMALS = 128,
-    HAS_TEXCOORDS0 = 256,
-    HAS_TEXCOORDS1 = 512,
-    // CASES
-    NO_LIGHT_AT_ALL = 1024,
-    // PASSES
-    GBUFF_PASS = 2048,
-    SHADOW_MAP_PASS = 4096,
-    FSQUAD_1_TEX = 8192,
-    FSQUAD_2_TEX = 16384,
-    FSQUAD_3_TEX = 32768,
-    DEFERRED_PASS = 65536,
-    SHADOW_COMP_PASS = 131072,
-    VERTICAL_BLUR_PASS = 262144,
-    HORIZONTAL_BLUR_PASS = 524288,
-    ONE_PASS_BLUR = 1048576,
-    BRIGHT_PASS = 2097152,
-    HDR_COMP_PASS = 4194304
+  struct TechniqueProfile;
+  class Technique {
+  public:
+    Technique();
+    explicit Technique(std::string path);
+    void Parse(std::string path);
+
+    enum T8_TECHNIQUE_PROFILE{
+      HLSL,
+      GLES20,
+      GLES30,
+      GL
+    };
+    std::string m_name;
+    std::vector<TechniqueProfile> m_profiles;
+
+    std::vector<std::string> m_globalDefines;
+  };
+  struct TechniqueProfile {
+    Technique::T8_TECHNIQUE_PROFILE m_type;
+    std::string m_vsPath;
+    std::string m_fsPath;
+    std::string m_gsPath;
+    std::string m_hsPath;
+    std::string m_tsPath;
+
+    std::vector<std::string> m_defines;
   };
 
   class ShaderBase {

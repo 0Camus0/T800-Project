@@ -105,8 +105,13 @@ namespace t800 {
 #endif
 
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-    Defines += "#version 300 es\n\n";
-    Defines += "#define ES_30\n\n";
+    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
+      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
+      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
+      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
+      Defines += "#version 300 es\n\n";
+      Defines += "#define ES_30\n\n";
+    }
 #endif
 
 #if VDEBUG_NO_LIGHT

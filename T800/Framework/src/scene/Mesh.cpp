@@ -163,7 +163,10 @@ namespace t800 {
 
     char *vsSourceP;
     char *fsSourceP;
-    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
+    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
       vsSourceP = file2string("Shaders/VS_Mesh.glsl");
       fsSourceP = file2string("Shaders/FS_Mesh.glsl");
     }

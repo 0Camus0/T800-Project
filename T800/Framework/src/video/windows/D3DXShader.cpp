@@ -125,6 +125,7 @@ namespace t800 {
 
   void D3DXShader::Set(const DeviceContext & deviceContext)
   {
+    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->VSSetShader(pVS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetShader(pFS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->IASetInputLayout(Layout.Get());

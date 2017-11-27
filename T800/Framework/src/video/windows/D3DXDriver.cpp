@@ -118,6 +118,7 @@ namespace t800 {
 
   void D3DXVertexBuffer::Set(const DeviceContext & deviceContext, const unsigned stride, const unsigned offset)
   {
+    const_cast<DeviceContext*>(&deviceContext)->actualVertexBuffer = (VertexBuffer*)this;
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->IASetVertexBuffers(0, 1, &APIBuffer, &stride, &offset);
   }
   void D3DXVertexBuffer::Create(const Device & device, BufferDesc desc, void * initialData)
@@ -189,6 +190,7 @@ namespace t800 {
 
   void D3DXIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
   {
+    const_cast<DeviceContext*>(&deviceContext)->actualIndexBuffer = (IndexBuffer*)this;
     DXGI_FORMAT apiformat;
     if (format == T8_IB_FORMAR::R16)
       apiformat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
@@ -261,6 +263,7 @@ namespace t800 {
 
   void D3DXConstantBuffer::Set(const DeviceContext & deviceContext)
   {
+    const_cast<DeviceContext*>(&deviceContext)->actualConstantBuffer = (ConstantBuffer*)this;
     ID3D11DeviceContext* context = reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject());
     context->VSSetConstantBuffers(0, 1, &APIBuffer);
     context->PSSetConstantBuffers(0, 1, &APIBuffer);

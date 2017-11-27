@@ -1,6 +1,7 @@
 #ifndef T800_DESCRIPTORS_H
 #define T800_DESCRIPTORS_H
 #include <ShaderBase.h>
+namespace t800 {
 namespace T8_BUFFER_USAGE{
   enum E {
     DEFAULT,
@@ -188,8 +189,49 @@ namespace T8_VIDEO_MODE {
   };
 }
 
+enum TEXT_BASIC_FORMAT {
+  CH_ALPHA = 1,
+  CH_RGB = 2,
+  CH_RGBA = 4
+};
 
-namespace t800 {
+enum TEXT_BASIC_PARAMS {
+  TILED = 1,
+  CLAMP_TO_EDGE = 2,
+  MIPMAPS = 4
+};
+
+enum Signature {
+  FORWARD_PASS = 0,
+  // MAPS
+  DIFFUSE_MAP = 1,
+  SPECULAR_MAP = 2,
+  GLOSS_MAP = 4,
+  NORMAL_MAP = 8,
+  REFLECT_MAP = 16,
+  // ATTRIBUTES
+  HAS_NORMALS = 32,
+  HAS_TANGENTS = 64,
+  HAS_BINORMALS = 128,
+  HAS_TEXCOORDS0 = 256,
+  HAS_TEXCOORDS1 = 512,
+  // CASES
+  NO_LIGHT_AT_ALL = 1024,
+  // PASSES
+  GBUFF_PASS = 2048,
+  SHADOW_MAP_PASS = 4096,
+  FSQUAD_1_TEX = 8192,
+  FSQUAD_2_TEX = 16384,
+  FSQUAD_3_TEX = 32768,
+  DEFERRED_PASS = 65536,
+  SHADOW_COMP_PASS = 131072,
+  VERTICAL_BLUR_PASS = 262144,
+  HORIZONTAL_BLUR_PASS = 524288,
+  ONE_PASS_BLUR = 1048576,
+  BRIGHT_PASS = 2097152,
+  HDR_COMP_PASS = 4194304
+};
+
   struct BufferDesc {
     int byteWidth;
     T8_BUFFER_USAGE::E usage;
