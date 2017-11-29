@@ -1,7 +1,13 @@
 #include "utils\T8_Technique.h"
 #include <iostream>
+#include "video\GLDriver.h"
+#include "video\GLShader.h"
+#if defined(OS_WINDOWS)
+#include <video/windows/D3DXShader.h>
+#include <video/windows/D3DXDriver.h>
+#endif
 namespace t800 {
-  void T8Technique::ProcessDefine(tinyxml2::XMLElement * element)
+  void T8TechniqueInfo::ProcessDefine(tinyxml2::XMLElement * element)
   {
     const char* name = element->Attribute("name");
     if (name == nullptr) {
@@ -23,7 +29,7 @@ namespace t800 {
     
   }
 
-  void T8Technique::ProcessProfile(tinyxml2::XMLElement * element)
+  void T8TechniqueInfo::ProcessProfile(tinyxml2::XMLElement * element)
   {
     auto child = element->FirstChildElement("define");
     if (child != nullptr) {
@@ -47,7 +53,7 @@ namespace t800 {
     }
   }
 
-  void T8Technique::ProcessShader(tinyxml2::XMLElement * element)
+  void T8TechniqueInfo::ProcessShader(tinyxml2::XMLElement * element)
   {
     const char* path = element->Attribute("path");
     if (path == nullptr) {
@@ -72,14 +78,14 @@ namespace t800 {
   }
 
 
-  T8Technique::T8Technique()
+  T8TechniqueInfo::T8TechniqueInfo()
   {
   }
-  T8Technique::T8Technique(std::string path)
+  T8TechniqueInfo::T8TechniqueInfo(std::string path)
   {
     Parse(path);
   }
-  void T8Technique::Parse(std::string path)
+  void T8TechniqueInfo::Parse(std::string path)
   {
     m_actualDefines = &m_globalDefines;
     m_xmlDoc.LoadFile(path.c_str());
@@ -117,7 +123,7 @@ namespace t800 {
     }
     else {
       do {
-        T8TechniqueProfile t8Prof;
+        T8TechniqueProfileInfo t8Prof;
         t8Prof.m_name = profile->Attribute("name");
         std::string type = profile->Attribute("type");
         if (type == "GLSL")
@@ -140,5 +146,60 @@ namespace t800 {
       } while (profile != nullptr);
     }
     m_xmlDoc.Clear();
+  }
+
+  void T8TechniqueInfo::release()
+  {
+    m_xmlDoc.Clear();
+  }
+
+
+
+  //TODO: Separate Parser and implementation on diferent cpp
+  void T8Technique::Load(std::string path)
+  {
+    m_currentProfile = nullptr;
+    m_profiles.resize(T8TechniqueInfo::T8_TECHNIQUE_PROFILE::COUNT);
+    info.Parse(path);
+    for (auto it : info.m_profiles) {
+      m_profiles[it.m_type].m_loaded = false;
+      m_profiles[it.m_type].info = &it;
+    }
+  }
+
+
+  void T8Technique::UseProfile(const Device& device, T8TechniqueInfo::T8_TECHNIQUE_PROFILE profile)
+  {
+    if (!m_profiles[profile].m_loaded) {
+      m_currentProfile->m_loaded = false;
+      m_currentProfile->release();
+      m_profiles[profile].LoadShaders(device);
+    }
+  }
+  void T8Technique::SetShaders(const DeviceContext & deviceContext)
+  {
+    m_currentProfile->SetShaders(deviceContext);
+  }
+  void T8Technique::release()
+  {
+    info.release();
+    m_currentProfile->release();
+  }
+  void T8TechniqueProfile::LoadShaders(const Device& device)
+  {
+    shaderID = g_pBaseDriver->CreateShader(info->m_vsPath, info->m_fsPath);
+    shaderSet = g_pBaseDriver->GetShaderIdx(shaderID);
+  }
+  void T8TechniqueProfile::SetShaders(const DeviceContext & deviceContext)
+  {
+    shaderSet->Set(deviceContext);
+  }
+  void T8TechniqueProfile::release()
+  {
+    g_pBaseDriver->DestroyShader(shaderID);
+  }
+  T8Technique::T8Technique( std::string path)
+  {
+    Load(path);
   }
 }

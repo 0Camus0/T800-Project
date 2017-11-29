@@ -18,9 +18,9 @@
 #include <string>
 #include <vector>
 #include "T8_descriptors.h"
+#include "utils\T8_Technique.h"
 
 
-class Shader;
 namespace t800 {
   class Buffer;
   class VertexBuffer;
@@ -39,7 +39,7 @@ namespace t800 {
     ConstantBuffer* actualConstantBuffer;
     IndexBuffer* actualIndexBuffer;
     VertexBuffer* actualVertexBuffer;
-    Shader* actualShaderSet;
+    ShaderBase* actualShaderSet;
   };
   class Device {
   public:
@@ -79,7 +79,6 @@ namespace t800 {
     virtual void Set(const DeviceContext& deviceContext) = 0;
   };
 
-  /* BUFFERS */
 
   class Texture {
   public:
@@ -160,42 +159,14 @@ namespace t800 {
     std::vector<Texture*>							vColorTextures;
     Texture*										pDepthTexture;
   };
-
-  struct TechniqueProfile;
-  class Technique {
-  public:
-    Technique();
-    explicit Technique(std::string path);
-    void Parse(std::string path);
-
-    enum T8_TECHNIQUE_PROFILE{
-      HLSL,
-      GLES20,
-      GLES30,
-      GL
-    };
-    std::string m_name;
-    std::vector<TechniqueProfile> m_profiles;
-
-    std::vector<std::string> m_globalDefines;
-  };
-  struct TechniqueProfile {
-    Technique::T8_TECHNIQUE_PROFILE m_type;
-    std::string m_vsPath;
-    std::string m_fsPath;
-    std::string m_gsPath;
-    std::string m_hsPath;
-    std::string m_tsPath;
-
-    std::vector<std::string> m_defines;
-  };
-
+#define T8_NO_SIGNATURE -1
   class ShaderBase {
   public:
-    ShaderBase() : Sig(0) {	}
-    bool			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+    ShaderBase() : Sig(T8_NO_SIGNATURE) {	}
+    bool CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
     virtual bool    CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
     virtual void  Set(const t800::DeviceContext& deviceContext) = 0;
+    virtual void release() = 0;
 
     unsigned int	Sig;
   };
@@ -235,12 +206,18 @@ namespace t800 {
     virtual void	 DestroyRTs() = 0;
     virtual Texture* GetRTTexture(int id, int index) = 0;
 
-    virtual int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
+    virtual int	 CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) = 0;
+    virtual void DestroyShader(int id);
     virtual ShaderBase*	GetShaderSig(unsigned int sig) = 0;
     virtual ShaderBase*	GetShaderIdx(int id) = 0;
     virtual void		DestroyShaders() = 0;
 
-    std::vector<ShaderBase*>	Shaders;
+    int CreateTechnique(std::string path);
+    T8Technique* GetTechnique(int id);
+
+    std::vector<T8Technique*> m_techniques;
+    std::vector<ShaderBase*>	m_signatureShaders;
+    std::vector<ShaderBase*>	m_shaders;
     std::vector<BaseRT*>		RTs;
     std::vector<Texture*>		Textures;
     int							CurrentRT;

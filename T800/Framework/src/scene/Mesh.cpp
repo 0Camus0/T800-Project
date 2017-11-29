@@ -133,8 +133,6 @@ namespace t800 {
         delete[] tmpIndexex;
       }
 
-
-
       it_MeshInfo->VertexSize = it->VertexSize;
 
       t800::BufferDesc buffdesc;

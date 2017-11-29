@@ -66,6 +66,7 @@ namespace t800 {
     offset += 16;
     VertexDecl.push_back(elementDesc);
 
+    //TODO Parse from hlsl
     if (sig&Signature::HAS_NORMALS) {
       elementDesc.SemanticName = "NORMAL";
       elementDesc.SemanticIndex = 0;
@@ -125,9 +126,17 @@ namespace t800 {
 
   void D3DXShader::Set(const DeviceContext & deviceContext)
   {
-    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
+    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (ShaderBase*)this;
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->VSSetShader(pVS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetShader(pFS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->IASetInputLayout(Layout.Get());
+  }
+  void D3DXShader::release()
+  {
+    pVS.Reset();
+    pFS.Reset();
+    VS_blob.Reset();
+    FS_blob.Reset();
+    Layout.Reset();
   }
 }

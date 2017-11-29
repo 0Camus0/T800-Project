@@ -286,12 +286,6 @@ namespace t800 {
   }
 
 
-
-
-
-
-
-
 #if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
   void EGLError(const char* c_ptr) {
 
@@ -586,20 +580,20 @@ namespace t800 {
     else {
       return RTs[id]->vColorTextures[index];
     }
-
   }
 
   int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      if (Shaders[i]->Sig == sig) {
-        return i;
+    if (sig != T8_NO_SIGNATURE) {
+      for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+        if (m_signatureShaders[i]->Sig == sig) {
+          return i;
+        }
       }
     }
-
     GLShader* shader = new GLShader();
     if (shader->CreateShader(src_vs, src_fs, sig)) {
-      Shaders.push_back(shader);
-      return (Shaders.size() - 1);
+      m_signatureShaders.push_back(shader);
+      return (m_signatureShaders.size() - 1);
     }
     else {
       delete shader;
@@ -607,27 +601,28 @@ namespace t800 {
     return -1;
   }
 
+
   ShaderBase*	GLDriver::GetShaderSig(unsigned int sig) {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      if (Shaders[i]->Sig == sig) {
-        return Shaders[i];
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      if (m_signatureShaders[i]->Sig == sig) {
+        return m_signatureShaders[i];
       }
     }
     return 0;
   }
 
   ShaderBase*	GLDriver::GetShaderIdx(int id) {
-    if (id < 0 || id >= (int)Shaders.size()) {
+    if (id < 0 || id >= (int)m_signatureShaders.size()) {
       printf("Warning null ptr ShaderBase Idx\n");
       return 0;
     }
 
-    return Shaders[id];
+    return m_signatureShaders[id];
   }
 
   void GLDriver::DestroyShaders() {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      GLShader *pShader = dynamic_cast<GLShader*>(Shaders[i]);
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      GLShader *pShader = dynamic_cast<GLShader*>(m_signatureShaders[i]);
       delete pShader;
     }
   }

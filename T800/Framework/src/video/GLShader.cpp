@@ -134,7 +134,7 @@ namespace t800 {
 
   void GLShader::Set(const DeviceContext & deviceContext)
   {
-    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (Shader*)this;
+    const_cast<DeviceContext*>(&deviceContext)->actualShaderSet = (ShaderBase*)this;
     int stride = reinterpret_cast<const GLDeviceContext*>(&deviceContext)->internalStride;
     glUseProgram(ShaderProg);
 
@@ -143,5 +143,8 @@ namespace t800 {
       glEnableVertexAttribArray(it.loc);
       glVertexAttribPointer(it.loc, it.size, GL_FLOAT, GL_FALSE, stride, BUFFER_OFFSET(it.bufferBytePosition));
     }
+  }
+  void GLShader::release()
+  {
   }
 }

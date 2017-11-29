@@ -592,16 +592,16 @@ namespace t800 {
   }
 
   int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      if (Shaders[i]->Sig == sig) {
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      if (m_signatureShaders[i]->Sig == sig) {
         return i;
       }
     }
 
     D3DXShader* shader = new D3DXShader();
     if (shader->CreateShader(src_vs, src_fs, sig)) {
-      Shaders.push_back(shader);
-      return (Shaders.size() - 1);
+      m_signatureShaders.push_back(shader);
+      return (m_signatureShaders.size() - 1);
     }
     else {
       delete shader;
@@ -611,9 +611,9 @@ namespace t800 {
   }
 
   ShaderBase*	D3DXDriver::GetShaderSig(unsigned int sig) {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      if (Shaders[i]->Sig == sig) {
-        return Shaders[i];
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      if (m_signatureShaders[i]->Sig == sig) {
+        return m_signatureShaders[i];
       }
     }
     printf("Warning null ptr ShaderBase Sig\n");
@@ -621,17 +621,17 @@ namespace t800 {
   }
 
   ShaderBase*	D3DXDriver::GetShaderIdx(int id) {
-    if (id < 0 || id >= (int)Shaders.size()) {
+    if (id < 0 || id >= (int)m_signatureShaders.size()) {
       printf("Warning null ptr ShaderBase Idx\n");
       return 0;
     }
 
-    return Shaders[id];
+    return m_signatureShaders[id];
   }
 
   void D3DXDriver::DestroyShaders() {
-    for (unsigned int i = 0; i < Shaders.size(); i++) {
-      D3DXShader *pShader = dynamic_cast<D3DXShader*>(Shaders[i]);
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      D3DXShader *pShader = dynamic_cast<D3DXShader*>(m_signatureShaders[i]);
       delete pShader;
     }
   }

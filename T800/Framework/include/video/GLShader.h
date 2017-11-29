@@ -44,6 +44,7 @@ namespace t800 {
 
 	  bool CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig);
     void  Set(const DeviceContext& deviceContext) override;
+    void release() override;
 	  unsigned int ShaderProg;
 
 

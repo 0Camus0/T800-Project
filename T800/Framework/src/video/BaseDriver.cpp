@@ -95,101 +95,124 @@ namespace t800 {
   }
 
   bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
+    if (sig != T8_NO_SIGNATURE) {
+      std::string Defines = "";
 
-    std::string Defines = "";
-
-    bool LinearDepth = true;
+      bool LinearDepth = true;
 
 #if defined(USING_OPENGL_ES20)
-    LinearDepth = true; // Force for ES 2.0
+      LinearDepth = true; // Force for ES 2.0
 #endif
 
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
-      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
-      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
-      g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
-      Defines += "#version 300 es\n\n";
-      Defines += "#define ES_30\n\n";
-    }
+      if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
+        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
+        Defines += "#version 300 es\n\n";
+        Defines += "#define ES_30\n\n";
+      }
 #endif
 
 #if VDEBUG_NO_LIGHT
-    Defines += "#define NO_LIGHT\n\n";
+      Defines += "#define NO_LIGHT\n\n";
 #endif
 
 #if VDEBUG_SIMPLE_COLOR
-    Defines += "#define SIMPLE_COLOR\n\n";
+      Defines += "#define SIMPLE_COLOR\n\n";
 #endif
 
-    if (sig&Signature::HAS_NORMALS)
-      Defines += "#define USE_NORMALS\n\n";
-    if (sig&Signature::HAS_TEXCOORDS0)
-      Defines += "#define USE_TEXCOORD0\n\n";
-    if (sig&Signature::HAS_TEXCOORDS1)
-      Defines += "#define USE_TEXCOORD1\n\n";
-    if (sig&Signature::HAS_TANGENTS)
-      Defines += "#define USE_TANGENTS\n\n";
-    if (sig&Signature::HAS_BINORMALS)
-      Defines += "#define USE_BINORMALS\n\n";
-    if (sig&Signature::DIFFUSE_MAP)
-      Defines += "#define DIFFUSE_MAP\n\n";
-    if (sig&Signature::SPECULAR_MAP)
-      Defines += "#define SPECULAR_MAP\n\n";
-    if (sig&Signature::GLOSS_MAP)
-      Defines += "#define GLOSS_MAP\n\n";
-    if (sig&Signature::NORMAL_MAP)
-      Defines += "#define NORMAL_MAP\n\n";
-    if (sig&Signature::REFLECT_MAP)
-      Defines += "#define REFLECT_MAP\n\n";
-    if (sig&Signature::NO_LIGHT_AT_ALL)
-      Defines += "#define NO_LIGHT\n\n";
-    if (sig&Signature::GBUFF_PASS)
-      Defines += "#define G_BUFFER_PASS\n\n";
-    if (sig&Signature::FSQUAD_1_TEX)
-      Defines += "#define FSQUAD_1_TEX\n\n";
-    if (sig&Signature::FSQUAD_2_TEX)
-      Defines += "#define FSQUAD_2_TEX\n\n";
-    if (sig&Signature::FSQUAD_3_TEX)
-      Defines += "#define FSQUAD_3_TEX\n\n";
-    if (sig&Signature::SHADOW_MAP_PASS)
-      Defines += "#define SHADOW_MAP_PASS\n\n";
-    if (!LinearDepth)
-      Defines += "#define NON_LINEAR_DEPTH\n\n";
-    if (sig&Signature::SHADOW_COMP_PASS)
-      Defines += "#define SHADOW_COMP_PASS\n\n";
-    if (sig&Signature::DEFERRED_PASS)
-      Defines += "#define DEFERRED_PASS\n\n";
-    if (sig&Signature::VERTICAL_BLUR_PASS)
-      Defines += "#define VERTICAL_BLUR_PASS\n\n";
-    if (sig&Signature::HORIZONTAL_BLUR_PASS)
-      Defines += "#define HORIZONTAL_BLUR_PASS\n\n";
-    if (sig&Signature::ONE_PASS_BLUR)
-      Defines += "#define ONE_PASS_BLUR\n\n";
-    if (sig&Signature::BRIGHT_PASS)
-      Defines += "#define BRIGHT_PASS\n\n";
-    if (sig&Signature::HDR_COMP_PASS)
-      Defines += "#define HDR_COMP_PASS\n\n";
+      if (sig&Signature::HAS_NORMALS)
+        Defines += "#define USE_NORMALS\n\n";
+      if (sig&Signature::HAS_TEXCOORDS0)
+        Defines += "#define USE_TEXCOORD0\n\n";
+      if (sig&Signature::HAS_TEXCOORDS1)
+        Defines += "#define USE_TEXCOORD1\n\n";
+      if (sig&Signature::HAS_TANGENTS)
+        Defines += "#define USE_TANGENTS\n\n";
+      if (sig&Signature::HAS_BINORMALS)
+        Defines += "#define USE_BINORMALS\n\n";
+      if (sig&Signature::DIFFUSE_MAP)
+        Defines += "#define DIFFUSE_MAP\n\n";
+      if (sig&Signature::SPECULAR_MAP)
+        Defines += "#define SPECULAR_MAP\n\n";
+      if (sig&Signature::GLOSS_MAP)
+        Defines += "#define GLOSS_MAP\n\n";
+      if (sig&Signature::NORMAL_MAP)
+        Defines += "#define NORMAL_MAP\n\n";
+      if (sig&Signature::REFLECT_MAP)
+        Defines += "#define REFLECT_MAP\n\n";
+      if (sig&Signature::NO_LIGHT_AT_ALL)
+        Defines += "#define NO_LIGHT\n\n";
+      if (sig&Signature::GBUFF_PASS)
+        Defines += "#define G_BUFFER_PASS\n\n";
+      if (sig&Signature::FSQUAD_1_TEX)
+        Defines += "#define FSQUAD_1_TEX\n\n";
+      if (sig&Signature::FSQUAD_2_TEX)
+        Defines += "#define FSQUAD_2_TEX\n\n";
+      if (sig&Signature::FSQUAD_3_TEX)
+        Defines += "#define FSQUAD_3_TEX\n\n";
+      if (sig&Signature::SHADOW_MAP_PASS)
+        Defines += "#define SHADOW_MAP_PASS\n\n";
+      if (!LinearDepth)
+        Defines += "#define NON_LINEAR_DEPTH\n\n";
+      if (sig&Signature::SHADOW_COMP_PASS)
+        Defines += "#define SHADOW_COMP_PASS\n\n";
+      if (sig&Signature::DEFERRED_PASS)
+        Defines += "#define DEFERRED_PASS\n\n";
+      if (sig&Signature::VERTICAL_BLUR_PASS)
+        Defines += "#define VERTICAL_BLUR_PASS\n\n";
+      if (sig&Signature::HORIZONTAL_BLUR_PASS)
+        Defines += "#define HORIZONTAL_BLUR_PASS\n\n";
+      if (sig&Signature::ONE_PASS_BLUR)
+        Defines += "#define ONE_PASS_BLUR\n\n";
+      if (sig&Signature::BRIGHT_PASS)
+        Defines += "#define BRIGHT_PASS\n\n";
+      if (sig&Signature::HDR_COMP_PASS)
+        Defines += "#define HDR_COMP_PASS\n\n";
 
 
-    if (!LinearDepth)
-      Defines += "#define NON_LINEAR_DEPTH\n\n";
+      if (!LinearDepth)
+        Defines += "#define NON_LINEAR_DEPTH\n\n";
 
 #ifdef USING_OPENGL
-    Defines += "#define lowp \n\n";
-    Defines += "#define mediump \n\n";
-    Defines += "#define highp \n\n";
+      Defines += "#define lowp \n\n";
+      Defines += "#define mediump \n\n";
+      Defines += "#define highp \n\n";
 #endif
 
 #ifdef USING_16BIT_NORMALS
-    Defines += "#define USING_16BIT_NORMALS\n\n";
+      Defines += "#define USING_16BIT_NORMALS\n\n";
 #endif
 
-    //	cout << "Compiling with the following signature[ " << Defines << endl << "]" << endl;
+      //	cout << "Compiling with the following signature[ " << Defines << endl << "]" << endl;
 
-    src_vs = Defines + src_vs;
-    src_fs = Defines + src_fs;
+      src_vs = Defines + src_vs;
+      src_fs = Defines + src_fs;
+    }
     this->Sig = sig;
     return CreateShaderAPI(src_vs, src_fs, sig);
+  }
+  int BaseDriver::CreateTechnique(std::string path)
+  {
+    int i = 0;
+    for (auto &it : m_techniques) {
+      if (it->info.m_path == path)
+        return i;
+      i++;
+    }
+    m_techniques.push_back(std::move(new T8Technique(path)));
+  }
+  T8Technique * BaseDriver::GetTechnique(int id)
+  {
+    if (id < m_techniques.size())
+      return m_techniques[id];
+    return nullptr;
+  }
+  void BaseDriver::DestroyShader(int id)
+  {
+    m_signatureShaders[id]->release();
+    delete m_signatureShaders[id];
+    m_signatureShaders[id] = nullptr;
   }
 }
