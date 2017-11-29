@@ -429,6 +429,9 @@ namespace t800 {
   }
 
   void D3DXDriver::DestroyDriver() {
+    DestroyShaders();
+    DestroyRTs();
+    DestroyTextures();
     T8Device->release();
     T8DeviceContext->release();
   }
@@ -471,22 +474,6 @@ namespace t800 {
       delete pTex;
     }
     return -1;
-  }
-
-  Texture*  D3DXDriver::GetTexture(int id) {
-    if (id < 0 || id >= (int)Textures.size()) {
-      printf("Warning null ptr Textures Idx\n");
-      return 0;
-    }
-
-    return Textures[id];
-  }
-
-  void  D3DXDriver::DestroyTexture() {
-    for (unsigned int i = 0; i < Textures.size(); i++) {
-      D3DXTexture *pTex = dynamic_cast<D3DXTexture*>(Textures[i]);
-      delete pTex;
-    }
   }
 
   int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool GenMips) {
@@ -567,30 +554,6 @@ namespace t800 {
 
   }
 
-  void D3DXDriver::DestroyRT(int id) {
-
-  }
-
-  void D3DXDriver::DestroyRTs() {
-    for (unsigned int i = 0; i < RTs.size(); i++) {
-      D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[i]);
-      delete pRT;
-    }
-  }
-
-  Texture* D3DXDriver::GetRTTexture(int id, int index) {
-    if (id < 0 || id >= (int)RTs.size())
-      exit(666);
-
-    if (index == DEPTH_ATTACHMENT) {
-      return RTs[id]->pDepthTexture;
-    }
-    else {
-      return RTs[id]->vColorTextures[index];
-    }
-
-  }
-
   int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
     for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
       if (m_signatureShaders[i]->Sig == sig) {
@@ -608,31 +571,5 @@ namespace t800 {
     }
     return -1;
 
-  }
-
-  ShaderBase*	D3DXDriver::GetShaderSig(unsigned int sig) {
-    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      if (m_signatureShaders[i]->Sig == sig) {
-        return m_signatureShaders[i];
-      }
-    }
-    printf("Warning null ptr ShaderBase Sig\n");
-    return 0;
-  }
-
-  ShaderBase*	D3DXDriver::GetShaderIdx(int id) {
-    if (id < 0 || id >= (int)m_signatureShaders.size()) {
-      printf("Warning null ptr ShaderBase Idx\n");
-      return 0;
-    }
-
-    return m_signatureShaders[id];
-  }
-
-  void D3DXDriver::DestroyShaders() {
-    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      D3DXShader *pShader = dynamic_cast<D3DXShader*>(m_signatureShaders[i]);
-      delete pShader;
-    }
   }
 }

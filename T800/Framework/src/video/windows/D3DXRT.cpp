@@ -177,6 +177,11 @@ namespace t800 {
   }
 
   void D3DXRT::DestroyAPIRT() {
-
+    pDepthTexture->release();
+    delete pDepthTexture;
+    for (int i = 0; i < number_RT; i++) {
+      vColorTextures[i]->release();
+      delete vColorTextures[i];
+    }
   }
 }

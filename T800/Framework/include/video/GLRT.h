@@ -41,7 +41,6 @@ namespace t800 {
     virtual ~GLRT() {}
     bool	LoadAPIRT();
     void	DestroyAPIRT();
-
     std::vector<GLuint>		vFrameBuffers;
     std::vector<GLuint>		vGLColorTex;
     GLuint					DepthTexture;

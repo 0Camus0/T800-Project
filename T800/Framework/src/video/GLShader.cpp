@@ -9,8 +9,8 @@ namespace t800 {
 
     ShaderProg = glCreateProgram();
 
-    GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)src_vs.c_str());
-    GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)src_fs.c_str());
+    vshader_id = createShader(GL_VERTEX_SHADER, (char*)src_vs.c_str());
+    fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)src_fs.c_str());
 
     glAttachShader(ShaderProg, vshader_id);
     glAttachShader(ShaderProg, fshader_id);
@@ -146,5 +146,8 @@ namespace t800 {
   }
   void GLShader::release()
   {
+    glDeleteShader(vshader_id);
+    glDeleteShader(fshader_id);
+    glDeleteProgram(ShaderProg);
   }
 }

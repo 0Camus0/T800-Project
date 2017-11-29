@@ -76,7 +76,7 @@ namespace t800 {
     return true;
   }
 
-  void Texture::DestroyTex() {
+  void Texture::release() {
     DestroyAPITexture();
   }
 
@@ -90,7 +90,7 @@ namespace t800 {
     return LoadAPIRT();
   }
 
-  void BaseRT::DestroyRT() {
+  void BaseRT::release() {
     DestroyAPIRT();
   }
 
@@ -193,6 +193,61 @@ namespace t800 {
     this->Sig = sig;
     return CreateShaderAPI(src_vs, src_fs, sig);
   }
+  Texture * BaseDriver::GetRTTexture(int id, int index)
+  {
+    if (id < 0 || id >= (int)RTs.size())
+      exit(666);
+
+    if (index == DEPTH_ATTACHMENT) {
+      return RTs[id]->pDepthTexture;
+    }
+    else {
+      return RTs[id]->vColorTextures[index];
+    }
+  }
+  ShaderBase * BaseDriver::GetShaderSig(unsigned int sig)
+  {
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      if (m_signatureShaders[i]->Sig == sig) {
+        return m_signatureShaders[i];
+      }
+    }
+    return nullptr;
+  }
+  ShaderBase * BaseDriver::GetShaderIdx(int id)
+  {
+    if (id < 0 || id >= (int)m_signatureShaders.size()) {
+      printf("Warning null ptr ShaderBase Idx\n");
+      return nullptr;
+    }
+
+    return m_signatureShaders[id];
+  }
+  Texture * BaseDriver::GetTexture(int id)
+  {
+    if (id < 0 || id >= (int)Textures.size()) {
+      printf("Warning null ptr Textures Idx\n");
+      return 0;
+    }
+
+    return Textures[id];
+  }
+  void BaseDriver::DestroyShaders()
+  {
+    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+      ShaderBase *pShader = m_signatureShaders[i];
+      pShader->release();
+      delete pShader;
+    }
+  }
+  void BaseDriver::DestroyRTs()
+  {
+    for (unsigned int i = 0; i < RTs.size(); i++) {
+      BaseRT *pRT = RTs[i];
+      pRT->release();
+      delete pRT;
+    }
+  }
   int BaseDriver::CreateTechnique(std::string path)
   {
     int i = 0;
@@ -208,6 +263,30 @@ namespace t800 {
     if (id < m_techniques.size())
       return m_techniques[id];
     return nullptr;
+  }
+  void BaseDriver::DestroyRT(int id)
+  {
+    if (id < 0 || id >= (int)RTs.size())
+      return;
+
+    RTs[id]->release();
+    BaseRT *pRT = RTs[id];
+    delete pRT;
+  }
+  void BaseDriver::DestroyTextures()
+  {
+    for (unsigned int i = 0; i < Textures.size(); i++) {
+      Texture *texture = Textures[i];
+      texture->release();
+      delete texture;
+    }
+  }
+  void BaseDriver::DestroyTexture()
+  {
+    for (unsigned int i = 0; i < Textures.size(); i++) {
+      Textures[i]->release();
+      delete Textures[i];
+    }
   }
   void BaseDriver::DestroyShader(int id)
   {

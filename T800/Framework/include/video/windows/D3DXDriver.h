@@ -112,20 +112,11 @@ namespace t800 {
     void	SetDimensions(int, int);
 
     int 	 CreateTexture(std::string);
-    Texture* GetTexture(int id);
-    void	 DestroyTexture();
-
+    int		 CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
     int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool GenMips = false);
+
     void	 PushRT(int id);
     void	 PopRT();
-    void     DestroyRT(int id);
-    void	 DestroyRTs();
-    Texture* GetRTTexture(int id, int index);
-
-    int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
-    ShaderBase*	GetShaderSig(unsigned int sig);
-    ShaderBase*	GetShaderIdx(int Id);
-    void		DestroyShaders();
 
     void	Clear();
     void	SwapBuffers();

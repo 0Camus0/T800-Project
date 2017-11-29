@@ -98,7 +98,7 @@ namespace t800 {
     virtual ~Texture() {}
 
     bool			LoadTexture(const char *fn);
-    void			DestroyTex();
+    void			release();
 
     virtual void	LoadAPITexture(DeviceContext* context, unsigned char* buffer) = 0;
     virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
@@ -146,7 +146,7 @@ namespace t800 {
     bool			LoadRT(int nrt, int cf, int df, int w, int h, bool GenMips = false);
     virtual bool	LoadAPIRT() = 0;
 
-    void			DestroyRT();
+    void			release();
     virtual void	DestroyAPIRT() = 0;
 
     int w;
@@ -196,28 +196,34 @@ namespace t800 {
     virtual void	 SwapBuffers() = 0;
 
     virtual int 	 CreateTexture(std::string) = 0;
-    virtual Texture* GetTexture(int id) = 0;
-    virtual void	 DestroyTexture() = 0;
-
+    virtual int	   CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) = 0;
     virtual int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false) = 0;
+
     virtual void	 PushRT(int id) = 0;
     virtual void	 PopRT() = 0;
-    virtual void	 DestroyRT(int id) = 0;
-    virtual void	 DestroyRTs() = 0;
-    virtual Texture* GetRTTexture(int id, int index) = 0;
 
-    virtual int	 CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) = 0;
-    virtual void DestroyShader(int id);
-    virtual ShaderBase*	GetShaderSig(unsigned int sig) = 0;
-    virtual ShaderBase*	GetShaderIdx(int id) = 0;
-    virtual void		DestroyShaders() = 0;
+
+    Texture* GetRTTexture(int id, int index);
+    ShaderBase*	GetShaderSig(unsigned int sig);
+    ShaderBase*	GetShaderIdx(int id);
+    Texture* GetTexture(int id);
+
+    void DestroyShaders();
+    void DestroyShader(int id);
+
+    void DestroyRTs();
+    void DestroyRT(int id);
+
+    void DestroyTextures();
+    void	DestroyTexture();
+
+    void DestroyTechniques();
 
     int CreateTechnique(std::string path);
     T8Technique* GetTechnique(int id);
 
     std::vector<T8Technique*> m_techniques;
     std::vector<ShaderBase*>	m_signatureShaders;
-    std::vector<ShaderBase*>	m_shaders;
     std::vector<BaseRT*>		RTs;
     std::vector<Texture*>		Textures;
     int							CurrentRT;

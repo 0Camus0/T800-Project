@@ -53,6 +53,8 @@ namespace t800 {
     int vertexWidth;
 
     GLSL_Parser m_parser;
+    GLuint vshader_id;
+    GLuint fshader_id;
   };
 }
 

@@ -143,6 +143,7 @@ namespace t800 {
   void GLVertexBuffer::release()
   {
     sysMemCpy.clear();
+    glDeleteBuffers(1,&APIID);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     delete this;
   }
@@ -199,6 +200,7 @@ namespace t800 {
   void GLIndexBuffer::release()
   {
     sysMemCpy.clear();
+    glDeleteBuffers(1, &APIID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     delete this;
   }
@@ -422,6 +424,9 @@ namespace t800 {
   }
 
   void	GLDriver::DestroyDriver() {
+    DestroyShaders();
+    DestroyRTs();
+    DestroyTextures();
     T8Device->release();
     T8DeviceContext->release();
 #if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
@@ -480,21 +485,6 @@ namespace t800 {
     return -1;
   }
 
-  Texture* GLDriver::GetTexture(int id) {
-    if (id < 0 || id >= (int)Textures.size()) {
-      printf("Warning null ptr Textures Idx\n");
-      return 0;
-    }
-
-    return Textures[id];
-  }
-
-  void GLDriver::DestroyTexture() {
-    for (unsigned int i = 0; i < Textures.size(); i++) {
-      GLTexture *pTex = dynamic_cast<GLTexture*>(Textures[i]);
-      delete pTex;
-    }
-  }
 
   int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips) {
     GLRT	*pRT = new GLRT;
@@ -553,35 +543,6 @@ namespace t800 {
 
   }
 
-  void GLDriver::DestroyRT(int id) {
-    if (id < 0 || id >= (int)RTs.size())
-      return;
-
-    RTs[id]->DestroyRT();
-    GLRT *pRT = dynamic_cast<GLRT*>(RTs[id]);
-    delete pRT;
-
-  }
-
-  void GLDriver::DestroyRTs() {
-    for (unsigned int i = 0; i < RTs.size(); i++) {
-      GLRT *pRT = dynamic_cast<GLRT*>(RTs[i]);
-      delete pRT;
-    }
-  }
-
-  Texture* GLDriver::GetRTTexture(int id, int index) {
-    if (id < 0 || id >= (int)RTs.size())
-      exit(666);
-
-    if (index == DEPTH_ATTACHMENT) {
-      return RTs[id]->pDepthTexture;
-    }
-    else {
-      return RTs[id]->vColorTextures[index];
-    }
-  }
-
   int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
     if (sig != T8_NO_SIGNATURE) {
       for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
@@ -602,28 +563,4 @@ namespace t800 {
   }
 
 
-  ShaderBase*	GLDriver::GetShaderSig(unsigned int sig) {
-    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      if (m_signatureShaders[i]->Sig == sig) {
-        return m_signatureShaders[i];
-      }
-    }
-    return 0;
-  }
-
-  ShaderBase*	GLDriver::GetShaderIdx(int id) {
-    if (id < 0 || id >= (int)m_signatureShaders.size()) {
-      printf("Warning null ptr ShaderBase Idx\n");
-      return 0;
-    }
-
-    return m_signatureShaders[id];
-  }
-
-  void GLDriver::DestroyShaders() {
-    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      GLShader *pShader = dynamic_cast<GLShader*>(m_signatureShaders[i]);
-      delete pShader;
-    }
-  }
 }

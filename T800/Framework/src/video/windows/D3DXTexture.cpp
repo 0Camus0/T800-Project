@@ -146,7 +146,9 @@ namespace t800 {
   }
 
   void D3DXTexture::DestroyAPITexture() {
-
+    Tex.Reset();
+    pSRVTex.Reset();
+    pSampler.Reset();
   }
 
   void D3DXTexture::Set(const DeviceContext & deviceContext, unsigned int slot, std::string shaderTextureName)
