@@ -22,10 +22,13 @@
 
 
 namespace t800 {
+#define T8_NO_SIGNATURE -1
   class Buffer;
   class VertexBuffer;
   class IndexBuffer;
   class ConstantBuffer;
+  class Texture;
+  class BaseRT;
 
   class DeviceContext {
   public:
@@ -48,8 +51,9 @@ namespace t800 {
 
     virtual void release() = 0;
     virtual Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) = 0;
-    //virtual Shader* CreateShader(T8_SHADER_TYPE::E shaderType) = 0;
-    //virtual Texture* CreateTexture(desc) = 0;
+    virtual ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) = 0;
+    virtual Texture* CreateTexture(std::string path) = 0;
+    virtual BaseRT* CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false) = 0;
   };
   /* BUFFERS */
   class Buffer {
@@ -109,6 +113,7 @@ namespace t800 {
     virtual void  Set(const DeviceContext& deviceContext, unsigned int slot, std::string shaderTextureName) = 0;
     virtual void  SetSampler(const DeviceContext& deviceContext) = 0;
 
+    std::string filepath;
     char			optname[128];
     unsigned int	size;
     unsigned int	props;
@@ -149,6 +154,8 @@ namespace t800 {
     void			release();
     virtual void	DestroyAPIRT() = 0;
 
+    virtual void Set(const DeviceContext& context) = 0;
+
     int w;
     int h;
     int number_RT;
@@ -159,14 +166,14 @@ namespace t800 {
     std::vector<Texture*>							vColorTextures;
     Texture*										pDepthTexture;
   };
-#define T8_NO_SIGNATURE -1
   class ShaderBase {
   public:
     ShaderBase() : Sig(T8_NO_SIGNATURE) {	}
-    bool CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+    bool CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE);
     virtual bool    CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned int sig) = 0;
     virtual void  Set(const t800::DeviceContext& deviceContext) = 0;
-    virtual void release() = 0;
+    virtual void DestroyAPIShader() = 0;
+    void release();
 
     unsigned int	Sig;
   };
@@ -195,11 +202,12 @@ namespace t800 {
     virtual void	 Clear() = 0;
     virtual void	 SwapBuffers() = 0;
 
-    virtual int 	 CreateTexture(std::string) = 0;
-    virtual int	   CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) = 0;
-    virtual int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false) = 0;
+    int 	 CreateTexture(std::string);
+    int	   CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE);
+    int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
+    int    CreateTechnique(std::string path);
 
-    virtual void	 PushRT(int id) = 0;
+    void	 PushRT(int id);
     virtual void	 PopRT() = 0;
 
 
@@ -207,6 +215,7 @@ namespace t800 {
     ShaderBase*	GetShaderSig(unsigned int sig);
     ShaderBase*	GetShaderIdx(int id);
     Texture* GetTexture(int id);
+    T8Technique* GetTechnique(int id);
 
     void DestroyShaders();
     void DestroyShader(int id);
@@ -215,12 +224,12 @@ namespace t800 {
     void DestroyRT(int id);
 
     void DestroyTextures();
-    void	DestroyTexture();
+    void	DestroyTexture(int id);
 
     void DestroyTechniques();
+    void DestroyTechnique(int id);
 
-    int CreateTechnique(std::string path);
-    T8Technique* GetTechnique(int id);
+
 
     std::vector<T8Technique*> m_techniques;
     std::vector<ShaderBase*>	m_signatureShaders;
@@ -228,6 +237,7 @@ namespace t800 {
     std::vector<Texture*>		Textures;
     int							CurrentRT;
     GRAPHICS_API::E m_currentAPI;
+    int	width, height;
   };
 
 

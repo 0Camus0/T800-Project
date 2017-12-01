@@ -39,8 +39,9 @@ namespace t800 {
   public:
 
     virtual ~GLRT() {}
-    bool	LoadAPIRT();
-    void	DestroyAPIRT();
+    bool	LoadAPIRT() override;
+    void	DestroyAPIRT() override;
+    void Set(const DeviceContext& context) override;
     std::vector<GLuint>		vFrameBuffers;
     std::vector<GLuint>		vGLColorTex;
     GLuint					DepthTexture;

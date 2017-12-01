@@ -26,7 +26,7 @@ namespace t800 {
   bool		Texture::LoadTexture(const char *fn) {
     bool found = false;
     std::string path = "Textures/";
-    std::string filepath = path + std::string(fn);
+    filepath = path + std::string(fn);
     std::ifstream inf(filepath.c_str());
     found = inf.good();
     inf.close();
@@ -78,6 +78,7 @@ namespace t800 {
 
   void Texture::release() {
     DestroyAPITexture();
+    delete this;
   }
 
   bool BaseRT::LoadRT(int nrt, int cf, int df, int w, int h, bool GenMips) {
@@ -92,6 +93,7 @@ namespace t800 {
 
   void BaseRT::release() {
     DestroyAPIRT();
+    delete this;
   }
 
   bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
@@ -193,6 +195,11 @@ namespace t800 {
     this->Sig = sig;
     return CreateShaderAPI(src_vs, src_fs, sig);
   }
+  void ShaderBase::release()
+  {
+    DestroyAPIShader();
+    delete this;
+  }
   Texture * BaseDriver::GetRTTexture(int id, int index)
   {
     if (id < 0 || id >= (int)RTs.size())
@@ -235,18 +242,19 @@ namespace t800 {
   void BaseDriver::DestroyShaders()
   {
     for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      ShaderBase *pShader = m_signatureShaders[i];
-      pShader->release();
-      delete pShader;
+      m_signatureShaders[i]->release();
+      m_signatureShaders[i] = nullptr;
     }
+    m_signatureShaders.clear();
   }
   void BaseDriver::DestroyRTs()
   {
     for (unsigned int i = 0; i < RTs.size(); i++) {
       BaseRT *pRT = RTs[i];
       pRT->release();
-      delete pRT;
+      pRT = nullptr;
     }
+    RTs.clear();
   }
   int BaseDriver::CreateTechnique(std::string path)
   {
@@ -257,6 +265,14 @@ namespace t800 {
       i++;
     }
     m_techniques.push_back(std::move(new T8Technique(path)));
+  }
+  void BaseDriver::PushRT(int id)
+  {
+    if (id < 0 || id >= (int)RTs.size())
+      return;
+
+    CurrentRT = id;
+    RTs[id]->Set(*T8DeviceContext);
   }
   T8Technique * BaseDriver::GetTechnique(int id)
   {
@@ -269,29 +285,77 @@ namespace t800 {
     if (id < 0 || id >= (int)RTs.size())
       return;
 
-    RTs[id]->release();
-    BaseRT *pRT = RTs[id];
-    delete pRT;
+    if (RTs[id] != nullptr) {
+      RTs[id]->release();
+      RTs[id] = nullptr;
+    }
   }
   void BaseDriver::DestroyTextures()
   {
     for (unsigned int i = 0; i < Textures.size(); i++) {
-      Texture *texture = Textures[i];
-      texture->release();
-      delete texture;
-    }
-  }
-  void BaseDriver::DestroyTexture()
-  {
-    for (unsigned int i = 0; i < Textures.size(); i++) {
       Textures[i]->release();
-      delete Textures[i];
+      Textures[i] = nullptr;
+    }
+    Textures.clear();
+  }
+  void BaseDriver::DestroyTexture(int id)
+  {
+    if (id < Textures.size() && id >= 0) {
+      if (Textures[id] != nullptr) {
+        Textures[id]->release();
+        Textures[id] = nullptr;
+      }
     }
   }
   void BaseDriver::DestroyShader(int id)
   {
-    m_signatureShaders[id]->release();
-    delete m_signatureShaders[id];
-    m_signatureShaders[id] = nullptr;
+    if (id >= 0 && id < m_signatureShaders.size()) {
+      if (m_signatureShaders[id] != nullptr) {
+        m_signatureShaders[id]->release();
+        m_signatureShaders[id] = nullptr;
+      }
+    }
+
+  }
+  int BaseDriver::CreateTexture(std::string path)
+  {
+    for (unsigned int i = 0; i < Textures.size(); i++) {
+      if (Textures[i]->filepath == path) {
+        return i;
+      }
+    }
+    Texture *pTex = T8Device->CreateTexture(path);
+    Textures.push_back(pTex);
+    return (Textures.size() - 1);
+  }
+  int BaseDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig)
+  {
+    if (sig != T8_NO_SIGNATURE) {
+      for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
+        if (m_signatureShaders[i]->Sig == sig) {
+          return i;
+        }
+      }
+    }
+    ShaderBase* shader = T8Device->CreateShader(src_vs, src_fs, sig);
+    if (shader != nullptr) {
+      m_signatureShaders.push_back(shader);
+      return (m_signatureShaders.size() - 1);
+    }
+    return -1;
+  }
+  int BaseDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips)
+  {
+    if (w == 0)
+      w = width;
+    if (h == 0)
+      h = height;
+    BaseRT	*pRT = T8Device->CreateRT(nrt,cf,df,w,h,genMips);
+    pRT->number_RT = nrt;
+    if (pRT!= nullptr) {
+      RTs.push_back(pRT);
+      return (RTs.size() - 1);
+    }
+    return -1;
   }
 }

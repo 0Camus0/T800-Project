@@ -191,4 +191,20 @@ namespace t800 {
     tex->DestroyAPITexture();
     delete tex;
   }
+  void GLRT::Set(const DeviceContext&context)
+  {
+    glBindFramebuffer(GL_FRAMEBUFFER, vFrameBuffers[0]);
+
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
+    if (number_RT != 0) {
+      glDrawBuffers(number_RT, GLDriver::DrawBuffers);
+    }
+    else {
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    }
+#endif
+    glViewport(0, 0,w, h);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  }
 }

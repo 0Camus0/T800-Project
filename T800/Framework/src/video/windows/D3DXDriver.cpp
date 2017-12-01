@@ -105,6 +105,30 @@ namespace t800 {
     return retBuff;
   }
 
+  ShaderBase * D3DXDevice::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig)
+  {
+    ShaderBase *sh = new D3DXShader();
+    sh->CreateShader(src_vs, src_fs, sig);
+    return sh;
+  }
+
+  Texture * D3DXDevice::CreateTexture(std::string path)
+  {
+    D3DXTexture* txture = new D3DXTexture;
+    txture->LoadTexture(path.c_str());
+    return txture;
+  }
+
+  BaseRT * D3DXDevice::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips)
+  {
+    BaseRT* rt = new D3DXRT;
+    if (rt->LoadRT(nrt, cf, df, w, h, genMips)) {
+      return rt;
+    }
+    delete rt;
+    return nullptr;
+  }
+
 
   void * D3DXVertexBuffer::GetAPIObject() const
   {
@@ -330,8 +354,8 @@ namespace t800 {
     //	Descriptor of the Back Buffer
     DXGI_MODE_DESC BackBufferDesc;
     ZeroMemory(&BackBufferDesc, sizeof(DXGI_MODE_DESC));
-    BackBufferDesc.Width = Width;
-    BackBufferDesc.Height = Height;
+    BackBufferDesc.Width = width;
+    BackBufferDesc.Height = height;
     BackBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA 32 bit buffer
     BackBufferDesc.RefreshRate.Numerator = 0;
     BackBufferDesc.RefreshRate.Denominator = 1;
@@ -373,8 +397,8 @@ namespace t800 {
 
     // Descriptor to create the Depth Buffer
     D3D11_TEXTURE2D_DESC descDepth;
-    descDepth.Width = Width;
-    descDepth.Height = Height;
+    descDepth.Width = width;
+    descDepth.Height = height;
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
     descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	// 24 bits for depth 8 bits for stencil
@@ -408,8 +432,8 @@ namespace t800 {
     // Set the Viewport of the size of the screen
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Width = static_cast<float>(Width);
-    viewport.Height = static_cast<float>(Height);
+    viewport.Width = static_cast<float>(width);
+    viewport.Height = static_cast<float>(height);
     viewport.MinDepth = 0;
     viewport.MaxDepth = 1;
 
@@ -441,8 +465,8 @@ namespace t800 {
   }
 
   void D3DXDriver::SetDimensions(int w, int h) {
-    Width = w;
-    Height = h;
+    width = w;
+    height = h;
   }
 
   void D3DXDriver::Clear() {
@@ -464,79 +488,6 @@ namespace t800 {
     DXGISwapchain->Present(0, 0);
   }
 
-  int  D3DXDriver::CreateTexture(std::string path) {
-    D3DXTexture *pTex = new D3DXTexture;
-    if (pTex->LoadTexture((char*)path.c_str())) {
-      Textures.push_back(pTex);
-      return (Textures.size() - 1);
-    }
-    else {
-      delete pTex;
-    }
-    return -1;
-  }
-
-  int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool GenMips) {
-    D3DXRT	*pRT = new D3DXRT;
-    if (w == 0)
-      w = Width;
-    if (h == 0)
-      h = Height;
-    pRT->number_RT = nrt;
-    if (pRT->LoadRT(nrt, cf, df, w, h, GenMips)) {
-      RTs.push_back(pRT);
-      return (RTs.size() - 1);
-    }
-    else {
-      delete pRT;
-    }
-    return -1;
-  }
-
-  void D3DXDriver::PushRT(int id) {
-    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
-    if (id < 0 || id >= (int)RTs.size()) {
-      CurrentRT = -1;
-      return;
-    }
-
-    CurrentRT = id;
-
-    D3DXRT *pRT = dynamic_cast<D3DXRT*>(RTs[id]);
-
-    std::vector<ID3D11RenderTargetView**> RTVA;
-    for (int i = 0; i < pRT->number_RT; i++) {
-      RTVA.push_back(pRT->vD3D11RenderTargetView[i].GetAddressOf());
-    }
-
-    if (pRT->number_RT == 0)
-      RTVA.push_back(0);
-
-    deviceContext->OMSetRenderTargets(pRT->number_RT, &RTVA[0][0], pRT->D3D11DepthStencilTargetView.Get());
-
-    viewport_RT.TopLeftX = 0;
-    viewport_RT.TopLeftY = 0;
-    viewport_RT.Width = static_cast<float>(pRT->w);
-    viewport_RT.Height = static_cast<float>(pRT->h);
-    viewport_RT.MinDepth = 0;
-    viewport_RT.MaxDepth = 1;
-
-    deviceContext->RSSetViewports(1, &viewport_RT);
-
-    float rgba[4];
-    rgba[0] = 0.5f;
-    rgba[1] = 0.5f;
-    rgba[2] = 0.5f;
-    rgba[3] = 1.0f;
-
-    for (int i = 0; i < pRT->number_RT; i++) {
-      deviceContext->ClearRenderTargetView(pRT->vD3D11RenderTargetView[i].Get(), rgba);
-    }
-
-    deviceContext->ClearDepthStencilView(pRT->D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-  }
-
   void D3DXDriver::PopRT() {
     ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     deviceContext->OMSetRenderTargets(1, D3D11RenderTargetView.GetAddressOf(), D3D11DepthStencilTargetView.Get());
@@ -551,25 +502,6 @@ namespace t800 {
       }
 
     }
-
-  }
-
-  int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
-    for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-      if (m_signatureShaders[i]->Sig == sig) {
-        return i;
-      }
-    }
-
-    D3DXShader* shader = new D3DXShader();
-    if (shader->CreateShader(src_vs, src_fs, sig)) {
-      m_signatureShaders.push_back(shader);
-      return (m_signatureShaders.size() - 1);
-    }
-    else {
-      delete shader;
-    }
-    return -1;
 
   }
 }

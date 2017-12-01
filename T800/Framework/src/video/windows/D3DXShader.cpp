@@ -131,7 +131,7 @@ namespace t800 {
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetShader(pFS.Get(), 0, 0);
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->IASetInputLayout(Layout.Get());
   }
-  void D3DXShader::release()
+  void D3DXShader::DestroyAPIShader()
   {
     pVS.Reset();
     pFS.Reset();

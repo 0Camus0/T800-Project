@@ -78,6 +78,9 @@ namespace t800 {
 
     void release() override;
     Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
+    ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned int sig = T8_NO_SIGNATURE) override;
+    Texture* CreateTexture(std::string path) override;
+    BaseRT* CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false) override; // TODO RT Desc
   private:
   };
 
@@ -142,13 +145,7 @@ namespace t800 {
     void	SetWindow(void *window);
     void	SetDimensions(int, int);
 
-    int 	 CreateTexture(std::string path);
-
-    int 	CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
-    void	PushRT(int id);
     void	PopRT();
-
-    int	  CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
 
     void	Clear();
     void	SwapBuffers();
@@ -163,10 +160,8 @@ namespace t800 {
 #endif
     GLint				CurrentFBO;
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-    GLenum				DrawBuffers[16];
+    static GLenum		DrawBuffers[16];
 #endif
-
-    int	width, height;
     std::vector<std::string>	ExtensionsTok;
     std::string					Extensions;
 

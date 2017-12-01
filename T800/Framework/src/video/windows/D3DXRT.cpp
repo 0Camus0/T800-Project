@@ -178,10 +178,43 @@ namespace t800 {
 
   void D3DXRT::DestroyAPIRT() {
     pDepthTexture->release();
-    delete pDepthTexture;
     for (int i = 0; i < number_RT; i++) {
       vColorTextures[i]->release();
-      delete vColorTextures[i];
     }
+  }
+  void D3DXRT::Set(const DeviceContext& context)
+  {
+    ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
+    std::vector<ID3D11RenderTargetView**> RTVA;
+    for (int i = 0; i < number_RT; i++) {
+      RTVA.push_back(vD3D11RenderTargetView[i].GetAddressOf());
+    }
+
+    if (number_RT == 0)
+      RTVA.push_back(0);
+
+    deviceContext->OMSetRenderTargets(number_RT, &RTVA[0][0], D3D11DepthStencilTargetView.Get());
+
+    D3D11_VIEWPORT viewport_RT;
+    viewport_RT.TopLeftX = 0;
+    viewport_RT.TopLeftY = 0;
+    viewport_RT.Width = static_cast<float>(w);
+    viewport_RT.Height = static_cast<float>(h);
+    viewport_RT.MinDepth = 0;
+    viewport_RT.MaxDepth = 1;
+
+    deviceContext->RSSetViewports(1, &viewport_RT);
+
+    float rgba[4];
+    rgba[0] = 0.5f;
+    rgba[1] = 0.5f;
+    rgba[2] = 0.5f;
+    rgba[3] = 1.0f;
+
+    for (int i = 0; i < number_RT; i++) {
+      deviceContext->ClearRenderTargetView(vD3D11RenderTargetView[i].Get(), rgba);
+    }
+
+    deviceContext->ClearDepthStencilView(D3D11DepthStencilTargetView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
   }
 }

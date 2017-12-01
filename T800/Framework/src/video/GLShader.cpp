@@ -144,7 +144,7 @@ namespace t800 {
       glVertexAttribPointer(it.loc, it.size, GL_FLOAT, GL_FALSE, stride, BUFFER_OFFSET(it.bufferBytePosition));
     }
   }
-  void GLShader::release()
+  void GLShader::DestroyAPIShader()
   {
     glDeleteShader(vshader_id);
     glDeleteShader(fshader_id);

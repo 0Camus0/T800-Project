@@ -112,6 +112,30 @@ namespace t800 {
     return retBuff;
   }
 
+  ShaderBase * GLDevice::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig)
+  {
+    ShaderBase *sh = new GLShader();
+    sh->CreateShader(src_vs, src_fs,sig);
+    return sh;
+  }
+
+  Texture * GLDevice::CreateTexture(std::string path)
+  {
+    GLTexture* txture = new GLTexture;
+    txture->LoadTexture(path.c_str());
+    return txture;
+  }
+
+  BaseRT * GLDevice::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips)
+  {
+    BaseRT* rt = new GLRT;
+    if (rt->LoadRT(nrt, cf, df, w, h, genMips)) {
+      return rt;
+    }
+    delete rt;
+    return nullptr;
+  }
+
 
   void * GLVertexBuffer::GetAPIObject() const
   {
@@ -303,6 +327,8 @@ namespace t800 {
     return true;
   }
 #endif
+
+  GLenum GLDriver::DrawBuffers[16];
   void	GLDriver::InitDriver() {
     T8Device = new t800::GLDevice;
     T8DeviceContext = new t800::GLDeviceContext;
@@ -406,7 +432,7 @@ namespace t800 {
 
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
     for (int i = 0; i < 16; i++) {
-      DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+      GLDriver::DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
     }
 #endif
   }
@@ -473,61 +499,6 @@ namespace t800 {
     return (Extensions.find(s) != std::string::npos);
   }
 
-  int GLDriver::CreateTexture(std::string path) {
-    GLTexture *pTex = new GLTexture;
-    if (pTex->LoadTexture((char*)path.c_str())) {
-      Textures.push_back(pTex);
-      return (Textures.size() - 1);
-    }
-    else {
-      delete pTex;
-    }
-    return -1;
-  }
-
-
-  int  GLDriver::CreateRT(int nrt, int cf, int df, int w, int h, bool genMips) {
-    GLRT	*pRT = new GLRT;
-    if (w == 0)
-      w = width;
-    if (h == 0)
-      h = height;
-    if (pRT->LoadRT(nrt, cf, df, w, h, genMips)) {
-      glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
-      RTs.push_back(pRT);
-      return (RTs.size() - 1);
-    }
-    else {
-      delete pRT;
-    }
-    return -1;
-  }
-
-  void GLDriver::PushRT(int id) {
-    if (id < 0 || id >= (int)RTs.size())
-      return;
-
-    CurrentRT = id;
-
-    GLRT *pRT = dynamic_cast<GLRT*>(RTs[id]);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, pRT->vFrameBuffers[0]);
-
-#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-    if (pRT->number_RT != 0) {
-      glDrawBuffers(pRT->number_RT, DrawBuffers);
-    }
-    else {
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    }
-#endif
-
-    glViewport(0, 0, pRT->w, pRT->h);
-
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  }
 
   void GLDriver::PopRT() {
     glBindFramebuffer(GL_FRAMEBUFFER, CurrentFBO);
@@ -543,24 +514,6 @@ namespace t800 {
 
   }
 
-  int GLDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
-    if (sig != T8_NO_SIGNATURE) {
-      for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
-        if (m_signatureShaders[i]->Sig == sig) {
-          return i;
-        }
-      }
-    }
-    GLShader* shader = new GLShader();
-    if (shader->CreateShader(src_vs, src_fs, sig)) {
-      m_signatureShaders.push_back(shader);
-      return (m_signatureShaders.size() - 1);
-    }
-    else {
-      delete shader;
-    }
-    return -1;
-  }
 
 
 }
