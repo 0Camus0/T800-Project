@@ -53,67 +53,56 @@ namespace t800 {
         return false;
       }
     }
+    ID3D11ShaderReflection* reflect;
 
+    hr = D3DReflect(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&reflect);
+    D3D11_SHADER_DESC lShaderDesc;
+    reflect->GetDesc(&lShaderDesc);
     int offset = 0;
-    D3D11_INPUT_ELEMENT_DESC elementDesc;
-    elementDesc.SemanticName = "POSITION";
-    elementDesc.SemanticIndex = 0;
-    elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    elementDesc.InputSlot = 0;
-    elementDesc.AlignedByteOffset = offset;
-    elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-    elementDesc.InstanceDataStepRate = 0;
-    offset += 16;
-    VertexDecl.push_back(elementDesc);
+    for (unsigned i = 0; i < lShaderDesc.InputParameters; i++)
+    {
+      D3D11_SIGNATURE_PARAMETER_DESC desc;
+      reflect->GetInputParameterDesc(i, &desc);
 
-    //TODO Parse from hlsl
-    if (sig&Signature::HAS_NORMALS) {
-      elementDesc.SemanticName = "NORMAL";
-      elementDesc.SemanticIndex = 0;
-      elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-      elementDesc.InputSlot = 0;
-      elementDesc.AlignedByteOffset = offset;
-      elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-      elementDesc.InstanceDataStepRate = 0;
-      offset += 16;
-      VertexDecl.push_back(elementDesc);
-    }
+      D3D11_INPUT_ELEMENT_DESC ie;
+      ie.SemanticName = desc.SemanticName;
+      ie.SemanticIndex = desc.SemanticIndex;
+      ie.InputSlot = 0;
+      ie.AlignedByteOffset = offset ;
+      ie.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+      ie.InstanceDataStepRate = 0;
+      if (desc.Mask == 1)
+      {
+        if (desc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) ie.Format = DXGI_FORMAT_R32_UINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) ie.Format = DXGI_FORMAT_R32_SINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) ie.Format = DXGI_FORMAT_R32_FLOAT;
+        offset += 4;
+      }
+      else if (desc.Mask <= 3)
+      {
+        if (desc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) ie.Format = DXGI_FORMAT_R32G32_UINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) ie.Format = DXGI_FORMAT_R32G32_SINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) ie.Format = DXGI_FORMAT_R32G32_FLOAT;
+        offset += 8;
+      }
+      else if (desc.Mask <= 7)
+      {
+        if (desc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) ie.Format = DXGI_FORMAT_R32G32B32_UINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) ie.Format = DXGI_FORMAT_R32G32B32_SINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) ie.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+        offset += 12;
+      }
+      else if (desc.Mask <= 15)
+      {
+        if (desc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) ie.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) ie.Format = DXGI_FORMAT_R32G32B32A32_SINT;
+        else if (desc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) ie.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        offset += 16;
+      }
 
-    if (sig&Signature::HAS_TANGENTS) {
-      elementDesc.SemanticName = "TANGENT";
-      elementDesc.SemanticIndex = 0;
-      elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-      elementDesc.InputSlot = 0;
-      elementDesc.AlignedByteOffset = offset;
-      elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-      elementDesc.InstanceDataStepRate = 0;
-      offset += 16;
-      VertexDecl.push_back(elementDesc);
+      VertexDecl.push_back(ie);
     }
-
-    if (sig&Signature::HAS_BINORMALS) {
-      elementDesc.SemanticName = "BINORMAL";
-      elementDesc.SemanticIndex = 0;
-      elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-      elementDesc.InputSlot = 0;
-      elementDesc.AlignedByteOffset = offset;
-      elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-      elementDesc.InstanceDataStepRate = 0;
-      offset += 16;
-      VertexDecl.push_back(elementDesc);
-    }
-
-    if (sig&Signature::HAS_TEXCOORDS0) {
-      elementDesc.SemanticName = "TEXCOORD";
-      elementDesc.SemanticIndex = 0;
-      elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-      elementDesc.InputSlot = 0;
-      elementDesc.AlignedByteOffset = offset;
-      elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-      elementDesc.InstanceDataStepRate = 0;
-      offset += 8;
-      VertexDecl.push_back(elementDesc);
-    }
+    reflect->Release();
 
     hr = device->CreateInputLayout(&VertexDecl[0], VertexDecl.size(), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
     if (hr != S_OK) {

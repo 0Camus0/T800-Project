@@ -105,7 +105,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Librerias\tinyxml2\lib;$(SolutionDir)Lib\$(PlatformTarget);$(SolutionDir)$(Configuration);$(SolutionDir)Librerias\SDL-1.2.14\lib;$(SolutionDir)Librerias\OGLES2\pvr\lib;$(SolutionDir)Librerias\glew-2.0.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>tinyxml2.lib;GLSLParserd.lib;Frameworkd.lib;SDL.lib;D3D11.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;tinyxml2.lib;GLSLParserd.lib;Frameworkd.lib;SDL.lib;D3D11.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
