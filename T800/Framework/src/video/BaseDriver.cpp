@@ -107,10 +107,7 @@ namespace t800 {
 #endif
 
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-      if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
+      if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
         Defines += "#version 300 es\n\n";
         Defines += "#define ES_30\n\n";
       }
@@ -304,6 +301,23 @@ namespace t800 {
       if (Textures[id] != nullptr) {
         Textures[id]->release();
         Textures[id] = nullptr;
+      }
+    }
+  }
+  void BaseDriver::DestroyTechniques()
+  {
+    for (auto &it : m_techniques) {
+      it->release();
+      delete it;
+    }
+    m_techniques.clear();
+  }
+  void BaseDriver::DestroyTechnique(int id)
+  {
+    if (id >= 0 && id < m_techniques.size()) {
+      if (m_techniques[id] != nullptr) {
+        m_techniques[id]->release();
+        m_techniques[id] = nullptr;
       }
     }
   }

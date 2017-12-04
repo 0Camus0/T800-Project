@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 #include "T8_descriptors.h"
-#include "utils\T8_Technique.h"
+#include "utils/T8_Technique.h"
 
 
 namespace t800 {

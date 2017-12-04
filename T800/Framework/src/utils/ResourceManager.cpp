@@ -1,4 +1,4 @@
-#include "utils\ResourceManager.h"
+#include "utils/ResourceManager.h"
 #include <iostream>
 namespace t800 {
   xF::XDataBase * ResourceManager::Load(const std::string & filename)

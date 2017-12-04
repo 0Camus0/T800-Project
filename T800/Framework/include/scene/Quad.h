@@ -15,14 +15,14 @@
 
 #include <Config.h>
 
-#include <video\BaseDriver.h>
-#include <utils\xMaths.h>
-#include <scene\PrimitiveBase.h>
+#include <video/BaseDriver.h>
+#include <utils/xMaths.h>
+#include <scene/PrimitiveBase.h>
 
 
-#include <video\GLTexture.h>
+#include <video/GLTexture.h>
 #if defined(OS_WINDOWS)
-#include <video\windows/D3DXTexture.h>
+#include <video/windows/D3DXTexture.h>
 #endif
 namespace t800 {
   class D3DXQuad : public PrimitiveBase {

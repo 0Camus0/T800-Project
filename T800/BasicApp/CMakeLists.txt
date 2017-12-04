@@ -7,7 +7,6 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../Librerias/freeglut-linux/lib
 ${PROJECT_SOURCE_DIR}/../Librerias/glew-2.0.0/lib 
 ${PROJECT_SOURCE_DIR}/../Librerias/OGLES2/pvr/lib 
 ${PROJECT_SOURCE_DIR}/../Librerias/SDL-1.2.14/lib 
-${PROJECT_SOURCE_DIR}/../Librerias/tinyxml2/lib
 ${PROJECT_SOURCE_DIR}/../bin)
 
 add_executable(App ${SOURCES})
@@ -17,7 +16,6 @@ ${PROJECT_SOURCE_DIR}/../Librerias/freeglut-linux/include
 ${PROJECT_SOURCE_DIR}/../Librerias/glew-2.0.0/include 
 ${PROJECT_SOURCE_DIR}/../Librerias/OGLES2/amd/include 
 ${PROJECT_SOURCE_DIR}/../Librerias/SDL-1.2.14/include 
-${PROJECT_SOURCE_DIR}/../Librerias/stb/include 
-${PROJECT_SOURCE_DIR}/../Librerias/tinyxml2/include)
+${PROJECT_SOURCE_DIR}/../Librerias/stb/include )
 
 target_link_libraries(App T800Framework freeglut glew EGL GLESv2 wayland-cursor wayland-client wayland-egl xkbcommon)

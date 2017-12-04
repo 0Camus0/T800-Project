@@ -17,7 +17,7 @@
 	#include <core/windows/Win32Framework.h>
 #endif
 
-#include "Application.h"
+#include "BasicApplication.h"
 
 #include <iostream>
 #include <string>
@@ -32,7 +32,7 @@ t800::RootFramework *pFrameWork = 0;
 
 int main(int arg,char ** args){
   t800::ApplicationDesc desc;
-  desc.api = t800::GRAPHICS_API::D3D11;
+  desc.api = t800::GRAPHICS_API::OPENGL;
   desc.height = 720;
   desc.width = 1280;
   desc.videoMode = t800::T8_VIDEO_MODE::WINDOWED;
@@ -44,9 +44,9 @@ int main(int arg,char ** args){
 
 	pApp = new App;
 #ifdef OS_LINUX
-    pFrameWork = new t800::LinuxFramework((t800::AppBase*)pApp);
+    pFrameWork = new LinuxFramework((AppBase*)pApp);
     pFrameWork->InitGlobalVars();
-	pFrameWork->OnCreateApplication(desc);
+	pFrameWork->OnCreateApplication();
 #elif defined(OS_WINDOWS)
 	pFrameWork = new t800::Win32Framework((t800::AppBase*)pApp);
 	pFrameWork->InitGlobalVars();

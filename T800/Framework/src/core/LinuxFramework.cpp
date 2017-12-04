@@ -3,7 +3,9 @@
 #include <stdio.h>
 
 #include <sys/time.h>
-
+extern int g_AvoidInput;
+extern std::vector<std::string> g_args;
+namespace t800 {
 #ifdef USING_WAYLAND_NATIVE
 struct wl_compositor    *wlnd_compositor = 0;
 struct wl_shell         *wlnd_shell = 0;
@@ -40,17 +42,16 @@ void LinuxFramework::InitGlobalVars(){
 
 }
 
-extern int g_AvoidInput;
-
-
 #include <iostream>
 #include <string>
 #include <vector>
 
 
-extern std::vector<std::string> g_args;
 
-void LinuxFramework::OnCreateApplication(){
+
+void LinuxFramework::OnCreateApplication(ApplicationDesc desc){
+    aplicationDescriptor = desc;
+    m_inited = true;
 
 #ifdef USING_WAYLAND_NATIVE
     printf("Using Wayland Camus\n");
@@ -251,6 +252,9 @@ void LinuxFramework::ProcessInput(){
 void LinuxFramework::ResetApplication(){
 
 }
+void LinuxFramework::ChangeAPI(GRAPHICS_API::E api){
+
+}
 
 #ifdef USING_FREEGLUT
 // STATIC
@@ -292,3 +296,4 @@ void LinuxFramework::KeyboardReleaseEvent(unsigned char key, int x, int y){
 	thiz->pBaseApp->IManager.KeyStates[1][key] = false;
 }
 #endif
+}

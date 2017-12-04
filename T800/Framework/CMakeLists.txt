@@ -8,13 +8,15 @@ ${PROJECT_SOURCE_DIR}/../Librerias/freeglut-linux/include
 ${PROJECT_SOURCE_DIR}/../Librerias/glew-2.0.0/include 
 ${PROJECT_SOURCE_DIR}/../Librerias/OGLES2/pvr/include 
 ${PROJECT_SOURCE_DIR}/../Librerias/SDL-1.2.14/include 
-${PROJECT_SOURCE_DIR}/../Librerias/stb/include )
+${PROJECT_SOURCE_DIR}/../Librerias/stb/include
+${PROJECT_SOURCE_DIR}/../Librerias/tinyxml2/include)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../Lib)
 file(GLOB SOURCES src/video/*.cpp 
 src/utils/*.cpp 
 src/scene/*.cpp 
-src/core/*.cpp)
+src/core/*.cpp
+${PROJECT_SOURCE_DIR}/../Librerias/tinyxml2/tinyxml2.cpp)
 
 add_library(T800Framework ${SOURCES})
 target_include_directories(T800Framework PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

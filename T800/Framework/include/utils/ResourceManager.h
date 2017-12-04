@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <utils\XDataBase.h>
+#include <utils/XDataBase.h>
 namespace t800 {
   class ResourceManager {
   public:

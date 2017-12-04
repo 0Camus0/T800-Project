@@ -327,8 +327,9 @@ namespace t800 {
     return true;
   }
 #endif
-
+#if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
   GLenum GLDriver::DrawBuffers[16];
+#endif
   void	GLDriver::InitDriver() {
     T8Device = new t800::GLDevice;
     T8DeviceContext = new t800::GLDeviceContext;

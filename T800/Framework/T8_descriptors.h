@@ -175,10 +175,7 @@ namespace T8_FORMAT {
 namespace GRAPHICS_API {
   enum E {
     OPENGL,
-    D3D11,
-    GLES20,
-    GLES30,
-    GLES31
+    D3D11
   };
 }
 

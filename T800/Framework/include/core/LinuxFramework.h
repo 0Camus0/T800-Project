@@ -36,18 +36,19 @@
 #endif
 
 #include <memory>
-
+namespace t800 {
 class LinuxFramework : public RootFramework {
 public:
 	LinuxFramework(AppBase *pBaseApp);
 	void InitGlobalVars();
-	void OnCreateApplication();
+	void OnCreateApplication(ApplicationDesc desc);
 	void OnDestroyApplication();
 	void OnInterruptApplication();
 	void OnResumeApplication();
 	void UpdateApplication();
 	void ProcessInput();
 	void ResetApplication();
+  void ChangeAPI(GRAPHICS_API::E api);
 	~LinuxFramework() {	}
 
 #ifdef USING_FREEGLUT
@@ -72,7 +73,8 @@ public:
 	bool	m_alive;
 
 	static LinuxFramework* thiz;
-};
+ };
+}
 
 
 #endif // LINUXFRAMEWORK_H_INCLUDED

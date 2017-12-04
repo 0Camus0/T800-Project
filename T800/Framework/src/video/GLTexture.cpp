@@ -28,7 +28,7 @@
 #include <SDL/SDL.h>
 #endif
 
-#include "video\GLShader.h"
+#include "video/GLShader.h"
 
 
 namespace t800 {

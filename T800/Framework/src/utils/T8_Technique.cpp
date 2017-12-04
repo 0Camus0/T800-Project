@@ -1,7 +1,7 @@
-#include "utils\T8_Technique.h"
+#include "utils/T8_Technique.h"
 #include <iostream>
-#include "video\GLDriver.h"
-#include "video\GLShader.h"
+#include "video/GLDriver.h"
+#include "video/GLShader.h"
 #if defined(OS_WINDOWS)
 #include <video/windows/D3DXShader.h>
 #include <video/windows/D3DXDriver.h>

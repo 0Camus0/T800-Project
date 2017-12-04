@@ -31,20 +31,20 @@
 #endif
 
 #if defined(OS_WINDOWS)
-#include <video\windows/D3DXTexture.h>
+#include <video/windows/D3DXTexture.h>
 #include <D3Dcompiler.h>
 #endif
 
 
 
 
-#include <video\BaseDriver.h>
+#include <video/BaseDriver.h>
 
-#include <utils\Utils.h>
+#include <utils/Utils.h>
 
-#include <utils\xMaths.h>
-#include <utils\XDataBase.h>
-#include <scene\PrimitiveBase.h>
+#include <utils/xMaths.h>
+#include <utils/XDataBase.h>
+#include <scene/PrimitiveBase.h>
 
 
 

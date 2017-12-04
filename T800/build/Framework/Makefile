@@ -169,6 +169,33 @@ T800Framework/fast:
 	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/build
 .PHONY : T800Framework/fast
 
+__/Librerias/tinyxml2/tinyxml2.o: __/Librerias/tinyxml2/tinyxml2.cpp.o
+
+.PHONY : __/Librerias/tinyxml2/tinyxml2.o
+
+# target to build an object file
+__/Librerias/tinyxml2/tinyxml2.cpp.o:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/__/Librerias/tinyxml2/tinyxml2.cpp.o
+.PHONY : __/Librerias/tinyxml2/tinyxml2.cpp.o
+
+__/Librerias/tinyxml2/tinyxml2.i: __/Librerias/tinyxml2/tinyxml2.cpp.i
+
+.PHONY : __/Librerias/tinyxml2/tinyxml2.i
+
+# target to preprocess a source file
+__/Librerias/tinyxml2/tinyxml2.cpp.i:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/__/Librerias/tinyxml2/tinyxml2.cpp.i
+.PHONY : __/Librerias/tinyxml2/tinyxml2.cpp.i
+
+__/Librerias/tinyxml2/tinyxml2.s: __/Librerias/tinyxml2/tinyxml2.cpp.s
+
+.PHONY : __/Librerias/tinyxml2/tinyxml2.s
+
+# target to generate assembly for a file
+__/Librerias/tinyxml2/tinyxml2.cpp.s:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/__/Librerias/tinyxml2/tinyxml2.cpp.s
+.PHONY : __/Librerias/tinyxml2/tinyxml2.cpp.s
+
 src/core/Core.o: src/core/Core.cpp.o
 
 .PHONY : src/core/Core.o
@@ -223,59 +250,32 @@ src/core/LinuxFramework.cpp.s:
 	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/core/LinuxFramework.cpp.s
 .PHONY : src/core/LinuxFramework.cpp.s
 
-src/scene/GLMesh.o: src/scene/GLMesh.cpp.o
+src/scene/Mesh.o: src/scene/Mesh.cpp.o
 
-.PHONY : src/scene/GLMesh.o
-
-# target to build an object file
-src/scene/GLMesh.cpp.o:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLMesh.cpp.o
-.PHONY : src/scene/GLMesh.cpp.o
-
-src/scene/GLMesh.i: src/scene/GLMesh.cpp.i
-
-.PHONY : src/scene/GLMesh.i
-
-# target to preprocess a source file
-src/scene/GLMesh.cpp.i:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLMesh.cpp.i
-.PHONY : src/scene/GLMesh.cpp.i
-
-src/scene/GLMesh.s: src/scene/GLMesh.cpp.s
-
-.PHONY : src/scene/GLMesh.s
-
-# target to generate assembly for a file
-src/scene/GLMesh.cpp.s:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLMesh.cpp.s
-.PHONY : src/scene/GLMesh.cpp.s
-
-src/scene/GLQuad.o: src/scene/GLQuad.cpp.o
-
-.PHONY : src/scene/GLQuad.o
+.PHONY : src/scene/Mesh.o
 
 # target to build an object file
-src/scene/GLQuad.cpp.o:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLQuad.cpp.o
-.PHONY : src/scene/GLQuad.cpp.o
+src/scene/Mesh.cpp.o:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Mesh.cpp.o
+.PHONY : src/scene/Mesh.cpp.o
 
-src/scene/GLQuad.i: src/scene/GLQuad.cpp.i
+src/scene/Mesh.i: src/scene/Mesh.cpp.i
 
-.PHONY : src/scene/GLQuad.i
+.PHONY : src/scene/Mesh.i
 
 # target to preprocess a source file
-src/scene/GLQuad.cpp.i:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLQuad.cpp.i
-.PHONY : src/scene/GLQuad.cpp.i
+src/scene/Mesh.cpp.i:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Mesh.cpp.i
+.PHONY : src/scene/Mesh.cpp.i
 
-src/scene/GLQuad.s: src/scene/GLQuad.cpp.s
+src/scene/Mesh.s: src/scene/Mesh.cpp.s
 
-.PHONY : src/scene/GLQuad.s
+.PHONY : src/scene/Mesh.s
 
 # target to generate assembly for a file
-src/scene/GLQuad.cpp.s:
-	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/GLQuad.cpp.s
-.PHONY : src/scene/GLQuad.cpp.s
+src/scene/Mesh.cpp.s:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Mesh.cpp.s
+.PHONY : src/scene/Mesh.cpp.s
 
 src/scene/PrimitiveInstance.o: src/scene/PrimitiveInstance.cpp.o
 
@@ -330,6 +330,33 @@ src/scene/PrimitiveManager.s: src/scene/PrimitiveManager.cpp.s
 src/scene/PrimitiveManager.cpp.s:
 	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/PrimitiveManager.cpp.s
 .PHONY : src/scene/PrimitiveManager.cpp.s
+
+src/scene/Quad.o: src/scene/Quad.cpp.o
+
+.PHONY : src/scene/Quad.o
+
+# target to build an object file
+src/scene/Quad.cpp.o:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Quad.cpp.o
+.PHONY : src/scene/Quad.cpp.o
+
+src/scene/Quad.i: src/scene/Quad.cpp.i
+
+.PHONY : src/scene/Quad.i
+
+# target to preprocess a source file
+src/scene/Quad.cpp.i:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Quad.cpp.i
+.PHONY : src/scene/Quad.cpp.i
+
+src/scene/Quad.s: src/scene/Quad.cpp.s
+
+.PHONY : src/scene/Quad.s
+
+# target to generate assembly for a file
+src/scene/Quad.cpp.s:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/scene/Quad.cpp.s
+.PHONY : src/scene/Quad.cpp.s
 
 src/scene/SceneProp.o: src/scene/SceneProp.cpp.o
 
@@ -411,6 +438,60 @@ src/utils/InputManager.s: src/utils/InputManager.cpp.s
 src/utils/InputManager.cpp.s:
 	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/InputManager.cpp.s
 .PHONY : src/utils/InputManager.cpp.s
+
+src/utils/ResourceManager.o: src/utils/ResourceManager.cpp.o
+
+.PHONY : src/utils/ResourceManager.o
+
+# target to build an object file
+src/utils/ResourceManager.cpp.o:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/ResourceManager.cpp.o
+.PHONY : src/utils/ResourceManager.cpp.o
+
+src/utils/ResourceManager.i: src/utils/ResourceManager.cpp.i
+
+.PHONY : src/utils/ResourceManager.i
+
+# target to preprocess a source file
+src/utils/ResourceManager.cpp.i:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/ResourceManager.cpp.i
+.PHONY : src/utils/ResourceManager.cpp.i
+
+src/utils/ResourceManager.s: src/utils/ResourceManager.cpp.s
+
+.PHONY : src/utils/ResourceManager.s
+
+# target to generate assembly for a file
+src/utils/ResourceManager.cpp.s:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/ResourceManager.cpp.s
+.PHONY : src/utils/ResourceManager.cpp.s
+
+src/utils/T8_Technique.o: src/utils/T8_Technique.cpp.o
+
+.PHONY : src/utils/T8_Technique.o
+
+# target to build an object file
+src/utils/T8_Technique.cpp.o:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/T8_Technique.cpp.o
+.PHONY : src/utils/T8_Technique.cpp.o
+
+src/utils/T8_Technique.i: src/utils/T8_Technique.cpp.i
+
+.PHONY : src/utils/T8_Technique.i
+
+# target to preprocess a source file
+src/utils/T8_Technique.cpp.i:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/T8_Technique.cpp.i
+.PHONY : src/utils/T8_Technique.cpp.i
+
+src/utils/T8_Technique.s: src/utils/T8_Technique.cpp.s
+
+.PHONY : src/utils/T8_Technique.s
+
+# target to generate assembly for a file
+src/utils/T8_Technique.cpp.s:
+	cd /home/Camus/Puga/T800/build && $(MAKE) -f Framework/CMakeFiles/T800Framework.dir/build.make Framework/CMakeFiles/T800Framework.dir/src/utils/T8_Technique.cpp.s
+.PHONY : src/utils/T8_Technique.cpp.s
 
 src/utils/Timer.o: src/utils/Timer.cpp.o
 
@@ -695,24 +776,27 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... edit_cache"
+	@echo "... __/Librerias/tinyxml2/tinyxml2.o"
+	@echo "... __/Librerias/tinyxml2/tinyxml2.i"
+	@echo "... __/Librerias/tinyxml2/tinyxml2.s"
 	@echo "... src/core/Core.o"
 	@echo "... src/core/Core.i"
 	@echo "... src/core/Core.s"
 	@echo "... src/core/LinuxFramework.o"
 	@echo "... src/core/LinuxFramework.i"
 	@echo "... src/core/LinuxFramework.s"
-	@echo "... src/scene/GLMesh.o"
-	@echo "... src/scene/GLMesh.i"
-	@echo "... src/scene/GLMesh.s"
-	@echo "... src/scene/GLQuad.o"
-	@echo "... src/scene/GLQuad.i"
-	@echo "... src/scene/GLQuad.s"
+	@echo "... src/scene/Mesh.o"
+	@echo "... src/scene/Mesh.i"
+	@echo "... src/scene/Mesh.s"
 	@echo "... src/scene/PrimitiveInstance.o"
 	@echo "... src/scene/PrimitiveInstance.i"
 	@echo "... src/scene/PrimitiveInstance.s"
 	@echo "... src/scene/PrimitiveManager.o"
 	@echo "... src/scene/PrimitiveManager.i"
 	@echo "... src/scene/PrimitiveManager.s"
+	@echo "... src/scene/Quad.o"
+	@echo "... src/scene/Quad.i"
+	@echo "... src/scene/Quad.s"
 	@echo "... src/scene/SceneProp.o"
 	@echo "... src/scene/SceneProp.i"
 	@echo "... src/scene/SceneProp.s"
@@ -722,6 +806,12 @@ help:
 	@echo "... src/utils/InputManager.o"
 	@echo "... src/utils/InputManager.i"
 	@echo "... src/utils/InputManager.s"
+	@echo "... src/utils/ResourceManager.o"
+	@echo "... src/utils/ResourceManager.i"
+	@echo "... src/utils/ResourceManager.s"
+	@echo "... src/utils/T8_Technique.o"
+	@echo "... src/utils/T8_Technique.i"
+	@echo "... src/utils/T8_Technique.s"
 	@echo "... src/utils/Timer.o"
 	@echo "... src/utils/Timer.i"
 	@echo "... src/utils/Timer.s"

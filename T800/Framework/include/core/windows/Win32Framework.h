@@ -23,8 +23,9 @@
 namespace t800 {
   class Win32Framework : public RootFramework {
   public:
-    Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true), m_inited(false) {
+    Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) {
       pBaseApp->SetParentFramework(this);
+      m_inited = false;
     }
     void InitGlobalVars();
     void OnCreateApplication(ApplicationDesc desc);
@@ -39,8 +40,6 @@ namespace t800 {
 
     bool	m_alive;
   private:
-    bool m_inited;
-    ApplicationDesc aplicationDescriptor;
   };
 }
 

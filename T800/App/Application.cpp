@@ -48,7 +48,7 @@ enum {
 	CERDOLIGHT,
 	TOTAL_INSTANCES
 };
-#include "utils\T8_Technique.h"
+#include "utils/T8_Technique.h"
 void App::InitVars() {
   t800::T8Technique tech("Techniques/test_technique.xml");
 

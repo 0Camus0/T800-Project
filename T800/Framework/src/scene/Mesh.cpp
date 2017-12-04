@@ -21,7 +21,7 @@
 #include <video/windows/D3DXShader.h>
 #include <video/windows/D3DXDriver.h>
 #endif
-#include "core\Core.h"
+#include "core/Core.h"
 
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
@@ -161,10 +161,7 @@ namespace t800 {
 
     char *vsSourceP;
     char *fsSourceP;
-    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES20 ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES30 ||
-        g_pBaseDriver->m_currentAPI == GRAPHICS_API::GLES31) {
+    if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
       vsSourceP = file2string("Shaders/VS_Mesh.glsl");
       fsSourceP = file2string("Shaders/FS_Mesh.glsl");
     }

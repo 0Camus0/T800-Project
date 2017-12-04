@@ -17,7 +17,7 @@
 
 #include <video/BaseDriver.h>
 #include <utils/InputManager.h>
-#include <utils\ResourceManager.h>
+#include <utils/ResourceManager.h>
 namespace t800 {
   class RootFramework;
   class AppBase {
@@ -58,6 +58,8 @@ namespace t800 {
 
     BaseDriver		*pVideoDriver;
     AppBase			*pBaseApp;
+    bool m_inited;
+    ApplicationDesc aplicationDescriptor;
   };
 }
 
