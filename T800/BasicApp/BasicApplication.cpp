@@ -115,6 +115,10 @@ void App::CreateAssets() {
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
+  index = PrimitiveMgr.CreateMesh("Models/SponzaEsc.X");
+  Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+  PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
+
   index = PrimitiveMgr.CreateSpline();
   splineWire = (SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
   splineInst.CreateInstance(splineWire, &VP);
@@ -183,6 +187,7 @@ void App::OnDraw() {
 
   pFramework->pVideoDriver->Clear();
   SceneProp.pCameras[0] = &Cam;
+  Pigs[2].Draw();
   for (int i = 0; i < 2; i++) {
     Pigs[i].Draw();
   }

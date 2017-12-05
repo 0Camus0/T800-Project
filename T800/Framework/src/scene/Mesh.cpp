@@ -340,8 +340,9 @@ namespace t800 {
           it_MeshInfo->CB->UpdateFromBuffer(*T8DeviceContext, &it_MeshInfo->CnstBuffer.WVP[0]);
           it_MeshInfo->CB->Set(*T8DeviceContext);
         }
-
-        sub_info->DiffuseTex->Set(*T8DeviceContext, 0, "DiffuseTex");
+        if (s->Sig&Signature::DIFFUSE_MAP) {
+          sub_info->DiffuseTex->Set(*T8DeviceContext, 0, "DiffuseTex");
+        }
         if (s->Sig&Signature::SPECULAR_MAP) {
           sub_info->SpecularTex->Set(*T8DeviceContext, 1, "SpecularTex");
         }
@@ -357,7 +358,9 @@ namespace t800 {
         if (EnvMap) {
           EnvMap->Set(*T8DeviceContext, 4, "texEnv");
         }
-        sub_info->DiffuseTex->SetSampler(*T8DeviceContext);
+        if (s->Sig&Signature::DIFFUSE_MAP) {
+          sub_info->DiffuseTex->SetSampler(*T8DeviceContext);
+        }
 
         T8DeviceContext->SetPrimitiveTopology(T8_TOPOLOGY::TRIANLE_LIST);
         T8DeviceContext->DrawIndexed(sub_info->NumVertex, 0, 0);
