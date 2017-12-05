@@ -29,6 +29,7 @@ namespace t800 {
     int	 CreateCube();
     int	 CreateMesh(char *fname);
     int  CreateQuad();
+    int  CreateSpline();
 
     void SetSceneProps(SceneProps *p);
 

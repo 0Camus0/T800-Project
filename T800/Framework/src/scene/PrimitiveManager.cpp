@@ -14,6 +14,7 @@
 
 #include <scene/Mesh.h>
 #include <scene/Quad.h>
+#include <scene/SplineWireframe.h>
 
 namespace t800 {
   PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
@@ -41,6 +42,14 @@ namespace t800 {
 
   int PrimitiveManager::CreateQuad() {
     PrimitiveBase *primitive = new D3DXQuad();
+    primitive->Create();
+    primitives.push_back(primitive);
+    return (int)(primitives.size() - 1);
+  }
+
+  int PrimitiveManager::CreateSpline()
+  {
+    PrimitiveBase *primitive = new SplineWireframe();
     primitive->Create();
     primitives.push_back(primitive);
     return (int)(primitives.size() - 1);

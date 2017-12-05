@@ -28,9 +28,11 @@
     <ClInclude Include="include\scene\PrimitiveManager.h" />
     <ClInclude Include="include\scene\Quad.h" />
     <ClInclude Include="include\scene\SceneProp.h" />
+    <ClInclude Include="include\scene\SplineWireframe.h" />
     <ClInclude Include="include\utils\cil.h" />
     <ClInclude Include="include\utils\InputManager.h" />
     <ClInclude Include="include\utils\ResourceManager.h" />
+    <ClInclude Include="include\utils\T8_Spline.h" />
     <ClInclude Include="include\utils\T8_Technique.h" />
     <ClInclude Include="include\utils\Timer.h" />
     <ClInclude Include="include\utils\Utils.h" />
@@ -57,9 +59,11 @@
     <ClCompile Include="src\scene\PrimitiveManager.cpp" />
     <ClCompile Include="src\scene\Quad.cpp" />
     <ClCompile Include="src\scene\SceneProp.cpp" />
+    <ClCompile Include="src\scene\SplineWireframe.cpp" />
     <ClCompile Include="src\utils\cil.cpp" />
     <ClCompile Include="src\utils\InputManager.cpp" />
     <ClCompile Include="src\utils\ResourceManager.cpp" />
+    <ClCompile Include="src\utils\T8_Spline.cpp" />
     <ClCompile Include="src\utils\T8_Technique.cpp" />
     <ClCompile Include="src\utils\Timer.cpp" />
     <ClCompile Include="src\utils\Utils.cpp" />

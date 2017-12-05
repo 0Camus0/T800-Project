@@ -19,6 +19,8 @@
 #include <utils/xMaths.h>
 #include <utils/Camera.h>
 #include <utils/Timer.h>
+#include <scene/SplineWireframe.h>
+#include <utils/T8_Spline.h>
 
 
 enum {
@@ -101,4 +103,8 @@ public:
 	int				CamSelection;
 	int				SceneSettingSelection;
 	int				ChangeActiveGaussSelection;
+
+  t800::SplineWireframe* splineWire;
+  t800::PrimitiveInst splineInst;
+  t800::SplineAgent m_agent;
 };

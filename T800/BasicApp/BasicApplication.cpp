@@ -115,7 +115,17 @@ void App::CreateAssets() {
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
+  index = PrimitiveMgr.CreateSpline();
+  splineWire = (SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
+  splineInst.CreateInstance(splineWire, &VP);
+
 	PrimitiveMgr.SetSceneProps(&SceneProp);
+
+  m_agent.m_pSpline = &splineWire->m_spline;
+  m_agent.m_moving = true;
+  m_agent.m_velocity = 15.0f;
+
+  m_agent.m_actualPoint = splineWire->m_spline.GetPoint(splineWire->m_spline.GetNormalizedOffset(0));
 }
 
 void App::DestroyAssets() {
@@ -163,8 +173,9 @@ void App::OnUpdate() {
 		SceneProp.Lights[i].Position.x += RadA*sin(freq + float(i*Offset));
 		SceneProp.Lights[i].Position.z += RadB*cos(freq + float(i*Offset2));
 	}
-
-
+  m_agent.Update(1/60.0f);
+  Pigs[1].TranslateAbsolute(m_agent.m_actualPoint.x, m_agent.m_actualPoint.y, m_agent.m_actualPoint.z);
+  Pigs[1].Update();
 	OnDraw();
 }
 
@@ -175,6 +186,7 @@ void App::OnDraw() {
   for (int i = 0; i < 2; i++) {
     Pigs[i].Draw();
   }
+  splineInst.Draw();
   pFramework->pVideoDriver->SwapBuffers();
   FirstFrame = false;
 }
@@ -328,6 +340,7 @@ void App::OnInput() {
   if (IManager.PressedOnceKey(T800K_2)) {
     pFramework->ChangeAPI(GRAPHICS_API::OPENGL);
   }
+
 
 	float yaw = 0.005f*static_cast<float>(IManager.xDelta);
 	ActiveCam->MoveYaw(yaw);
