@@ -27,24 +27,8 @@ void SplineWireframe::Create()
   s = g_pBaseDriver->GetShaderIdx(shaderID);
 
 
-  m_spline.m_points.push_back(SplinePoint(0,  10, 0));
-  m_spline.m_points.back().m_velocity = 5.0f;
-  m_spline.m_points.push_back(SplinePoint(10, 10, 10));
-  m_spline.m_points.back().m_velocity = 8.0f;
-  m_spline.m_points.push_back(SplinePoint(85, 50, 150));
-  m_spline.m_points.back().m_velocity = 15.0f;
-  m_spline.m_points.push_back(SplinePoint(250, 10, 100));
-  m_spline.m_points.back().m_velocity = 25.0f;
-  m_spline.m_points.push_back(SplinePoint(500, 10, 250));
-  m_spline.m_points.back().m_velocity = 10.0f;
-  m_spline.m_points.push_back(SplinePoint(600, 10, 300));
-  m_spline.m_points.back().m_velocity = 5.0f;
-  m_spline.m_looped = false;
-  m_spline.Init();
-
-  float length = m_spline.m_totalLength * POINMTS_PER_UNIT;
-  for (float i = 0; i < (float)m_spline.m_points.size() - 3.0f; i+= m_spline.STEP_SIZE) {
-    XVECTOR3 v = m_spline.GetPoint(i);
+  for (float i = 0; i < (float)m_spline->m_points.size() - 3.0f; i+= m_spline->STEP_SIZE) {
+    XVECTOR3 v = m_spline->GetPoint(i);
     vertices.push_back(Vert{ v.x,v.y,v.z,1.0f });
   }
   for (int i = 0; i < vertices.size(); i++) {

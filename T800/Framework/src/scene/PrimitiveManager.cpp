@@ -47,9 +47,10 @@ namespace t800 {
     return (int)(primitives.size() - 1);
   }
 
-  int PrimitiveManager::CreateSpline()
+  int PrimitiveManager::CreateSpline(Spline& spline)
   {
-    PrimitiveBase *primitive = new SplineWireframe();
+    SplineWireframe *primitive = new SplineWireframe();
+    primitive->m_spline = &spline;
     primitive->Create();
     primitives.push_back(primitive);
     return (int)(primitives.size() - 1);

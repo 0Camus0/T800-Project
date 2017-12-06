@@ -22,7 +22,7 @@ namespace t800 {
     void Destroy();
     int shaderID;
     CBuffer constantBuff;
-    Spline m_spline;
+    Spline* m_spline;
     ShaderBase* s;
     IndexBuffer*		IB;
     VertexBuffer*		VB;

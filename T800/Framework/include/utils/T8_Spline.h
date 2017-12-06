@@ -43,7 +43,7 @@ namespace t800 {
       m_pSpline = 0;
     }
     void Update(float delta);
-
+    void SetOffset(float);
     Spline* m_pSpline;
     SplinePoint m_actualPoint;
     XVECTOR3 m_actualGradient;

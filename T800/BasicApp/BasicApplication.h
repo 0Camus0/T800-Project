@@ -107,4 +107,5 @@ public:
   t800::SplineWireframe* splineWire;
   t800::PrimitiveInst splineInst;
   t800::SplineAgent m_agent;
+  t800::Spline m_spline;
 };

@@ -119,18 +119,49 @@ void App::CreateAssets() {
   Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
   PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
-  index = PrimitiveMgr.CreateSpline();
+
+
+  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
+  m_spline.m_points.back().m_velocity = 1.0f;
+  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
+  m_spline.m_points.back().m_velocity = 1.5f;
+  m_spline.m_points.push_back(SplinePoint(8, 6, 0));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(40, 6, 0));
+  m_spline.m_points.back().m_velocity = 3;
+  m_spline.m_points.push_back(SplinePoint(50, 6, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(40, 3, 20));
+  m_spline.m_points.back().m_velocity = 1.5;
+  m_spline.m_points.push_back(SplinePoint(0, 3, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(-40, 3, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(-50, 6, 0));
+  m_spline.m_points.back().m_velocity = 3;
+  m_spline.m_points.push_back(SplinePoint(50, 15, 0));
+  m_spline.m_points.back().m_velocity = 4;
+  m_spline.m_points.push_back(SplinePoint(50, 15, 20));
+  m_spline.m_points.back().m_velocity = 4;
+  m_spline.m_points.push_back(SplinePoint(50, 15, 20));
+  m_spline.m_points.back().m_velocity = 4;
+
+  m_spline.m_looped = false;
+  m_spline.Init();
+  index = PrimitiveMgr.CreateSpline(m_spline);
   splineWire = (SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
   splineInst.CreateInstance(splineWire, &VP);
 
+
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
-  m_agent.m_pSpline = &splineWire->m_spline;
+  m_agent.m_pSpline = &m_spline;
   m_agent.m_moving = true;
   m_agent.m_velocity = 15.0f;
 
-  m_agent.m_actualPoint = splineWire->m_spline.GetPoint(splineWire->m_spline.GetNormalizedOffset(0));
+  m_agent.m_actualPoint = m_spline.GetPoint(m_spline.GetNormalizedOffset(0));
   ActiveCam->AttachAgent(m_agent);
+  //ActiveCam->DettachAgent();
 }
 
 void App::DestroyAssets() {
@@ -148,7 +179,10 @@ void App::OnUpdate() {
 	DtSecs = DtTimer.GetDTSecs();
 	OnInput();
 
-  m_agent.Update(1 / 60.0f);
+  if (FirstFrame) {
+    DtSecs = 1.0f/60.0f;
+  }
+  m_agent.Update(DtSecs);
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
 
@@ -188,7 +222,7 @@ void App::OnDraw() {
   pFramework->pVideoDriver->Clear();
   SceneProp.pCameras[0] = &Cam;
   Pigs[2].Draw();
-  for (int i = 0; i < 2; i++) {
+  for (int i = 1; i < 2; i++) {
     Pigs[i].Draw();
   }
   splineInst.Draw();

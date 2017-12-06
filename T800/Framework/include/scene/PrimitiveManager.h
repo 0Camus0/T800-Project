@@ -20,6 +20,7 @@
 #include <scene/PrimitiveBase.h>
 #include <scene/SceneProp.h>
 namespace t800 {
+  class Spline;
   class PrimitiveManager {
   public:
     void SetVP(XMATRIX44 *vp) {
@@ -29,7 +30,7 @@ namespace t800 {
     int	 CreateCube();
     int	 CreateMesh(char *fname);
     int  CreateQuad();
-    int  CreateSpline();
+    int  CreateSpline(Spline& spline);
 
     void SetSceneProps(SceneProps *p);
 

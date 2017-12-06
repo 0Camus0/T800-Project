@@ -119,13 +119,17 @@ namespace t800 {
   void SplineAgent::Update(float delta)
   {
     realLoc += delta * m_velocity;
-    if (realLoc > m_pSpline->m_totalLength)
+    while (realLoc > m_pSpline->m_totalLength)
       realLoc -= m_pSpline->m_totalLength;
-    if (realLoc < 0.0f)
+    while (realLoc < 0.0f)
       realLoc += m_pSpline->m_totalLength;
     m_actualPoint = m_pSpline->GetPoint(m_pSpline->GetNormalizedOffset(realLoc));
     m_actualGradient = m_pSpline->GetGradient(m_pSpline->GetNormalizedOffset(realLoc));
     m_actualGradient.Normalize();
     m_velocity = m_actualPoint.m_velocity;
+  }
+  void SplineAgent::SetOffset(float offset)
+  {
+    realLoc = offset;
   }
 }
