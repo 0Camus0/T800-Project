@@ -22,7 +22,7 @@
 #endif
 
 #ifndef FORCE_LOW_RES_TEXTURES
-#define FORCE_LOW_RES_TEXTURES 0
+#define FORCE_LOW_RES_TEXTURES 
 #endif
 
 #ifndef FORCED_FACTOR

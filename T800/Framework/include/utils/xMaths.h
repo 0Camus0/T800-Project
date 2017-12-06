@@ -76,6 +76,10 @@ float CadenaAnumeroFlotantePersonalizada(char *c);
 #define  xPI 3.141592653589f
 #endif
 
+#ifndef xHALF_PI
+#define  xHALF_PI 1.57079632679f
+#endif
+
 #ifndef xSMALLFLOAT
 #define  xSMALLFLOAT 0.000000001f
 #endif

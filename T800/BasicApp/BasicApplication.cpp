@@ -130,6 +130,7 @@ void App::CreateAssets() {
   m_agent.m_velocity = 15.0f;
 
   m_agent.m_actualPoint = splineWire->m_spline.GetPoint(splineWire->m_spline.GetNormalizedOffset(0));
+  ActiveCam->AttachAgent(m_agent);
 }
 
 void App::DestroyAssets() {
@@ -147,7 +148,7 @@ void App::OnUpdate() {
 	DtSecs = DtTimer.GetDTSecs();
 	OnInput();
 
-
+  m_agent.Update(1 / 60.0f);
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
 
@@ -177,9 +178,8 @@ void App::OnUpdate() {
 		SceneProp.Lights[i].Position.x += RadA*sin(freq + float(i*Offset));
 		SceneProp.Lights[i].Position.z += RadB*cos(freq + float(i*Offset2));
 	}
-  m_agent.Update(1/60.0f);
-  Pigs[1].TranslateAbsolute(m_agent.m_actualPoint.x, m_agent.m_actualPoint.y, m_agent.m_actualPoint.z);
-  Pigs[1].Update();
+  //Pigs[1].TranslateAbsolute(m_agent.m_actualPoint.x, m_agent.m_actualPoint.y, m_agent.m_actualPoint.z);
+  //Pigs[1].Update();
 	OnDraw();
 }
 

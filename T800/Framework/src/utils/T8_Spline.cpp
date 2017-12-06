@@ -125,6 +125,7 @@ namespace t800 {
       realLoc += m_pSpline->m_totalLength;
     m_actualPoint = m_pSpline->GetPoint(m_pSpline->GetNormalizedOffset(realLoc));
     m_actualGradient = m_pSpline->GetGradient(m_pSpline->GetNormalizedOffset(realLoc));
+    m_actualGradient.Normalize();
     m_velocity = m_actualPoint.m_velocity;
   }
 }

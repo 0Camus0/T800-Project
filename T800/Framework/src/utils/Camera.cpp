@@ -11,7 +11,7 @@
 *********************************************************/
 
 #include <utils/Camera.h>
-
+#include <utils/T8_Spline.h>
 const	XVECTOR3	Camera::LookConstCameraSpace = XVECTOR3(0.0f, 0.0f, 1.0f);
 const	XVECTOR3	Camera::RightConstCameraSpace = XVECTOR3(1.0f, 0.0f, 0.0f);
 const	XVECTOR3	Camera::UpConstCameraSpace = XVECTOR3(0.0f, 1.0f, 0.0f);
@@ -27,6 +27,9 @@ void	Camera::Init(XVECTOR3 position, float fov, float ratio, float np, float fp,
 	this->FPlane = fp;
 	this->Eye = position;
 	this->LeftHanded = lf;
+  m_externalControl = false;
+  m_agent = nullptr;
+  LastFrameEye = XVECTOR3(0,0,0);
 	CreatePojection();
 }
 
@@ -78,6 +81,18 @@ void	Camera::SetPlanes(float n, float f) {
 	CreatePojection();
 }
 
+void Camera::AttachAgent(const t800::SplineAgent & agent)
+{
+  m_externalControl = true;
+  m_agent = &agent;
+}
+
+t800::SplineAgent * Camera::DettachAgent()
+{
+  m_externalControl = false;
+  return const_cast<t800::SplineAgent*>(m_agent);
+}
+
 void	Camera::MoveYaw(float f) {
 	if (MaxYaw != 0.0) {
 		if ((Yaw + f) > MaxYaw || (Yaw + f) < -MaxYaw)
@@ -103,30 +118,53 @@ void	Camera::MoveRoll(float f) {
 }
 
 void	Camera::Update(float dt) {
-	XMATRIX44	X_, Y_, Z_, T_;
-	XMatRotationX(X_, -Pitch);
-	XMatRotationY(Y_, -Yaw);
-	XMatRotationZ(Z_, -Roll);
-	View = Z_*Y_*X_;
+	 XMATRIX44	X_, Y_, Z_, T_;
+   if (m_externalControl) {
+     Eye = m_agent->m_actualPoint;
+     if (Eye != LastFrameEye) {
+       float		_Yaw;
+       float		_Pitch;
+       Look = Eye - LastFrameEye;
+       Look.Normalize();
+       _Pitch = asin(-Look.y);
+       _Yaw = atan2f(Look.x, Look.z);
 
-	XMATRIX44 transpose;
-	XMatTranspose(transpose, View);
-	XVecTransformNormal(Look, LookConstCameraSpace, transpose);
-	XVecTransformNormal(Up, UpConstCameraSpace, transpose);
-	XVecTransformNormal(Right, RightConstCameraSpace, transpose);
+       XMatRotationX(X_, -_Pitch);
+       XMatRotationY(Y_, -_Yaw);
+       XMatIdentity(Z_);
+     }
+   }
+   else {
+     XMatRotationX(X_, -Pitch);
+     XMatRotationY(Y_, -Yaw);
+     XMatRotationZ(Z_, -Roll);
+   }
 
-	Look.Normalize();
-	Up.Normalize();
-	Right.Normalize();
 
-	XVECTOR3 currentvelocity = Velocity.x*Right + Velocity.y*Up + Velocity.z*Look;
-	Velocity -= Velocity*Friction;
-	Eye += currentvelocity;
+	  View = Z_*Y_*X_;
 
-    XVECTOR3 TEYE = -Eye;
+	  XMATRIX44 transpose;
+	  XMatTranspose(transpose, View);
+	  XVecTransformNormal(Look, LookConstCameraSpace, transpose);
+	  XVecTransformNormal(Up, UpConstCameraSpace, transpose);
+	  XVecTransformNormal(Right, RightConstCameraSpace, transpose);
+
+	  Look.Normalize();
+	  Up.Normalize();
+	  Right.Normalize();
+
+    if (!m_externalControl) {
+      XVECTOR3 currentvelocity = Velocity.x*Right + Velocity.y*Up + Velocity.z*Look;
+      Velocity -= Velocity*Friction;
+      Eye += currentvelocity;
+    }
+  
+  XVECTOR3 TEYE = -Eye;
 	XMatTranslation(T_,TEYE);
 	View = T_*View;
 	VP = View*Projection;
+
+  LastFrameEye = Eye;
 }
 
 void	Camera::Reset() {

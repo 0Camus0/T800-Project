@@ -5,7 +5,9 @@
 
 #include <utils/xMaths.h>
 
-
+namespace t800 {
+  class SplineAgent;
+}
 class Camera {
 public:
 	Camera();
@@ -31,6 +33,10 @@ public:
 	void	SetRatio(float r);
 	void	SetPlanes(float n, float f);
 
+  const t800::SplineAgent* m_agent;
+  void AttachAgent(const t800::SplineAgent& agent);
+  t800::SplineAgent* DettachAgent();
+
 	float		Fov;
 	float		AspectRatio;
 	float		NPlane;
@@ -49,6 +55,7 @@ public:
 
 	bool		LeftHanded;
 
+  XVECTOR3  LastFrameEye;
 	XVECTOR3	Eye;
 	XVECTOR3	Look;
 	XVECTOR3	Right;
@@ -64,6 +71,8 @@ public:
 	XMATRIX44	View;
 	XMATRIX44	Projection;
 	XMATRIX44	VP;
+
+  bool m_externalControl;
 
 	static const	XVECTOR3	LookConstCameraSpace;
 	static const	XVECTOR3	RightConstCameraSpace;

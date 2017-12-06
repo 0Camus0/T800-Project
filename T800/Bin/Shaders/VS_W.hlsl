@@ -12,6 +12,6 @@ struct VS_OUTPUT{
 
 VS_OUTPUT VS( VS_INPUT input ){
     VS_OUTPUT OUT;
-    OUT.hposition = mul(WVP, position);
+    OUT.hposition = mul(WVP, input.position);
     return OUT;
 }
