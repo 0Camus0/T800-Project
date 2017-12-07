@@ -49,6 +49,8 @@ enum {
 	TOTAL_INSTANCES
 };
 #include "utils\T8_Technique.h"
+
+
 void App::InitVars() {
   t800::T8Technique tech("Techniques/test_technique.xml");
 
@@ -95,6 +97,51 @@ void App::InitVars() {
 	SceneProp.ActiveLights = 127;
 	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
 	FirstFrame = true;
+
+  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
+  m_spline.m_points.back().m_velocity = 1.0f;
+  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
+  m_spline.m_points.back().m_velocity = 1.5f;
+  m_spline.m_points.push_back(SplinePoint(8, 6, 0));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(40, 6, 0));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(50, 6, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(40, 3, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(0, 3, 20));
+  m_spline.m_points.back().m_velocity = 2;
+  m_spline.m_points.push_back(SplinePoint(-50, 3, 20));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(-50, 6, 0));
+  m_spline.m_points.back().m_velocity = 12;
+  m_spline.m_points.push_back(SplinePoint(20, 6, 0));
+  m_spline.m_points.back().m_velocity = 12;
+  m_spline.m_points.push_back(SplinePoint(50, 15, 0));
+  m_spline.m_points.back().m_velocity = 12;
+  m_spline.m_points.push_back(SplinePoint(50, 15, -20));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(-50, 15, -20));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(-50, 10, 0));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(20, 15, 0));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(50, 30, -20));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(50, 30, 20));
+  m_spline.m_points.back().m_velocity = 15;
+  m_spline.m_points.push_back(SplinePoint(-50, 30, -20));
+  m_spline.m_points.back().m_velocity = 15;
+
+  m_spline.m_looped = false;
+  m_spline.Init();
+
+  m_agent.m_pSpline = &m_spline;
+  m_agent.m_moving = true;
+  m_agent.m_velocity = 15.0f;
+
 }
 
 void App::LoadAssets()
@@ -119,45 +166,12 @@ void App::CreateAssets() {
   Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
   PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
-
-
-  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
-  m_spline.m_points.back().m_velocity = 1.0f;
-  m_spline.m_points.push_back(SplinePoint(0, 3, 0));
-  m_spline.m_points.back().m_velocity = 1.5f;
-  m_spline.m_points.push_back(SplinePoint(8, 6, 0));
-  m_spline.m_points.back().m_velocity = 2;
-  m_spline.m_points.push_back(SplinePoint(40, 6, 0));
-  m_spline.m_points.back().m_velocity = 3;
-  m_spline.m_points.push_back(SplinePoint(50, 6, 20));
-  m_spline.m_points.back().m_velocity = 2;
-  m_spline.m_points.push_back(SplinePoint(40, 3, 20));
-  m_spline.m_points.back().m_velocity = 1.5;
-  m_spline.m_points.push_back(SplinePoint(0, 3, 20));
-  m_spline.m_points.back().m_velocity = 2;
-  m_spline.m_points.push_back(SplinePoint(-40, 3, 20));
-  m_spline.m_points.back().m_velocity = 2;
-  m_spline.m_points.push_back(SplinePoint(-50, 6, 0));
-  m_spline.m_points.back().m_velocity = 3;
-  m_spline.m_points.push_back(SplinePoint(50, 15, 0));
-  m_spline.m_points.back().m_velocity = 4;
-  m_spline.m_points.push_back(SplinePoint(50, 15, 20));
-  m_spline.m_points.back().m_velocity = 4;
-  m_spline.m_points.push_back(SplinePoint(50, 15, 20));
-  m_spline.m_points.back().m_velocity = 4;
-
-  m_spline.m_looped = false;
-  m_spline.Init();
   index = PrimitiveMgr.CreateSpline(m_spline);
   splineWire = (SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
   splineInst.CreateInstance(splineWire, &VP);
 
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
-
-  m_agent.m_pSpline = &m_spline;
-  m_agent.m_moving = true;
-  m_agent.m_velocity = 15.0f;
 
   m_agent.m_actualPoint = m_spline.GetPoint(m_spline.GetNormalizedOffset(0));
   ActiveCam->AttachAgent(m_agent);
@@ -218,7 +232,6 @@ void App::OnUpdate() {
 }
 
 void App::OnDraw() {
-
   pFramework->pVideoDriver->Clear();
   SceneProp.pCameras[0] = &Cam;
   Pigs[2].Draw();
@@ -226,6 +239,8 @@ void App::OnDraw() {
     Pigs[i].Draw();
   }
   splineInst.Draw();
+
+
   pFramework->pVideoDriver->SwapBuffers();
   FirstFrame = false;
 }

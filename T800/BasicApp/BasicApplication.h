@@ -22,7 +22,6 @@
 #include <scene/SplineWireframe.h>
 #include <utils/T8_Spline.h>
 
-
 enum {
 	DRAW_CUBE_SPINNING = 0,
 	DRAW_CUBE_BIG,
