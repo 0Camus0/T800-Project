@@ -39,18 +39,18 @@ namespace t800 {
     virtual void Transform(float *t) = 0;
     virtual void Draw(float *t, float *vp) = 0;
     virtual void Destroy() = 0;
+    friend class PrimitiveInst;
 
+    void SetSceneProps(SceneProps *p) { pScProp = p; }
+    SceneProps				*pScProp;
+  protected:
     void SetGlobalSignature(unsigned int f) { gSig = f; }
     void SetTexture(Texture* tex, int index) {
       Textures[index] = tex;
     }
-
     void SetEnvironmentMap(Texture* tex) {
       EnvMap = tex;
     }
-
-    void SetSceneProps(SceneProps *p) { pScProp = p; }
-    SceneProps				*pScProp;
     Texture*				 Textures[8];
     Texture*			     EnvMap;
     unsigned int gSig;

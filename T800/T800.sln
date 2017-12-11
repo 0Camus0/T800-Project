@@ -20,6 +20,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicApp", "BasicApp\BasicA
 		{844841CA-54AA-45DF-AA7A-65C27F50FB75} = {844841CA-54AA-45DF-AA7A-65C27F50FB75}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DayScene", "DayScene\DayScene.vcxproj", "{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{844841CA-54AA-45DF-AA7A-65C27F50FB75} = {844841CA-54AA-45DF-AA7A-65C27F50FB75}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -60,6 +65,14 @@ Global
 		{C6FE71E0-914E-4D4D-AF2D-89B549C37C78}.Release|x64.Build.0 = Release|x64
 		{C6FE71E0-914E-4D4D-AF2D-89B549C37C78}.Release|x86.ActiveCfg = Release|Win32
 		{C6FE71E0-914E-4D4D-AF2D-89B549C37C78}.Release|x86.Build.0 = Release|Win32
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Debug|x64.ActiveCfg = Debug|x64
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Debug|x64.Build.0 = Debug|x64
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Debug|x86.ActiveCfg = Debug|Win32
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Debug|x86.Build.0 = Debug|Win32
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Release|x64.ActiveCfg = Release|x64
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Release|x64.Build.0 = Release|x64
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Release|x86.ActiveCfg = Release|Win32
+		{8F4A8F13-C29C-4BA3-A673-2AB797440C0C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

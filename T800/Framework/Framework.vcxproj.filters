@@ -140,6 +140,9 @@
     <ClInclude Include="include\scene\SplineWireframe.h">
       <Filter>Header Files\scene</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\LensFlare.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Core.cpp">
@@ -221,6 +224,9 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\SplineWireframe.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\LensFlare.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>

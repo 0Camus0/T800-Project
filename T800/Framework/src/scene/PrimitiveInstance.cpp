@@ -69,14 +69,16 @@ namespace t800 {
   void PrimitiveInst::Draw() {
     if (!Visible)
       return;
+    pBase->SetEnvironmentMap(EnvMap);
+    pBase->SetGlobalSignature(gSig);
+    pBase->SetTexture(Textures[0], 0);
+    pBase->SetTexture(Textures[1], 1);
+    pBase->SetTexture(Textures[2], 2);
+    pBase->SetTexture(Textures[3], 3);
+    pBase->SetTexture(Textures[4], 4);
+    pBase->SetTexture(Textures[5], 5);
+    pBase->SetTexture(Textures[6], 6);
+    pBase->SetTexture(Textures[7], 7);
     pBase->Draw(&Final.m[0][0], &(*pViewProj).m[0][0]);
-  }
-
-  void PrimitiveInst::SetSignature(unsigned int f) {
-    pBase->SetGlobalSignature(f);
-  }
-
-  void PrimitiveInst::SetTexture(Texture* tex, int index) {
-    pBase->SetTexture(tex, index);
   }
 }

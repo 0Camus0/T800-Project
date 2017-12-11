@@ -50,10 +50,10 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 	 float3  EyeDir   = normalize(CameraPosition-position).xyz;
 	 
 	if(matId.r == 1.0 && matId.g == 0.0){		
-		float3 RefCol = texEnv.Sample( SS, -EyeDir ).zyx;
-		Final.xyz = RefCol.xyz;
+		float3 RefCol = texEnv.Sample( SS, -EyeDir ).zyx; //TODO: add technique
+		Final.xyz = RefCol.xyz; //TODO: add technique
 	}else{
-		float Rad = 15.0;
+		float Rad = 500.0;
 		float cutoff = 0.8;
 		float4 Lambert = float4(1.0,1.0,1.0,1.0);
 		float4 Specular = float4(1.0,1.0,1.0,1.0);
@@ -76,8 +76,8 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 		float3 ReflectedVec = normalize(reflect(-EyeDir,normal.xyz));	
 		float ratio = 1.0/1.52;
 		float3 R = refract(-EyeDir,normal.xyz,ratio);
-		float3 RefleCol = texEnv.Sample( SS, ReflectedVec ).zyx;
-		float3 RefraCol = texEnv.Sample( SS, R ).zyx;
+		float3 RefleCol = float3(0.0,0.0,0.0) /*texEnv.Sample( SS, ReflectedVec ).zyx TODO: add technique*/;
+		float3 RefraCol = float3(1.0,1.0,1.0) /*texEnv.Sample( SS, R ).zyx TODO: add technique*/;
 		
 		int NumLights = (int)CameraInfo.w;
 			for(int i=0;i<NumLights;i++){
@@ -136,7 +136,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET {
 			Fresnel 		= FresnelCol*FresnelIntensity*FresnelAtt;
 		
 			Final += Fresnel;		
-			Final.xyz += 0.26*RefraCol.xyz;
+			//Final.xyz += 0.26*RefraCol.xyz;
 		}
 	
 		//Final.xyz *= tex5.Sample( SS, input.texture0).xyz;

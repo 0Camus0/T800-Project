@@ -21,7 +21,7 @@
 #define SEPARATED_BLUR 1
 #define DEGENERATED_FBO_TEST 0
 
-#define NUM_LIGHTS 64
+#define NUM_LIGHTS 1
 #define RADI 170.0f
 
 #if defined(OS_LINUX)
@@ -74,7 +74,7 @@ void App::InitVars() {
 	Cam.Yaw = 0.020f;
 	Cam.Update(0.0f);
 
-	LightCam.Init(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(60.0f), 1.0f, 0.1f, 8000.0f);
+	LightCam.Init(XVECTOR3(0.0f, 100.0f, 10.0f), Deg2Rad(60.0f), 1.0f, 0.1f, 8000.0f);
 	LightCam.Speed = 10.0f;
 	LightCam.Eye = XVECTOR3(0.0f, 25.0f, -40.0f);
 	LightCam.Pitch = 0.14f;
@@ -86,23 +86,20 @@ void App::InitVars() {
 
 	SceneProp.AddCamera(ActiveCam);
 	SceneProp.AddLightCamera(&LightCam);
-	for(int i=0;i<NUM_LIGHTS;i++){
-		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		SceneProp.AddLight(XVECTOR3(0.0f, 0.0f, 0.0f), XVECTOR3(r, g, b), true);
-	}
-	SceneProp.ActiveLights = 127;
-	SceneProp.AmbientColor = XVECTOR3(0.15f, 0.15f, 0.15f);
+
+  SceneProp.AddLight(LightCam.Eye, XVECTOR3(1, 1, 1), true);
+
+	SceneProp.ActiveLights = 1;
+	SceneProp.AmbientColor = XVECTOR3(0.8f, 0.8f, 0.8f);
 
 	ShadowFilter.kernelSize = 7;
-	ShadowFilter.radius = 2.0f;
+	ShadowFilter.radius = 1.0f;
 	ShadowFilter.sigma = 1.0f;
 	ShadowFilter.Update();
 
-	BloomFilter.kernelSize = 29;
-	BloomFilter.radius = 3.0f;
-	BloomFilter.sigma = 3.0f;
+	BloomFilter.kernelSize = 5;
+	BloomFilter.radius = 2.0f;
+	BloomFilter.sigma = 1.0f;
 	BloomFilter.Update();
 
 	SceneProp.AddGaussKernel(&ShadowFilter);
@@ -169,6 +166,8 @@ void App::LoadAssets()
 }
 
 void App::CreateAssets() {
+  PrimitiveMgr.Init();
+  //m_flare.Init(PrimitiveMgr);
 
 	EnvMapTexIndex = g_pBaseDriver->CreateTexture(string("CubeMap_Mountains.dds"));
 
@@ -183,62 +182,123 @@ void App::CreateAssets() {
 
 	int index = PrimitiveMgr.CreateMesh("Models/Scene.X");
 	Pigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
+  Pigs[0].TranslateAbsolute(0.0, -10.0f, 0.0f);
+  Pigs[0].Update();
 
 	index = PrimitiveMgr.CreateMesh("Models/NuCroc.X");
 	Pigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
     index = PrimitiveMgr.CreateMesh("Models/NuBatman.X");
 	Pigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
 	index = PrimitiveMgr.CreateMesh("Models/NuVenomJok.X");
 	Pigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
 	index = PrimitiveMgr.CreateMesh("Models/CerdoNuevo.X");
 	Pigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
 	Pigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	PrimitiveMgr.GetPrimitive(index)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
-  index = PrimitiveMgr.CreateMesh("Models/SponzaEsc.X");
-  Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-  PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
+  Pigs[5].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+  //index = PrimitiveMgr.CreateMesh("Models/SponzaEsc.X");
+  //Pigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+  //PrimitiveMgr.GetPrimitive(index)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
   index = PrimitiveMgr.CreateSpline(m_spline);
   splineWire = (SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
   splineInst.CreateInstance(splineWire, &VP);
 
 
-	QuadIndex = PrimitiveMgr.CreateQuad();
-	Quads[0].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
+	Quads[0].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture,4);
+  Quads[0].SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
 
-	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[3].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[4].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
-	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[3].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[4].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
+	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD), &VP);
 
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
   m_agent.m_actualPoint = m_spline.GetPoint(m_spline.GetNormalizedOffset(0));
-  ActiveCam->AttachAgent(m_agent);
+  //ActiveCam->AttachAgent(m_agent);
 
 	for(unsigned int i=0;i<g_args.size();i++){
         if(g_args[i] == "-l"){
            SceneProp.ActiveLights = atoi( g_args[i+1].c_str() );
         }
 	}
+
+  /* POSITIONS */
+  int count = 1;
+  Pigs[count].TranslateAbsolute(-15.0f, 0.0f, 0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].RotateYAbsolute(0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].ScaleAbsolute(0.15f);
+  Pigs[count].Update();
+  count++;
+
+  Pigs[count].TranslateAbsolute(-5.0f, 0.0f, 0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].RotateYAbsolute(0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].ScaleAbsolute(0.15f);
+  Pigs[count].Update();
+  count++;
+
+  Pigs[count].TranslateAbsolute(5.0f, 0.0f, 0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].RotateYAbsolute(0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].ScaleAbsolute(0.15f);
+  Pigs[count].Update();
+  count++;
+
+  Pigs[count].TranslateAbsolute(18.0f, 4.2f, 0.0f);
+  Pigs[count].RotateXAbsolute(0.0f);
+  Pigs[count].RotateYAbsolute(60.0f);
+  Pigs[count].RotateZAbsolute(90.0f);
+  Pigs[count].ScaleAbsolute(3.0f);
+  Pigs[count].Update();
+  count++;
+
+  Quads[0].TranslateAbsolute(0.0f, 0.0f, 0.0f);
+  Quads[0].Update();
+
+  Quads[1].ScaleAbsolute(0.25f);
+  Quads[1].TranslateAbsolute(-0.75f, +0.75f, 0.0f);
+  Quads[1].Update();
+
+  Quads[2].ScaleAbsolute(0.25f);
+  Quads[2].TranslateAbsolute(0.75f, +0.75f, 0.0f);
+  Quads[2].Update();
+
+  Quads[3].ScaleAbsolute(0.25f);
+  Quads[3].TranslateAbsolute(-0.75f, -0.75f, 0.0f);
+  Quads[3].Update();
+
+  Quads[4].ScaleAbsolute(0.25f);
+  Quads[4].TranslateAbsolute(0.75f, -0.75f, 0.0f);
+  Quads[4].Update();
+
+  Quads[5].ScaleAbsolute(0.25f);
+  Quads[5].TranslateAbsolute(0.75f, 0.0f, 0.0f);
+  Quads[5].Update();
+
+  Quads[6].ScaleAbsolute(0.25f);
+  Quads[6].TranslateAbsolute(-0.75f, 0.0f, 0.0f);
+  Quads[6].Update();
+
+  Quads[7].ScaleAbsolute(1.0f);
+  Quads[7].TranslateAbsolute(0.0f, 0.0f, 0.1f);
+  Quads[7].Update();
 }
 
 void App::DestroyAssets() {
@@ -246,12 +306,6 @@ void App::DestroyAssets() {
 }
 
 void App::OnUpdate() {
-
-#if defined(OS_LINUX)
-	timeval start;
-    gettimeofday(&start,0);
-#endif
-
 	DtTimer.Update();
 	DtSecs = DtTimer.GetDTSecs();
 	OnInput();
@@ -263,88 +317,6 @@ void App::OnUpdate() {
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
 
-	int count = 1;
-	Pigs[count].TranslateAbsolute(-15.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
-
-	Pigs[count].TranslateAbsolute(-5.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
-
-	Pigs[count].TranslateAbsolute(5.0f, 0.0f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].ScaleAbsolute(0.15f);
-	Pigs[count].Update();
-	count++;
-
-	Pigs[count].TranslateAbsolute(18.0f, 4.2f, 0.0f);
-	Pigs[count].RotateXAbsolute(0.0f);
-	Pigs[count].RotateYAbsolute(60.0f);
-	Pigs[count].RotateZAbsolute(90.0f);
-	Pigs[count].ScaleAbsolute(3.0f);
-	Pigs[count].Update();
-	count++;
-
-	Quads[0].TranslateAbsolute(0.0f,0.0f, 0.0f);
-	Quads[0].Update();
-
-	Quads[1].ScaleAbsolute(0.25f);
-	Quads[1].TranslateAbsolute(-0.75f, +0.75f, 0.0f);
-	Quads[1].Update();
-
-	Quads[2].ScaleAbsolute(0.25f);
-	Quads[2].TranslateAbsolute(0.75f, +0.75f, 0.0f);
-	Quads[2].Update();
-
-	Quads[3].ScaleAbsolute(0.25f);
-	Quads[3].TranslateAbsolute(-0.75f, -0.75f, 0.0f);
-	Quads[3].Update();
-
-	Quads[4].ScaleAbsolute(0.25f);
-	Quads[4].TranslateAbsolute(0.75f, -0.75f, 0.0f);
-	Quads[4].Update();
-
-	Quads[5].ScaleAbsolute(0.25f);
-	Quads[5].TranslateAbsolute(0.75f, 0.0f, 0.0f);
-	Quads[5].Update();
-
-	Quads[6].ScaleAbsolute(0.25f);
-	Quads[6].TranslateAbsolute(-0.75f, 0.0f, 0.0f);
-	Quads[6].Update();
-
-	Quads[7].ScaleAbsolute(1.0f);
-	Quads[7].TranslateAbsolute(0.0f, 0.0f, 0.1f);
-	Quads[7].Update();
-
-
-	float speed = 0.5f;
-	static float freq = 0.0f;
-	freq += DtSecs*speed;
-	static float freq2 = 3.1415f / 2.0f;
-	freq2 += DtSecs*speed;
-
-	float dist = RADI;
-	float Offset = 2.0f*3.1415f/ NUM_LIGHTS;
-	float Offset2 = 4.0f*3.1415f / NUM_LIGHTS;
-	for (int i = 0; i<NUM_LIGHTS; i++) {
-		SceneProp.Lights[i].Position = Position;
-		float RadA = dist*0.35f + dist*0.4f * sin(freq + float(i*Offset))*cos(freq + float(i*Offset));
-		float RadB = dist*0.35f + dist*0.4f * sin(freq2 + float(i*Offset2))*cos(freq2 + float(i*Offset2));
-		SceneProp.Lights[i].Position.x += RadA*sin(freq + float(i*Offset));
-		SceneProp.Lights[i].Position.z += RadB*cos(freq + float(i*Offset2));
-	}
-
 
 	PrimitiveInst *Sel = &Pigs[5];
 	Sel->TranslateAbsolute(Position.x, Position.y, Position.z);
@@ -355,86 +327,51 @@ void App::OnUpdate() {
 	Sel->Update();
 
 	OnDraw();
-
-#if defined(OS_LINUX)
-	timeval actual;
-	gettimeofday(&actual,0);
-	double ttaken = double( (actual.tv_sec - start.tv_sec) + (actual.tv_usec - start.tv_usec)/1000000.0);
-
-	static int sample = 0;
-	static double avg = 0.0;
-	static int framescount = 0;
-
-	static int total_sample = 0;
-	static double total_avg = 0.0;
-
-	avg +=ttaken;
-	total_avg += ttaken;
-	sample++;
-
-
-	if(avg>1.0){
-       // printf("FPS: %d \n",sample);
-        total_sample+=sample;
-        framescount++;
-        sample = 0;
-        avg = 0.0;
-	}
-
-	static const double TIMETOTAKE = 60.0;
-	if(total_avg>TIMETOTAKE){
-        total_sample /= static_cast<double>(framescount);
-        printf("AVG after %f FPS: %d exiting now\n",TIMETOTAKE,total_sample);
-        exit(0);
-	}
-
-#endif
 }
 
 void App::OnDraw() {
 
   pFramework->pVideoDriver->Clear();
 
-
   pFramework->pVideoDriver->PushRT(DepthPass);
   SceneProp.pCameras[0] = &LightCam;
-  for (int i = 0; i < 7; i++) {
-    Pigs[i].SetSignature(Signature::SHADOW_MAP_PASS);
+  for (int i = 0; i < 6; i++) {
+    Pigs[i].SetGlobalSignature(Signature::SHADOW_MAP_PASS);
     Pigs[i].Draw();
-    Pigs[i].SetSignature(Signature::FORWARD_PASS);
+    Pigs[i].SetGlobalSignature(Signature::FORWARD_PASS);
   }
   pFramework->pVideoDriver->PopRT();
 
   SceneProp.pCameras[0] = &Cam;
 
   pFramework->pVideoDriver->PushRT(GBufferPass);
-  for (int i = 0; i < 7; i++) {
-    Pigs[i].SetSignature(Signature::GBUFF_PASS);
+  for (int i = 0; i < 6; i++) {
+    Pigs[i].SetGlobalSignature(Signature::GBUFF_PASS);
     Pigs[i].Draw();
-    Pigs[i].SetSignature(Signature::FORWARD_PASS);
+    Pigs[i].SetGlobalSignature(Signature::FORWARD_PASS);
   }
   pFramework->pVideoDriver->PopRT();
 
 
   pFramework->pVideoDriver->PushRT(ShadowAccumPass);
   pFramework->pVideoDriver->Clear();
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT), 0);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, BaseDriver::DEPTH_ATTACHMENT), 1);
-  Quads[0].SetSignature(Signature::SHADOW_COMP_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT), 0);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, BaseDriver::DEPTH_ATTACHMENT), 1);
+  Quads[0].SetGlobalSignature(Signature::SHADOW_COMP_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 
   SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
 #if SEPARATED_BLUR
   pFramework->pVideoDriver->PushRT(ExtraHelperPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[0].SetSignature(Signature::VERTICAL_BLUR_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetGlobalSignature(Signature::VERTICAL_BLUR_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 
   pFramework->pVideoDriver->PushRT(ShadowAccumPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[0].SetSignature(Signature::HORIZONTAL_BLUR_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetGlobalSignature(Signature::HORIZONTAL_BLUR_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 #else
@@ -446,38 +383,38 @@ void App::OnDraw() {
 #endif
 
   pFramework->pVideoDriver->PushRT(DeferredPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR1_ATTACHMENT), 1);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR2_ATTACHMENT), 2);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR3_ATTACHMENT), 3);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT), 4);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR1_ATTACHMENT), 1);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR2_ATTACHMENT), 2);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR3_ATTACHMENT), 3);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::DEPTH_ATTACHMENT), 4);
 #if SEPARATED_BLUR
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 5);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 5);
 #else
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 5);
+  PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 5);
 #endif
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
-  Quads[0].SetSignature(Signature::DEFERRED_PASS);
+  Quads[0].SetEnvironmentMap(g_pBaseDriver->GetTexture(EnvMapTexIndex));
+  Quads[0].SetGlobalSignature(Signature::DEFERRED_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 
   pFramework->pVideoDriver->PushRT(BloomAccumPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[0].SetSignature(Signature::BRIGHT_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetGlobalSignature(Signature::BRIGHT_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 
   SceneProp.ActiveGaussKernel = BLOOM_KERNEL;
 #if SEPARATED_BLUR
   pFramework->pVideoDriver->PushRT(ExtraHelperPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[0].SetSignature(Signature::HORIZONTAL_BLUR_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetGlobalSignature(Signature::HORIZONTAL_BLUR_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 
   pFramework->pVideoDriver->PushRT(BloomAccumPass);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[0].SetSignature(Signature::VERTICAL_BLUR_PASS);
+  Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[0].SetGlobalSignature(Signature::VERTICAL_BLUR_PASS);
   Quads[0].Draw();
   pFramework->pVideoDriver->PopRT();
 #else
@@ -489,38 +426,38 @@ void App::OnDraw() {
 #endif
 
   pFramework->pVideoDriver->Clear();
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[1].SetSignature(Signature::HDR_COMP_PASS);
+  Quads[1].SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[1].SetGlobalSignature(Signature::HDR_COMP_PASS);
   Quads[1].Draw();
 
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  Quads[2].SetSignature(Signature::FSQUAD_1_TEX);
+  Quads[2].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[2].SetGlobalSignature(Signature::FSQUAD_1_TEX);
   Quads[2].Draw();
 
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR1_ATTACHMENT), 0);
-  Quads[3].SetSignature(Signature::FSQUAD_1_TEX);
+  Quads[3].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR1_ATTACHMENT), 0);
+  Quads[3].SetGlobalSignature(Signature::FSQUAD_1_TEX);
   Quads[3].Draw();
 
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR2_ATTACHMENT), 0);
-  Quads[4].SetSignature(Signature::FSQUAD_1_TEX);
+  Quads[4].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR2_ATTACHMENT), 0);
+  Quads[4].SetGlobalSignature(Signature::FSQUAD_1_TEX);
   Quads[4].Draw();
 
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR3_ATTACHMENT), 0);
-  Quads[5].SetSignature(Signature::FSQUAD_1_TEX);
+  Quads[5].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, BaseDriver::COLOR3_ATTACHMENT), 0);
+  Quads[5].SetGlobalSignature(Signature::FSQUAD_1_TEX);
   Quads[5].Draw();
 
 #if	SEPARATED_BLUR
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[6].SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 0);
 #else
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  PrimitiveMgr.GetPrimitive(PrimitiveManager::QUAD)->SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, BaseDriver::COLOR0_ATTACHMENT), 0);
 #endif
-  Quads[6].SetSignature(Signature::FSQUAD_1_TEX);
+  Quads[6].SetGlobalSignature(Signature::FSQUAD_1_TEX);
   Quads[6].Draw();
 
 #if	SEPARATED_BLUR
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
-  PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 1);
-  Quads[7].SetSignature(Signature::HDR_COMP_PASS);
+  Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
+  Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, BaseDriver::COLOR0_ATTACHMENT), 1);
+  Quads[7].SetGlobalSignature(Signature::HDR_COMP_PASS);
   Quads[7].Draw();
 #else
   PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, BaseDriver::COLOR0_ATTACHMENT), 0);
@@ -528,6 +465,8 @@ void App::OnDraw() {
   Quads[7].SetSignature(Signature::HDR_COMP_PASS);
   Quads[7].Draw();
 #endif
+
+  //m_flare.Draw();
 
   pFramework->pVideoDriver->SwapBuffers();
 

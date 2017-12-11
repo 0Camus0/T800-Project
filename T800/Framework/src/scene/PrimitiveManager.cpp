@@ -17,7 +17,7 @@
 #include <scene/SplineWireframe.h>
 
 namespace t800 {
-  PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
+  PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) const {
     if (index >= primitives.size())
       return 0;
 
@@ -60,6 +60,13 @@ namespace t800 {
     for (unsigned int i = 0; i < primitives.size(); i++) {
       primitives[i]->SetSceneProps(p);
     }
+  }
+
+  void PrimitiveManager::Init()
+  {
+    primitives.resize(COUNT);
+    primitives[QUAD] = new D3DXQuad();
+    primitives[QUAD]->Create();
   }
 
   void PrimitiveManager::DrawPrimitives() {

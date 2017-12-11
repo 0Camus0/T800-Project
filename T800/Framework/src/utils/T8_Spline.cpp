@@ -10,7 +10,7 @@ namespace t800 {
     if (m_points.size() < 4) {
       std::cout << "Warning: not enought points on the spline" << std::endl;
     }
-    for (int i = 0; i < m_points.size()- 3; i++)
+    for (int i = 0; i < (m_points.size()- 3); i++)
     {
     	m_totalLength += (m_points[i].m_length = GetSegmentLength(i));
     }
@@ -35,6 +35,7 @@ namespace t800 {
     }
     
     t = t - (int)t;
+    if (t == 0) return m_points[p0];
     float tt = t * t;
     float ttt = tt * t;
     
@@ -73,7 +74,8 @@ namespace t800 {
     }
     
     t = t - (int)t;
-    
+    if (t == 0) return m_points[p0];
+
     float tt = t * t;
     float ttt = tt * t;
     

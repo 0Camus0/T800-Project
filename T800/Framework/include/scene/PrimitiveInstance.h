@@ -23,6 +23,12 @@ namespace t800 {
   class PrimitiveInst {
   public:
     void	CreateInstance(PrimitiveBase *pPrim, XMATRIX44 *pVP) {
+      gSig = 0; 
+      for (int i = 0; i < 8; i++) {
+        Textures[i] = 0;
+      }
+      EnvMap = 0;
+      
       pBase = pPrim;
       pViewProj = pVP;
       XMatIdentity(Position);
@@ -47,14 +53,28 @@ namespace t800 {
     void	RotateZRelative(float ang);
     void	ScaleRelative(float sc);
 
-    void	SetSignature(unsigned int f);
-    void	SetTexture(Texture* tex, int index);
 
     void	Update();
     void	Draw();
 
     void ToogleVisible() { Visible = !Visible; }
     void SetVisible(bool f) { Visible = f; }
+
+    //
+    void SetGlobalSignature(unsigned int f) { gSig = f; }
+    void SetTexture(Texture* tex, int index) {
+      Textures[index] = tex;
+    }
+
+    void SetEnvironmentMap(Texture* tex) {
+      EnvMap = tex;
+    }
+
+    Texture*				 Textures[8];
+    Texture*			     EnvMap;
+    unsigned int gSig;
+    //
+
     bool Visible;
 
     XMATRIX44		Position;
@@ -65,7 +85,6 @@ namespace t800 {
     XMATRIX44		Final;
 
     XMATRIX44		*pViewProj;
-
     PrimitiveBase	*pBase;
   };
 }

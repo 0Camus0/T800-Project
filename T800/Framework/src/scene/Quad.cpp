@@ -212,8 +212,10 @@ namespace t800 {
     }
     else if (sig&Signature::FSQUAD_3_TEX || sig&Signature::HDR_COMP_PASS) {
       Textures[0]->Set(*T8DeviceContext, 0, "tex0");
-      Textures[1]->Set(*T8DeviceContext, 1, "tex1");
-      Textures[2]->Set(*T8DeviceContext, 2, "tex2");
+      if (Textures[1])
+        Textures[1]->Set(*T8DeviceContext, 1, "tex1");
+      if (Textures[2])
+        Textures[2]->Set(*T8DeviceContext, 2, "tex2");
     }
     else if (sig&Signature::SHADOW_COMP_PASS) {
       Textures[0]->Set(*T8DeviceContext, 0, "tex0");

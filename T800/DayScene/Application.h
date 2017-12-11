@@ -22,6 +22,7 @@
 
 #include <scene/SplineWireframe.h>
 #include <utils/T8_Spline.h>
+#include <scene/LensFlare.h>
 
 
 enum {
@@ -100,7 +101,6 @@ public:
 	float			DtSecs;
 	int				SelectedMesh;
 	int				RTIndex;
-	int				QuadIndex;
 	int				GBufferPass;
 	int				DeferredPass;
 	int				DepthPass;
@@ -124,4 +124,6 @@ public:
   t800::PrimitiveInst splineInst;
   t800::SplineAgent m_agent;
   t800::Spline m_spline;
+
+  t800::LensFlare m_flare;
 };
